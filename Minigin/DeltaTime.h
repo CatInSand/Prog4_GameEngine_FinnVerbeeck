@@ -3,10 +3,10 @@
 
 namespace dae
 {
-	static float gDeltaTime{ 0.f };
 	static const int gFrameRate{ 60 };
 	static const float gFixedDeltaTime{ 1.f/gFrameRate };
 	static const int gMillisecondsPerFrame{ static_cast<int>(gFixedDeltaTime * 1000) };
+	static float gDeltaTime{ gFixedDeltaTime };
 }
 
 #endif
