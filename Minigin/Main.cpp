@@ -12,37 +12,39 @@
 #include "Scene.h"
 
 #include <filesystem>
-namespace fs = std::filesystem;
 
 static void load()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene();
+	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
 
-	auto go = std::make_unique<dae::GameObject>();
-	go->SetTexture("background.png");
-	scene.Add(std::move(go));
+	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>() };
+	gameObject->SetTexture("background.png");
+	scene.Add(std::move(gameObject));
 
-	go = std::make_unique<dae::GameObject>();
-	go->SetTexture("logo.png");
-	go->SetPosition(358, 180);
-	scene.Add(std::move(go));
+	gameObject = std::make_unique<dae::GameObject>();
+	gameObject->SetTexture("logo.png");
+	gameObject->SetPosition(358, 180);
+	scene.Add(std::move(gameObject));
 
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto to = std::make_unique<dae::TextObject>("Programming 4 Assignment", font);
-	to->SetColor({ 255, 255, 0, 255 });
-	to->SetPosition(292, 20);
-	scene.Add(std::move(to));
+	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
+	std::unique_ptr<dae::TextObject> textObject{ std::make_unique<dae::TextObject>("Programming 4 Assignment", font) };
+	textObject->SetColor({ 255, 255, 0, 255 });
+	textObject->SetPosition(292, 20);
+	scene.Add(std::move(textObject));
 }
 
-int main(int, char*[]) {
+int main(int, char*[])
+{
 #if __EMSCRIPTEN__
-	fs::path data_location = "";
+	std::filesystem::path data_location{ "" };
 #else
-	fs::path data_location = "./Data/";
-	if(!fs::exists(data_location))
+	std::filesystem::path data_location{ "./Data/" };
+	if(!std::filesystem::exists(data_location))
 		data_location = "../Data/";
 #endif
+
 	dae::Minigin engine(data_location);
 	engine.Run(load);
+
     return 0;
 }

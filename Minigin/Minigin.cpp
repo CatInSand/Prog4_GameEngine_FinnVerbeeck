@@ -16,6 +16,10 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 
+#include <time.h>
+#include <thread>
+#include "DeltaTime.h"
+
 SDL_Window* g_window{};
 
 void LogSDLVersion(const std::string& message, int major, int minor, int patch)
@@ -89,18 +93,30 @@ dae::Minigin::~Minigin()
 
 void dae::Minigin::Run(const std::function<void()>& load)
 {
+	//initialize
 	load();
 #ifndef __EMSCRIPTEN__
-	while (!m_quit)
-		RunOneFrame();
+
+	//game loop
+	bool running{ true };
+	auto prevTime{ std::chrono::high_resolution_clock::now() };
+
+	while (running)
+	{
+		const auto currentTime{ std::chrono::high_resolution_clock::now() };
+		dae::gDeltaTime = std::chrono::duration<float>(currentTime - prevTime).count();
+		prevTime = currentTime;
+
+		running = InputManager::GetInstance().ProcessInput();
+		SceneManager::GetInstance().Update();
+		Renderer::GetInstance().Render();
+
+		const auto sleepTime{ currentTime - std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(dae::gMillisecondsPerFrame) };
+
+		std::this_thread::sleep_for(sleepTime);
+	}
+
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
-}
-
-void dae::Minigin::RunOneFrame()
-{
-	m_quit = !InputManager::GetInstance().ProcessInput();
-	SceneManager::GetInstance().Update();
-	Renderer::GetInstance().Render();
 }
