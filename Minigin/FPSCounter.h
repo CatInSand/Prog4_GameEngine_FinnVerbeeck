@@ -1,15 +1,16 @@
 #ifndef FPS_COUNTER_H
 #define FPS_COUNTER_H
 
-#include "Component.h"
+#include "Text.h"
 #include "DeltaTime.h"
 
 namespace dae
 {
-	class FPSCounter final : public Component
+	class GameObject;
+	class FPSCounter final : public Text
 	{
 	public:
-		FPSCounter() = default;
+		FPSCounter(std::unique_ptr<GameObject>& owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
 
 		virtual void Update() override;
 		float GetFPS() const;

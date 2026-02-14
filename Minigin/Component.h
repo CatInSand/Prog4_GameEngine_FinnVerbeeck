@@ -2,13 +2,15 @@
 #define COMPONENT_H
 
 #include <string>
+#include <memory>
 
 namespace dae
 {
+	class GameObject;
 	class Component
 	{
 	public:
-		Component() = default;
+		Component(std::unique_ptr<GameObject>& owner);
 
 		virtual void Update() = 0;
 		virtual void Render() const = 0;
@@ -18,8 +20,9 @@ namespace dae
 
 		static const std::string m_ID;
 
-	private:
+	protected:
 		bool m_Enabled{ true };
+		std::unique_ptr<GameObject>& m_Owner;
 	};
 }
 

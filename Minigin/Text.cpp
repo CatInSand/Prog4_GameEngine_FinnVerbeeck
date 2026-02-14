@@ -4,9 +4,11 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include "Font.h"
 #include "Texture2D.h"
+#include "GameObject.h"
 
-dae::Text::Text(const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
-	: m_Text{ text }
+dae::Text::Text(std::unique_ptr<dae::GameObject>& owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
+	: Component(owner)
+	, m_Text{ text }
 	, m_Color{ color }
 	, m_pFont{ std::move(font) }
 {
