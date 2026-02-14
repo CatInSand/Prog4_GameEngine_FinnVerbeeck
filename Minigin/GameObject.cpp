@@ -18,8 +18,12 @@ void dae::GameObject::Update()
 
 void dae::GameObject::Render() const
 {
-	const auto& pos = m_transform.GetPosition();
-	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+	if (m_texture != nullptr)
+	{
+		const auto& pos = m_transform.GetPosition();
+		Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+	}
+
 }
 
 void dae::GameObject::SetTexture(const std::string& filename)
