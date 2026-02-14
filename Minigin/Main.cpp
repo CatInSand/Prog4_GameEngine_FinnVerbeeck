@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "TextObject.h"
+#include "FPSCounter.h"
 #include "Scene.h"
 
 #include <filesystem>
@@ -27,10 +28,19 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
+
 	std::unique_ptr<dae::TextObject> textObject{ std::make_unique<dae::TextObject>("Programming 4 Assignment", font) };
 	textObject->SetColor({ 255, 255, 0, 255 });
 	textObject->SetPosition(292, 20);
+
+	std::unique_ptr<dae::GameObject> textObject2{ std::make_unique<dae::GameObject>() };
+	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(textObject2, "FPS", font)};
+	fpsComponent->SetColor({ 255, 255, 0, 255 });
+	textObject2->AddComponent(std::move(fpsComponent));
+	textObject2->SetPosition(292, 20);
+
 	scene.Add(std::move(textObject));
+	scene.Add(std::move(textObject2));
 }
 
 int main(int, char*[])
