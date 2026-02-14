@@ -6,7 +6,7 @@ namespace dae
 	static const int gFrameRate{ 60 };
 	static const float gFixedDeltaTime{ 1.f/gFrameRate };
 	static const int gMillisecondsPerFrame{ static_cast<int>(gFixedDeltaTime * 1000) };
-	static float gDeltaTime{ gFixedDeltaTime };
+	extern float gDeltaTime;
 }
 
 #endif
