@@ -11,6 +11,7 @@ namespace dae
 	{
 	public:
 		Component(std::unique_ptr<GameObject>& owner);
+		virtual ~Component() = default;
 
 		virtual void Update() = 0;
 		virtual void Render() const = 0;
