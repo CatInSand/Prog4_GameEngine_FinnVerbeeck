@@ -13,7 +13,7 @@ namespace dae
 	{
 	public:
 		GameObject() = default;
-		virtual ~GameObject();
+		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
@@ -24,8 +24,8 @@ namespace dae
 		std::unique_ptr<Component>& GetComponent(const std::string& id);
 		bool HasComponent(const std::string& id);
 
-		virtual void Update();
-		virtual void Render() const;
+		void Update();
+		void Render() const;
 
 		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
