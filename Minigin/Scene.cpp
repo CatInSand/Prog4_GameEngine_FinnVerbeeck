@@ -1,9 +1,6 @@
 #include <algorithm>
 #include "Scene.h"
 
-//temp
-#include <iostream>
-
 using namespace dae;
 
 void Scene::Add(std::unique_ptr<GameObject>&& object)
@@ -34,10 +31,6 @@ void Scene::Update()
 	for(auto& object : m_objects)
 	{
 		object->Update();
-		if (object->HasComponent("Text"))
-		{
-			std::cout << "Object has component Text\n";
-		}
 	}
 }
 

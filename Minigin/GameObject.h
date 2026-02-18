@@ -20,9 +20,42 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 		void AddComponent(std::unique_ptr<Component>&& pComponent);
-		void RemoveComponent(const std::string& id);
-		std::unique_ptr<Component>& GetComponent(const std::string& id);
-		bool HasComponent(const std::string& id);
+		template<typename T>
+		void RemoveComponent()
+		{
+			//
+			//ADD DELETE QUEUE!!!
+			//
+			m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
+				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+			));
+		}
+		template<typename T>
+		std::unique_ptr<Component>& GetComponent()
+		{
+			auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
+				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+			);
+
+			assert(it == m_pComponents.end());
+			return *it;
+		}
+		template<typename T>
+		bool HasComponent()
+		{
+			const auto it = std::find_if(m_pComponents.cbegin(), m_pComponents.cend(),
+				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+			);
+
+			if (it != m_pComponents.cend())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		void Update();
 		void Render() const;

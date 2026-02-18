@@ -15,11 +15,7 @@ namespace dae
 		virtual void Update() override;
 		float GetFPS() const;
 
-		virtual std::string GetID() override { return m_ID; };
-
 	private:
-		const std::string m_ID{ "FPSCounter" };
-
 		float m_FPS{ gFrameRate };
 	};
 }

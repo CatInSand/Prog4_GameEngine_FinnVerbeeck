@@ -2,8 +2,6 @@
 #include "GameObject.h"
 #include <format>
 
-//const std::string dae::FPSCounter::m_ID{ "FPSCounter" };
-
 dae::FPSCounter::FPSCounter(std::unique_ptr<dae::GameObject>& owner, const std::string& text, std::shared_ptr<dae::Font> font, const SDL_Color& color)
 	: Text(owner, text, font, color)
 {
