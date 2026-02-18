@@ -26,11 +26,15 @@ namespace dae
 		virtual void Update() override;
 		virtual void Render() const override;
 
+		virtual std::string GetID() override { return m_ID; };
+
 		virtual void SetText(const std::string& text);
 		void SetPosition(float x, float y);
 		void SetColor(const SDL_Color& color);
 
 	protected:
+		const std::string m_ID{ "Text" };
+
 		bool m_NeedsUpdate{ true };
 		std::string m_Text;
 		SDL_Color m_Color;

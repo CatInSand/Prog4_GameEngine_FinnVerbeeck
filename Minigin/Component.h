@@ -16,14 +16,17 @@ namespace dae
 		virtual void Update() = 0;
 		virtual void Render() const = 0;
 
+		virtual std::string GetID() { return m_ID; };
+
 		void SetEnabled(bool enabled);
 		void ToggleEnabled();
-
-		static const std::string m_ID;
 
 	protected:
 		bool m_Enabled{ true };
 		std::unique_ptr<GameObject>& m_Owner;
+
+	private:
+		const std::string m_ID{ "Component" };
 	};
 }
 

@@ -1,7 +1,7 @@
 #include "Component.h"
 #include "GameObject.h"
 
-const std::string dae::Component::m_ID{ "Component" };
+//const std::string dae::Component::m_ID{ "Component" };
 
 dae::Component::Component(std::unique_ptr<dae::GameObject>& owner)
 	: m_Owner{ owner }

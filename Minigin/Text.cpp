@@ -6,6 +6,8 @@
 #include "Texture2D.h"
 #include "GameObject.h"
 
+//const std::string dae::Text::m_ID{ "Text" };
+
 dae::Text::Text(std::unique_ptr<dae::GameObject>& owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
 	: Component(owner)
 	, m_Text{ text }

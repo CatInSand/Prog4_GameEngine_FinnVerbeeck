@@ -50,13 +50,13 @@ void dae::GameObject::RemoveComponent(const std::string& id)
 	//ADD DELETE QUEUE!!!
 	//
 	m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
-		[id](const std::unique_ptr<dae::Component>& component) { return component->m_ID == id; }
+		[id](const std::unique_ptr<dae::Component>& component) { return component->GetID() == id; }
 	));
 }
 std::unique_ptr<dae::Component>& dae::GameObject::GetComponent(const std::string& id)
 {
 	auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
-		[id](const std::unique_ptr<dae::Component>& component) { return component->m_ID == id; }
+		[id](const std::unique_ptr<dae::Component>& component) { return component->GetID() == id; }
 	);
 
 	assert(it == m_pComponents.end());
@@ -65,7 +65,7 @@ std::unique_ptr<dae::Component>& dae::GameObject::GetComponent(const std::string
 bool dae::GameObject::HasComponent(const std::string& id)
 {
 	const auto it = std::find_if(m_pComponents.cbegin(), m_pComponents.cend(),
-		[id](const std::unique_ptr<dae::Component>& component) { return component->m_ID == id; }
+		[id](const std::unique_ptr<dae::Component>& component) { return component->GetID() == id; }
 		);
 
 	if (it != m_pComponents.cend())
