@@ -18,10 +18,10 @@ void dae::GameObject::Update()
 
 void dae::GameObject::Render() const
 {
-	if (m_texture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		const auto& pos = m_transform.GetPosition();
-		Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+		const auto& pos = m_Transform.GetPosition();
+		Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
 	}
 
 	for (const std::unique_ptr<dae::Component>& pComponent : m_pComponents)
@@ -32,15 +32,25 @@ void dae::GameObject::Render() const
 
 void dae::GameObject::SetTexture(const std::string& filename)
 {
-	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+	m_Texture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
 void dae::GameObject::SetPosition(float x, float y)
 {
-	m_transform.SetPosition(x, y, 0.0f);
+	m_Transform.SetPosition(x, y, 0.0f);
 }
 
-void dae::GameObject::AddComponent(std::unique_ptr<dae::Component>&& pComponent)
+void dae::GameObject::Delete()
 {
-	m_pComponents.push_back(std::move(pComponent));
+	m_MarkedForDeletion = true;
+}
+bool dae::GameObject::IsMarkedForDeletion() const
+{
+	return m_MarkedForDeletion;
+}
+void dae::GameObject::DeleteQueue()
+{
+	m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
+		[](std::unique_ptr<dae::Component>& component) { return component->IsMarkedForDeletion(); }),
+		m_pComponents.end());
 }

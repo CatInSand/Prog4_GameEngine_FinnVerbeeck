@@ -33,13 +33,13 @@ static void load()
 	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(textObject, "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
 	textComponent->SetPosition(292, 20);
-	textObject->AddComponent(std::move(textComponent));
+	textObject->AddComponent<dae::Text>(std::move(textComponent));
 
 	std::unique_ptr<dae::GameObject> fpsObject{ std::make_unique<dae::GameObject>() };
 	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(fpsObject, "FPS", font)};
 	fpsComponent->SetColor({ 255, 255, 255, 255 });
 	fpsComponent->SetPosition(0, 0);
-	fpsObject->AddComponent(std::move(fpsComponent));
+	fpsObject->AddComponent<dae::FPSCounter>(std::move(fpsComponent));
 
 	scene.Add(std::move(textObject));
 	scene.Add(std::move(fpsObject));

@@ -19,16 +19,32 @@ namespace dae
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
-		void AddComponent(std::unique_ptr<Component>&& pComponent);
+		void Delete();
+		bool IsMarkedForDeletion() const;
+		void DeleteQueue();
+
 		template<typename T>
-		void RemoveComponent()
+		void AddComponent(std::unique_ptr<dae::Component>&& pComponent)
 		{
-			//
-			//ADD DELETE QUEUE!!!
-			//
-			m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
-				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
-			));
+			if (!HasComponent<T>())
+			{
+				m_pComponents.push_back(std::move(pComponent));
+			}
+			else
+			{
+				throw std::exception("Attempted to add duplicate component");
+			}
+		}
+		template<typename T>
+		void DeleteComponent()
+		{
+			for (std::unique_ptr<dae::Component>& component : m_pComponents)
+			{
+				if (typeid(T) == typeid(*component))
+				{
+					component->Delete();
+				}
+			}
 		}
 		template<typename T>
 		std::unique_ptr<Component>& GetComponent()
@@ -64,8 +80,9 @@ namespace dae
 		void SetPosition(float x, float y);
 
 	private:
-		Transform m_transform{};
-		std::shared_ptr<Texture2D> m_texture{};
+		bool m_MarkedForDeletion{ false };
+		Transform m_Transform{};
+		std::shared_ptr<Texture2D> m_Texture{}; //REMOVE!!!
 
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
 	};

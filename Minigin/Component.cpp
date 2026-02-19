@@ -15,3 +15,13 @@ void dae::Component::ToggleEnabled()
 {
 	m_Enabled = !m_Enabled;
 }
+
+void dae::Component::Delete()
+{
+	m_MarkedForDeletion = true;
+}
+
+bool dae::Component::IsMarkedForDeletion() const
+{
+	return m_MarkedForDeletion;
+}

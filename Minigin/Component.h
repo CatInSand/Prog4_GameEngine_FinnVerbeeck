@@ -19,9 +19,15 @@ namespace dae
 		void SetEnabled(bool enabled);
 		void ToggleEnabled();
 
+		void Delete();
+		bool IsMarkedForDeletion() const;
+
 	protected:
 		bool m_Enabled{ true };
 		std::unique_ptr<GameObject>& m_Owner;
+
+	private:
+		bool m_MarkedForDeletion{ false };
 	};
 }
 
