@@ -36,8 +36,11 @@ void dae::Text::Update()
 
 void dae::Text::SetText(const std::string& text)
 {
-	m_Text = text;
-	m_NeedsUpdate = true;
+	if (text != m_Text)
+	{
+		m_Text = text;
+		m_NeedsUpdate = true;
+	}
 }
 
 void dae::Text::SetPosition(const float x, const float y)
