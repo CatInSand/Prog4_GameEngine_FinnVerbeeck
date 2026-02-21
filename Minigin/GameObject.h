@@ -52,8 +52,8 @@ namespace dae
 				[](const std::unique_ptr<dae::Component>& pComponent) { return dynamic_cast<T*>(pComponent.get()) != nullptr; }
 			);
 
-			assert(it == m_pComponents.end());
-			return *it;
+			assert(it != m_pComponents.end());
+			return dynamic_cast<T*>((*it).get());
 		}
 		template<typename T>
 		bool HasComponent()
