@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include <vector>
+#include <stdexcept>
 
 namespace dae
 {
@@ -31,7 +32,7 @@ namespace dae
 			}
 			else
 			{
-				throw std::exception("Attempted to add duplicate component");
+				throw std::invalid_argument("Attempted to add duplicate component");
 			}
 		}
 		template<typename T>
@@ -43,10 +44,6 @@ namespace dae
 				{
 					pComponent->Delete();
 				}
-				/*if (typeid(T) == typeid(*pComponent))
-				{
-					pComponent->Delete();
-				}*/
 			}
 		}
 		template<typename T>
