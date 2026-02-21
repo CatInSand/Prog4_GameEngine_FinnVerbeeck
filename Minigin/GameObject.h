@@ -37,19 +37,23 @@ namespace dae
 		template<typename T>
 		void DeleteComponent()
 		{
-			for (std::unique_ptr<dae::Component>& component : m_pComponents)
+			for (std::unique_ptr<dae::Component>& pComponent : m_pComponents)
 			{
-				if (typeid(T) == typeid(*component))
+				if (dynamic_cast<T*>(pComponent.get()) != nullptr)
 				{
-					component->Delete();
+					pComponent->Delete();
 				}
+				/*if (typeid(T) == typeid(*pComponent))
+				{
+					pComponent->Delete();
+				}*/
 			}
 		}
 		template<typename T>
 		std::unique_ptr<Component>& GetComponent()
 		{
 			auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
-				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+				[](const std::unique_ptr<dae::Component>& pComponent) { return dynamic_cast<T*>(pComponent.get()) != nullptr; }
 			);
 
 			assert(it == m_pComponents.end());
@@ -59,7 +63,7 @@ namespace dae
 		bool HasComponent()
 		{
 			const auto it = std::find_if(m_pComponents.cbegin(), m_pComponents.cend(),
-				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+				[](const std::unique_ptr<dae::Component>& pComponent) { return dynamic_cast<const T*>(pComponent.get()) != nullptr; }
 			);
 
 			if (it != m_pComponents.cend())
