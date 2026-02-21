@@ -31,7 +31,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   
   Minigin/Texture2D.cpp
   Minigin/Transform.cpp
- "Minigin/Component.cpp" "Minigin/FPSCounter.cpp" "Minigin/Text.cpp"   "Minigin/DeltaTime.cpp" "Minigin/RenderComponent.cpp")
+ "Minigin/Component.cpp" "Minigin/FPSCounter.cpp" "Minigin/Text.cpp"   "Minigin/DeltaTime.cpp" "Minigin/RenderComponent.cpp" "Minigin/FPSComponent.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)

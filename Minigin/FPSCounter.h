@@ -8,10 +8,10 @@
 namespace dae
 {
 	class GameObject;
-	class FPSCounter final : public Text
+	class FPSCounter final : public Component
 	{
 	public:
-		FPSCounter(GameObject* owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
+		FPSCounter(GameObject* owner);
 
 		virtual void Update() override;
 		float GetFPS() const;
