@@ -10,11 +10,14 @@ namespace dae
 	class Component
 	{
 	public:
-		Component(std::unique_ptr<GameObject>& owner);
+		Component(GameObject* owner);
 		virtual ~Component() = default;
+		Component(const Component& other) = delete;
+		Component(Component&& other) = delete;
+		Component& operator=(const Component& other) = delete;
+		Component& operator=(Component&& other) = delete;
 
 		virtual void Update() = 0;
-		virtual void Render() const = 0;
 
 		void SetEnabled(bool enabled);
 		void ToggleEnabled();
@@ -22,12 +25,15 @@ namespace dae
 		void Delete();
 		bool IsMarkedForDeletion() const;
 
+		GameObject* GetOwner();
+		const GameObject* GetOwner() const;
+
 	protected:
 		bool m_Enabled{ true };
-		std::unique_ptr<GameObject>& m_Owner;
 
 	private:
 		bool m_MarkedForDeletion{ false };
+		GameObject* m_Owner;
 	};
 }
 

@@ -3,6 +3,7 @@
 
 #include "Text.h"
 #include "DeltaTime.h"
+#include <vector>
 
 namespace dae
 {
@@ -10,13 +11,15 @@ namespace dae
 	class FPSCounter final : public Text
 	{
 	public:
-		FPSCounter(std::unique_ptr<GameObject>& owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
+		FPSCounter(GameObject* owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
 
 		virtual void Update() override;
 		float GetFPS() const;
 
 	private:
 		float m_FPS{ gFrameRate };
+		std::vector<float> m_Framerates{};
+		const uint8_t m_FrameCount{ 10 };
 	};
 }
 

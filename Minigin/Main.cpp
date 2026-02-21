@@ -8,7 +8,6 @@
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "TextObject.h"
 #include "FPSCounter.h"
 #include "Scene.h"
 
@@ -19,30 +18,34 @@ static void load()
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
 
 	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>() };
-	gameObject->SetTexture("background.png");
+	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get()) };
+	renderComponent->SetTexture("background.png");
+	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
 	gameObject = std::make_unique<dae::GameObject>();
-	gameObject->SetTexture("logo.png");
+	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
+	renderComponent->SetTexture("logo.png");
 	gameObject->SetPosition(358, 180);
+	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
 	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 
-	std::unique_ptr<dae::GameObject> textObject{ std::make_unique<dae::GameObject>() };
-	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(textObject, "Programming 4 Assignment", font) };
+	gameObject = std::make_unique<dae::GameObject>();
+	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(gameObject.get(), "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
-	textComponent->SetPosition(292, 20);
-	textObject->AddComponent<dae::Text>(std::move(textComponent));
 
-	std::unique_ptr<dae::GameObject> fpsObject{ std::make_unique<dae::GameObject>() };
-	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(fpsObject, "FPS", font)};
+	gameObject->SetPosition(292, 20);
+	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	scene.Add(std::move(gameObject));
+
+	gameObject = std::make_unique<dae::GameObject>();
+	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(gameObject.get(), "FPS", font)};
 	fpsComponent->SetColor({ 255, 255, 255, 255 });
-	fpsComponent->SetPosition(0, 0);
-	fpsObject->AddComponent<dae::FPSCounter>(std::move(fpsComponent));
-
-	scene.Add(std::move(textObject));
-	scene.Add(std::move(fpsObject));
+	gameObject->SetPosition(0, 0);
+	gameObject->AddComponent<dae::FPSCounter>(std::move(fpsComponent));
+	scene.Add(std::move(gameObject));
 }
 
 int main(int, char*[])

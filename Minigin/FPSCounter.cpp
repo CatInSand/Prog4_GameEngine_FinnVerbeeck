@@ -1,8 +1,9 @@
 #include "FPSCounter.h"
 #include "GameObject.h"
 #include <format>
+#include <numeric>
 
-dae::FPSCounter::FPSCounter(std::unique_ptr<dae::GameObject>& owner, const std::string& text, std::shared_ptr<dae::Font> font, const SDL_Color& color)
+dae::FPSCounter::FPSCounter(dae::GameObject* owner, const std::string& text, std::shared_ptr<dae::Font> font, const SDL_Color& color)
 	: Text(owner, text, font, color)
 {
 
@@ -10,15 +11,23 @@ dae::FPSCounter::FPSCounter(std::unique_ptr<dae::GameObject>& owner, const std::
 
 void dae::FPSCounter::Update()
 {
-	m_FPS = 1.f / gDeltaTime;
+	m_Framerates.push_back(1.f / gDeltaTime);
 
-	const std::string fpsString{ std::format("{:.1f}", m_FPS) };
-	if (fpsString != m_Text)
+	if (m_Framerates.size() == m_FrameCount)
 	{
-		dae::Text::SetText(fpsString);
-	}
+		float sum{ std::accumulate(m_Framerates.begin(), m_Framerates.end(), 0.f) };
+		m_FPS = sum / m_FrameCount;
 
-	dae::Text::Update();
+		const std::string fpsString{ std::format("{:.1f}", m_FPS) };
+		if (fpsString != m_Text)
+		{
+			dae::Text::SetText(fpsString);
+		}
+
+		dae::Text::Update();
+
+		m_Framerates.clear();
+	}
 }
 
 float dae::FPSCounter::GetFPS() const

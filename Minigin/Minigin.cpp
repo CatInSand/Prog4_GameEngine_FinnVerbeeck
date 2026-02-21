@@ -97,23 +97,9 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	load();
 #ifndef __EMSCRIPTEN__
 
-	//game loop
-	bool running{ true };
-	auto prevTime{ std::chrono::high_resolution_clock::now() };
-
-	while (running)
+	while (!m_quit)
 	{
-		const auto currentTime{ std::chrono::high_resolution_clock::now() };
-		dae::gDeltaTime = std::chrono::duration<float>(currentTime - prevTime).count();
-		prevTime = currentTime;
-
-		running = InputManager::GetInstance().ProcessInput();
-		SceneManager::GetInstance().Update();
-		Renderer::GetInstance().Render();
-
-		const auto sleepTime{ currentTime - std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(dae::gMillisecondsPerFrame) };
-
-		std::this_thread::sleep_for(sleepTime);
+		dae::Minigin::RunOneFrame();
 	}
 
 #else
@@ -124,6 +110,21 @@ void dae::Minigin::Run(const std::function<void()>& load)
 void dae::Minigin::RunOneFrame()
 {
 	m_quit = !InputManager::GetInstance().ProcessInput();
+
+	dae::gDeltaTime = GetDeltaTime();
+
 	SceneManager::GetInstance().Update();
 	Renderer::GetInstance().Render();
+}
+
+float dae::Minigin::GetDeltaTime()
+{
+	m_LastTime = SDL_GetTicks();
+
+	uint64_t currentTime{ SDL_GetTicks() };
+	float deltaTime{ static_cast<float>((currentTime - m_LastTime) / 1000) };
+
+	m_LastTime = currentTime;
+
+	return deltaTime;
 }
