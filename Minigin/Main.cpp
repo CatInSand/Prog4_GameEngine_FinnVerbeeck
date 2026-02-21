@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "FPSCounter.h"
+#include "FPSComponent.h"
 #include "Scene.h"
 
 #include <filesystem>
@@ -41,10 +42,14 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	gameObject = std::make_unique<dae::GameObject>();
-	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(gameObject.get(), "FPS", font)};
-	fpsComponent->SetColor({ 255, 255, 255, 255 });
+	textComponent = std::make_unique<dae::Text>(gameObject.get(), "FPS", font);
+	std::unique_ptr<dae::FPSCounter> fpsCounterComponent{ std::make_unique<dae::FPSCounter>(gameObject.get())};
+	textComponent->SetColor({ 255, 255, 255, 255 });
 	gameObject->SetPosition(0, 0);
-	gameObject->AddComponent<dae::FPSCounter>(std::move(fpsComponent));
+	gameObject->AddComponent<dae::FPSCounter>(std::move(fpsCounterComponent));
+	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	std::unique_ptr<dae::FPSComponent> fpsComponent{ std::make_unique<dae::FPSComponent>(gameObject.get())};
+	gameObject->AddComponent<dae::FPSComponent>(std::move(fpsComponent));
 	scene.Add(std::move(gameObject));
 }
 

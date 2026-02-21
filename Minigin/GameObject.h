@@ -47,14 +47,14 @@ namespace dae
 			}
 		}
 		template<typename T>
-		std::unique_ptr<Component>& GetComponent()
+		T* GetComponent()
 		{
 			auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
 				[](const std::unique_ptr<dae::Component>& pComponent) { return dynamic_cast<T*>(pComponent.get()) != nullptr; }
 			);
 
-			assert(it == m_pComponents.end());
-			return *it;
+			assert(it != m_pComponents.end());
+			return dynamic_cast<T*>((*it).get());
 		}
 		template<typename T>
 		bool HasComponent()
