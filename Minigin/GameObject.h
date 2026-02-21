@@ -43,14 +43,10 @@ namespace dae
 				{
 					pComponent->Delete();
 				}
-				/*if (typeid(T) == typeid(*pComponent))
-				{
-					pComponent->Delete();
-				}*/
 			}
 		}
 		template<typename T>
-		std::unique_ptr<Component>& GetComponent()
+		T* GetComponent()
 		{
 			auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
 				[](const std::unique_ptr<dae::Component>& pComponent) { return dynamic_cast<T*>(pComponent.get()) != nullptr; }
