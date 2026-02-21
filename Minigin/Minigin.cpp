@@ -42,9 +42,6 @@ void LoopCallback(void* arg)
 }
 #endif
 
-// Why bother with this? Because sometimes students have a different SDL version installed on their pc.
-// That is not a problem unless for some reason the dll's from this project are not copied next to the exe.
-// These entries in the debug output help to identify that issue.
 void PrintSDLVersion()
 {
 	LogSDLVersion("Compiled with SDL", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
@@ -119,10 +116,8 @@ void dae::Minigin::RunOneFrame()
 
 float dae::Minigin::GetDeltaTime()
 {
-	m_LastTime = SDL_GetTicks();
-
 	uint64_t currentTime{ SDL_GetTicks() };
-	float deltaTime{ static_cast<float>((currentTime - m_LastTime) / 1000) };
+	float deltaTime{ static_cast<float>(currentTime - m_LastTime) / 1000.f };
 
 	m_LastTime = currentTime;
 
