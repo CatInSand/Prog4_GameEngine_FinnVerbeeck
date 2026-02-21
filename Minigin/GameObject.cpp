@@ -33,6 +33,10 @@ void dae::GameObject::SetPosition(float x, float y)
 {
 	m_Transform.SetPosition(x, y, 0.0f);
 }
+bool dae::GameObject::IsMarkedForDeletion() const
+{
+	return m_MarkedForDeletion;
+}
 void dae::GameObject::DeleteQueue()
 {
 	m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
