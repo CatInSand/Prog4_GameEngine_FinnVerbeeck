@@ -119,10 +119,8 @@ void dae::Minigin::RunOneFrame()
 
 float dae::Minigin::GetDeltaTime()
 {
-	m_LastTime = SDL_GetTicks();
-
 	uint64_t currentTime{ SDL_GetTicks() };
-	float deltaTime{ static_cast<float>((currentTime - m_LastTime) / 1000) };
+	float deltaTime{ static_cast<float>((currentTime - m_LastTime) / 1000.f) };
 
 	m_LastTime = currentTime;
 
