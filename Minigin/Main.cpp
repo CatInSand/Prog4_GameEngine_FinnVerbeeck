@@ -35,29 +35,17 @@ static void load()
 	gameObject = std::make_unique<dae::GameObject>();
 	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(gameObject.get(), "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
-<<<<<<< Updated upstream
-	textComponent->SetPosition(292, 20);
-	textObject->AddComponent(std::move(textComponent));
-=======
+
 	gameObject->SetPosition(292, 20);
 	gameObject->AddComponent<dae::Text>(std::move(textComponent));
 	scene.Add(std::move(gameObject));
->>>>>>> Stashed changes
 
 	gameObject = std::make_unique<dae::GameObject>();
 	std::unique_ptr<dae::FPSCounter> fpsComponent{ std::make_unique<dae::FPSCounter>(gameObject.get(), "FPS", font)};
 	fpsComponent->SetColor({ 255, 255, 255, 255 });
-<<<<<<< Updated upstream
-	fpsComponent->SetPosition(0, 0);
-	fpsObject->AddComponent(std::move(fpsComponent));
-
-	scene.Add(std::move(textObject));
-	scene.Add(std::move(fpsObject));
-=======
 	gameObject->SetPosition(0, 0);
 	gameObject->AddComponent<dae::FPSCounter>(std::move(fpsComponent));
 	scene.Add(std::move(gameObject));
->>>>>>> Stashed changes
 }
 
 int main(int, char*[])

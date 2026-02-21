@@ -105,8 +105,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
-<<<<<<< Updated upstream
-=======
 }
 
 void dae::Minigin::RunOneFrame()
@@ -129,5 +127,4 @@ float dae::Minigin::GetDeltaTime()
 	m_LastTime = currentTime;
 
 	return deltaTime;
->>>>>>> Stashed changes
 }

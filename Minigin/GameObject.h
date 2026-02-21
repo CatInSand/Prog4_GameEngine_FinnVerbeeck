@@ -18,26 +18,70 @@ namespace dae
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
-		void AddComponent(std::unique_ptr<Component>&& pComponent);
-		void RemoveComponent(const std::string& id);
-		std::unique_ptr<Component>& GetComponent(const std::string& id);
-		bool HasComponent(const std::string& id);
+		void Delete();
+		bool IsMarkedForDeletion() const;
+		void DeleteQueue();
 
-		virtual void Update();
-		virtual void Render() const;
+		template<typename T>
+		void AddComponent(std::unique_ptr<dae::Component>&& pComponent)
+		{
+			if (!HasComponent<T>())
+			{
+				m_pComponents.push_back(std::move(pComponent));
+			}
+			else
+			{
+				throw std::exception("Attempted to add duplicate component");
+			}
+		}
+		template<typename T>
+		void DeleteComponent()
+		{
+			for (std::unique_ptr<dae::Component>& component : m_pComponents)
+			{
+				if (typeid(T) == typeid(*component))
+				{
+					component->Delete();
+				}
+			}
+		}
+		template<typename T>
+		std::unique_ptr<Component>& GetComponent()
+		{
+			auto it = std::find_if(m_pComponents.begin(), m_pComponents.end(),
+				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+			);
+
+			assert(it == m_pComponents.end());
+			return *it;
+		}
+		template<typename T>
+		bool HasComponent()
+		{
+			const auto it = std::find_if(m_pComponents.cbegin(), m_pComponents.cend(),
+				[](const std::unique_ptr<dae::Component>& component) { return typeid(T) == typeid(*component); }
+			);
+
+			if (it != m_pComponents.cend())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		void Update();
+		void Render() const;
 
 		void SetPosition(float x, float y);
 
 		Transform GetTransform() const;
 
 	private:
-<<<<<<< Updated upstream
-		Transform m_transform{};
-		std::shared_ptr<Texture2D> m_texture{};
-=======
 		bool m_MarkedForDeletion{ false };
 		Transform m_Transform{};
->>>>>>> Stashed changes
 
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
 	};
