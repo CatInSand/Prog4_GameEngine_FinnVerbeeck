@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include "DeltaTime.h"
+#include "RenderComponent.h"
 
 dae::GameObject::~GameObject() = default;
 
@@ -18,23 +19,33 @@ void dae::GameObject::Update()
 
 void dae::GameObject::Render() const
 {
+<<<<<<< Updated upstream
 	if (m_texture != nullptr)
 	{
 		const auto& pos = m_transform.GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
 	}
 
+=======
+>>>>>>> Stashed changes
 	for (const std::unique_ptr<dae::Component>& pComponent : m_pComponents)
 	{
-		pComponent->Render();
+		dae::RenderComponent* pRenderComponent{ dynamic_cast<dae::RenderComponent*>(pComponent.get()) };
+		if (pRenderComponent != nullptr)
+		{
+			pRenderComponent->Render();
+		}
 	}
 }
 
+<<<<<<< Updated upstream
 void dae::GameObject::SetTexture(const std::string& filename)
 {
 	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
+=======
+>>>>>>> Stashed changes
 void dae::GameObject::SetPosition(float x, float y)
 {
 	m_transform.SetPosition(x, y, 0.0f);
@@ -50,6 +61,7 @@ void dae::GameObject::RemoveComponent(const std::string& id)
 	//ADD DELETE QUEUE!!!
 	//
 	m_pComponents.erase(std::remove_if(m_pComponents.begin(), m_pComponents.end(),
+<<<<<<< Updated upstream
 		[id](const std::unique_ptr<dae::Component>& component) { return component->m_ID == id; }
 	));
 }
@@ -76,4 +88,13 @@ bool dae::GameObject::HasComponent(const std::string& id)
 	{
 		return false;
 	}
+=======
+		[](std::unique_ptr<dae::Component>& component) { return component->IsMarkedForDeletion(); }),
+		m_pComponents.end());
+}
+
+dae::Transform dae::GameObject::GetTransform() const
+{
+	return m_Transform;
+>>>>>>> Stashed changes
 }
