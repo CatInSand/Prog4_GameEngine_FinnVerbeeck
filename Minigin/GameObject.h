@@ -11,16 +11,12 @@ namespace dae
 	class GameObject final
 	{
 	public:
-		GameObject() = default;
+		GameObject() = default;	//should take GameObject* pParent
 		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
-
-		void Delete();
-		bool IsMarkedForDeletion() const;
-		void DeleteQueue();
 
 		template<typename T>
 		void AddComponent(std::unique_ptr<dae::Component>&& pComponent)
@@ -75,14 +71,35 @@ namespace dae
 		void Update();
 		void Render() const;
 
-		void SetPosition(float x, float y);
+		void Delete();
+		bool IsMarkedForDeletion() const;
+		void DeleteQueue();
 
-		Transform GetTransform() const;
+		void SetLocalPosition(float x, float y);
+		Transform GetLocalTransform() const;
+		Transform GetWorldTransform() const;
+
+		void SetParent(GameObject* pParent, bool keepWorldTransform = true);
+		const GameObject* GetParent() const;
+		size_t GetChildCount() const;
+		const GameObject* GetChildAtIndex(unsigned int index) const;
 
 	private:
+		void AddChild(GameObject* pChild);
+		void RemoveChild(GameObject* pChild);
+		bool IsChild(GameObject* pChild);
+
 		bool m_MarkedForDeletion{ false };
-		Transform m_Transform{};
+
+		void CalculateWorldTransform();
+
+		Transform m_WorldTransform{};
+		Transform m_LocalTransform{};
+		bool m_TransformRequiresUpdate{ true };	//might need to be false initially
 
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
+
+		GameObject* m_pParent;
+		std::vector<GameObject*> m_pChildren{};
 	};
 }
