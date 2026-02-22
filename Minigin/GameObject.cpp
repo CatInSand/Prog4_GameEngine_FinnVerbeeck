@@ -59,7 +59,7 @@ dae::Transform dae::GameObject::GetLocalTransform() const
 {
 	return m_LocalTransform;
 }
-dae::Transform dae::GameObject::GetWorldTransform() const
+dae::Transform dae::GameObject::GetWorldTransform()
 {
 	if (m_TransformRequiresUpdate)
 	{
@@ -77,11 +77,21 @@ void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransfor
 		return;
 	}
 
-	if (keepWorldTransform)
+	glm::vec3 pos{ GetWorldTransform().GetPosition() };
+
+	if (pParent == nullptr)
 	{
-		
+		SetLocalPosition(pos.x, pos.y);
 	}
-	m_TransformRequiresUpdate = true;
+	else
+	{
+		if (keepWorldTransform)
+		{
+			glm::vec3 parentPos{ pParent->GetWorldTransform().GetPosition() };
+			SetLocalPosition(pos.x - parentPos.x, pos.y - parentPos.y);
+		}
+		m_TransformRequiresUpdate = true;
+	}
 
 	m_pParent->RemoveChild(this);
 	m_pParent = pParent;
@@ -119,5 +129,17 @@ bool dae::GameObject::IsChild(dae::GameObject* pChild)
 			return pCurrentChild == pChild || pCurrentChild->IsChild(pChild);
 		});
 
+	if (it != m_pChildren.end())
+	{
+		return true;
+	}
 
+	return false;
+}
+
+void dae::GameObject::CalculateWorldTransform()
+{
+	//need to implement
+	glm::vec3 newWorldPos{ m_LocalTransform.GetPosition() + m_pParent->GetWorldTransform().GetPosition() };
+	m_WorldTransform.SetPosition(newWorldPos.x, newWorldPos.y);
 }

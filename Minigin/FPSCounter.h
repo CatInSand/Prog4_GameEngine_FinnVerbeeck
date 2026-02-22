@@ -17,7 +17,7 @@ namespace dae
 		float GetFPS() const;
 
 	private:
-		float m_FPS{ gFrameRate };
+		float m_FPS{ FRAME_RATE };
 		std::vector<float> m_Framerates{};
 		const uint8_t m_FrameCount{ 10 };
 	};

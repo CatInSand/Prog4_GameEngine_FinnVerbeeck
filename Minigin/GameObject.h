@@ -77,7 +77,7 @@ namespace dae
 
 		void SetLocalPosition(float x, float y);
 		Transform GetLocalTransform() const;
-		Transform GetWorldTransform() const;
+		Transform GetWorldTransform();
 
 		void SetParent(GameObject* pParent, bool keepWorldTransform = true);
 		const GameObject* GetParent() const;
