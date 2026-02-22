@@ -7,15 +7,6 @@ dae::Component::Component(dae::GameObject* owner)
 
 }
 
-void dae::Component::SetEnabled(bool enabled)
-{
-	m_Enabled = enabled;
-}
-void dae::Component::ToggleEnabled()
-{
-	m_Enabled = !m_Enabled;
-}
-
 void dae::Component::Delete()
 {
 	m_MarkedForDeletion = true;

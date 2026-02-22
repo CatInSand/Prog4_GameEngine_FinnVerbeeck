@@ -10,7 +10,6 @@ namespace dae
 	class Component
 	{
 	public:
-		Component(GameObject* owner);
 		virtual ~Component() = default;
 		Component(const Component& other) = delete;
 		Component(Component&& other) = delete;
@@ -19,17 +18,15 @@ namespace dae
 
 		virtual void Update() = 0;
 
-		void SetEnabled(bool enabled);
-		void ToggleEnabled();
-
 		void Delete();
 		bool IsMarkedForDeletion() const;
 
-		GameObject* GetOwner();
-		const GameObject* GetOwner() const;
+		bool m_Enabled{ true };
 
 	protected:
-		bool m_Enabled{ true };
+		explicit Component(GameObject* owner);
+		GameObject* GetOwner();
+		const GameObject* GetOwner() const;
 
 	private:
 		bool m_MarkedForDeletion{ false };
