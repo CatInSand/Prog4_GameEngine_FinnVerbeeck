@@ -11,13 +11,14 @@ namespace dae
 	class GameObject final
 	{
 	public:
-		GameObject() = default;	//should take GameObject* pParent
-		virtual ~GameObject();
+		GameObject(GameObject* pParent);
+		virtual ~GameObject() = default;
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
+		//Components
 		template<typename T>
 		void AddComponent(std::unique_ptr<dae::Component>&& pComponent)
 		{
@@ -68,38 +69,50 @@ namespace dae
 			}
 		}
 
+		//Parent-child
+		void SetParent(GameObject* pParent, bool keepWorldTransform = true);
+		const GameObject* GetParent() const;
+		GameObject* GetRoot();
+		const GameObject* GetRoot() const;
+		size_t GetChildCount() const;
+		const GameObject* GetChildAtIndex(unsigned int index) const;
+
+		//Gameloop
 		void Update();
 		void Render() const;
 
+		//Deletion
 		void Delete();
 		bool IsMarkedForDeletion() const;
 		void DeleteQueue();
 
+		//Transform
 		void SetLocalPosition(float x, float y);
 		Transform GetLocalTransform() const;
 		Transform GetWorldTransform();
-
-		void SetParent(GameObject* pParent, bool keepWorldTransform = true);
-		const GameObject* GetParent() const;
-		size_t GetChildCount() const;
-		const GameObject* GetChildAtIndex(unsigned int index) const;
+		Transform GetWorldTransform() const;
 
 	private:
+		//Components
+		std::vector<std::unique_ptr<Component>> m_pComponents{};
+
+		//Parent-child
 		void AddChild(GameObject* pChild);
 		void RemoveChild(GameObject* pChild);
 		bool IsChild(GameObject* pChild);
 
-		bool m_MarkedForDeletion{ false };
-
-		void CalculateWorldTransform();
-
-		Transform m_WorldTransform{};
-		Transform m_LocalTransform{};
-		bool m_TransformRequiresUpdate{ true };	//might need to be false initially
-
-		std::vector<std::unique_ptr<Component>> m_pComponents{};
-
 		GameObject* m_pParent;
 		std::vector<GameObject*> m_pChildren{};
+
+		//Deletion
+		bool m_MarkedForDeletion{ false };
+
+		//Transform
+		void SetTransformDirty();
+		void CalculateWorldTransform();
+		
+		Transform m_WorldTransform{};
+		Transform m_LocalTransform{};
+		bool m_TransformRequiresUpdate{ false };
 	};
 }

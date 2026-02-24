@@ -32,6 +32,10 @@ void Scene::Update()
 	{
 		object->Update();
 	}
+	for (auto& object : m_objects)
+	{
+		object->GetWorldTransform();	//prepare world transform for const Render function
+	}
 }
 
 void Scene::Render() const

@@ -7,7 +7,75 @@
 #include "DeltaTime.h"
 #include "RenderComponent.h"
 
-dae::GameObject::~GameObject() = default;
+dae::GameObject::GameObject(dae::GameObject* pParent)
+	: m_pParent{ pParent }
+{
+
+}
+
+void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransform)
+{
+	//nullptr is parent of root
+
+	if (pParent == m_pParent || pParent == this || IsChild(pParent) || pParent == nullptr || m_pParent == nullptr)
+	{
+		return;
+	}
+
+	glm::vec3 pos{ GetWorldTransform().GetPosition() };
+
+	if (pParent == GetRoot())
+	{
+		SetLocalPosition(pos.x, pos.y);
+	}
+	else
+	{
+		if (keepWorldTransform)
+		{
+			glm::vec3 parentPos{ pParent->GetWorldTransform().GetPosition() };
+			SetLocalPosition(pos.x - parentPos.x, pos.y - parentPos.y);
+		}
+		SetTransformDirty();
+	}
+
+	m_pParent->RemoveChild(this);
+	m_pParent = pParent;
+	m_pParent->AddChild(this);
+}
+const dae::GameObject* dae::GameObject::GetParent() const
+{
+	return m_pParent;
+}
+dae::GameObject* dae::GameObject::GetRoot()
+{
+	if (m_pParent == nullptr)
+	{
+		return this;
+	}
+	else
+	{
+		return m_pParent->GetRoot();
+	}
+}
+const dae::GameObject* dae::GameObject::GetRoot() const
+{
+	if (m_pParent == nullptr)
+	{
+		return this;
+	}
+	else
+	{
+		return m_pParent->GetRoot();
+	}
+}
+size_t dae::GameObject::GetChildCount() const
+{
+	return m_pChildren.size();
+}
+const dae::GameObject* dae::GameObject::GetChildAtIndex(unsigned int index) const
+{
+	return m_pChildren[index];
+}
 
 void dae::GameObject::Update()
 {
@@ -19,7 +87,6 @@ void dae::GameObject::Update()
 		}
 	}
 }
-
 void dae::GameObject::Render() const
 {
 	for (const std::unique_ptr<dae::Component>& pComponent : m_pComponents)
@@ -53,7 +120,7 @@ void dae::GameObject::DeleteQueue()
 void dae::GameObject::SetLocalPosition(float x, float y)
 {
 	m_LocalTransform.SetPosition(x, y, 0.0f);
-	m_TransformRequiresUpdate;
+	SetTransformDirty();
 }
 dae::Transform dae::GameObject::GetLocalTransform() const
 {
@@ -67,49 +134,16 @@ dae::Transform dae::GameObject::GetWorldTransform()
 	}
 	return m_WorldTransform;
 }
-
-void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransform = true)
+dae::Transform dae::GameObject::GetWorldTransform() const
 {
-	//nullptr is root
-
-	if (pParent == m_pParent || pParent == this || IsChild(pParent))
+	if (m_TransformRequiresUpdate)
 	{
-		return;
+		throw std::exception("Attempted to get world transform in const function while transform was dirty");
 	}
-
-	glm::vec3 pos{ GetWorldTransform().GetPosition() };
-
-	if (pParent == nullptr)
-	{
-		SetLocalPosition(pos.x, pos.y);
-	}
-	else
-	{
-		if (keepWorldTransform)
-		{
-			glm::vec3 parentPos{ pParent->GetWorldTransform().GetPosition() };
-			SetLocalPosition(pos.x - parentPos.x, pos.y - parentPos.y);
-		}
-		m_TransformRequiresUpdate = true;
-	}
-
-	m_pParent->RemoveChild(this);
-	m_pParent = pParent;
-	m_pParent->AddChild(this);
-}
-const dae::GameObject* dae::GameObject::GetParent() const
-{
-	return m_pParent;
-}
-size_t dae::GameObject::GetChildCount() const
-{
-	return m_pChildren.size();
-}
-const dae::GameObject* dae::GameObject::GetChildAtIndex(unsigned int index) const
-{
-	return m_pChildren[index];
+	return m_WorldTransform;
 }
 
+//private functions
 void dae::GameObject::AddChild(dae::GameObject* pChild)
 {
 	m_pChildren.push_back(pChild);
@@ -137,9 +171,24 @@ bool dae::GameObject::IsChild(dae::GameObject* pChild)
 	return false;
 }
 
+void dae::GameObject::SetTransformDirty()
+{
+	m_TransformRequiresUpdate = true;
+	for (GameObject* child : m_pChildren)
+	{
+		child->SetTransformDirty();
+	}
+}
 void dae::GameObject::CalculateWorldTransform()
 {
-	//need to implement
-	glm::vec3 newWorldPos{ m_LocalTransform.GetPosition() + m_pParent->GetWorldTransform().GetPosition() };
-	m_WorldTransform.SetPosition(newWorldPos.x, newWorldPos.y);
+	if (m_pParent == nullptr)
+	{
+		m_WorldTransform = m_LocalTransform;
+	}
+	else
+	{
+		glm::vec3 newWorldPos{ m_LocalTransform.GetPosition() + m_pParent->GetWorldTransform().GetPosition() };
+		m_WorldTransform.SetPosition(newWorldPos.x, newWorldPos.y);
+	}
+	m_TransformRequiresUpdate = false;
 }
