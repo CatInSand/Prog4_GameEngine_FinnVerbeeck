@@ -22,7 +22,7 @@ void dae::Scene::Update()
 	
 	DeleteQueue();
 	
-	for (auto& object : m_objects)
+	for (auto& object : m_Objects)
 	{
 		object->GetWorldTransform();	//prepare world transform for const Render function
 	}
