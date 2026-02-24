@@ -138,7 +138,7 @@ dae::Transform dae::GameObject::GetWorldTransform() const
 {
 	if (m_TransformRequiresUpdate)
 	{
-		throw std::exception("Attempted to get world transform in const function while transform was dirty");
+		throw std::runtime_error("Attempted to get world transform in const function while transform was dirty");
 	}
 	return m_WorldTransform;
 }
