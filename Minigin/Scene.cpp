@@ -19,8 +19,13 @@ void dae::Scene::Update()
 	{
 		object->Update();
 	}
-
+	
 	DeleteQueue();
+	
+	for (auto& object : m_objects)
+	{
+		object->GetWorldTransform();	//prepare world transform for const Render function
+	}
 }
 
 void dae::Scene::Render() const

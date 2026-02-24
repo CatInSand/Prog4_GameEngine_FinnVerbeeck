@@ -1,3 +1,3 @@
 #include "DeltaTime.h"
 
-float dae::gDeltaTime{ dae::gFixedDeltaTime };
+float dae::gDeltaTime{ dae::FIXED_DELTA_TIME };

@@ -45,7 +45,7 @@ void dae::Text::SetText(const std::string& text)
 
 void dae::Text::SetPosition(const float x, const float y)
 {
-	GetOwner()->GetTransform().SetPosition(x, y);
+	GetOwner()->GetWorldTransform().SetPosition(x, y);
 }
 
 void dae::Text::SetColor(const SDL_Color& color)

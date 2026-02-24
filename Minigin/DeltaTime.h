@@ -3,9 +3,9 @@
 
 namespace dae
 {
-	static const int gFrameRate{ 165 };
-	static const float gFixedDeltaTime{ 1.f/gFrameRate };
-	static const int gMillisecondsPerFrame{ static_cast<int>(gFixedDeltaTime * 1000) };
+	static int FRAME_RATE{ 60 };
+	static float FIXED_DELTA_TIME{ 1.f/FRAME_RATE };
+	static int MILLISECONDS_PER_FRAME{ static_cast<int>(FIXED_DELTA_TIME * 1000) };
 	extern float gDeltaTime;
 }
 
