@@ -72,7 +72,7 @@ static void load()
 	childObject->SetLocalPosition(100, 0);
 	childObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	center = {};
-	rotatorComponent = std::make_unique<dae::RotatorComponent>(childObject.get(), center, 10.f);
+	rotatorComponent = std::make_unique<dae::RotatorComponent>(childObject.get(), center, -10.f);
 	childObject->AddComponent<dae::RotatorComponent>(std::move(rotatorComponent));
 	scene.Add(std::move(gameObject));
 	scene.Add(std::move(childObject));
