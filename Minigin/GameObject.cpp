@@ -10,7 +10,17 @@
 dae::GameObject::GameObject(dae::GameObject* pParent)
 	: m_pParent{ pParent }
 {
+	m_pParent->AddChild(this);
+}
 
+dae::GameObject::~GameObject()
+{
+	if (m_pParent != nullptr)
+	{
+		m_pParent->RemoveChild(this);
+	}
+	//Only gets deleted after Delete() is called or goes out of scope
+	//	Either way, children will also get deleted
 }
 
 void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransform)
@@ -105,6 +115,10 @@ void dae::GameObject::Render() const
 void dae::GameObject::Delete()
 {
 	m_MarkedForDeletion = true;
+	for (dae::GameObject* pChild : m_pChildren)
+	{
+		pChild->Delete();
+	}
 }
 bool dae::GameObject::IsMarkedForDeletion() const
 {
