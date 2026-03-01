@@ -22,6 +22,10 @@ dae::GameObject::~GameObject()
 	{
 		m_pParent->RemoveChild(this);
 	}
+	for (dae::GameObject* pChild : m_pChildren)
+	{
+		pChild->m_pParent = nullptr;
+	}
 	//Only gets deleted after Delete() is called or goes out of scope
 	//	Either way, children will also get deleted
 }
