@@ -86,6 +86,8 @@ static void load()
 
 int main(int, char*[])
 {
+	voidasdfsfsaf
+
 #if __EMSCRIPTEN__
 	std::filesystem::path data_location{ "" };
 #else
