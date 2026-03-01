@@ -4,4 +4,4 @@ This game engine is an exam assignment for Programming 4 at DAE. It was generate
 
 [![Build Status](https://github.com/CatInSand/Prog4_GameEngine_FinnVerbeeck/actions/workflows/cmake.yml/badge.svg)](https://github.com/avadae/cmake/actions)
 [![Build Status](https://github.com/CatInSand/Prog4_GameEngine_FinnVerbeeck/actions/workflows/emscripten.yml/badge.svg)](https://github.com/avadae/emscripten/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/CatInSand/Prog4_GameEngine_FinnVerbeeck?logo=github&sort=semver)](https://github.com/avadae/minigin/releases/latest)
+[![GitHub Release](https://img.shields.io/github/v/release/CatInSand/Prog4_GameEngine_FinnVerbeeck?logo=github&sort=semver)](https://github.com/CatInSand/Prog4_GameEngine_FinnVerbeeck/releases/latest)
