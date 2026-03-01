@@ -10,7 +10,10 @@
 dae::GameObject::GameObject(dae::GameObject* pParent)
 	: m_pParent{ pParent }
 {
-	m_pParent->AddChild(this);
+	if (m_pParent != nullptr)
+	{
+		m_pParent->AddChild(this);
+	}
 }
 
 dae::GameObject::~GameObject()
