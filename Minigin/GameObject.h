@@ -80,7 +80,7 @@ namespace dae
 
 		//Gameloop
 		void Update();
-		void Render() const;
+		void Render();
 
 		//Deletion
 		void Delete();
@@ -91,7 +91,6 @@ namespace dae
 		void SetLocalPosition(float x, float y);
 		Transform GetLocalTransform() const;
 		Transform GetWorldTransform();
-		Transform GetWorldTransform() const;
 
 	private:
 		//Components

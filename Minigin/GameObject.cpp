@@ -97,7 +97,7 @@ void dae::GameObject::Update()
 		}
 	}
 }
-void dae::GameObject::Render() const
+void dae::GameObject::Render()
 {
 	for (const std::unique_ptr<dae::Component>& pComponent : m_pComponents)
 	{
@@ -145,14 +145,6 @@ dae::Transform dae::GameObject::GetWorldTransform()
 	if (m_TransformRequiresUpdate)
 	{
 		CalculateWorldTransform();
-	}
-	return m_WorldTransform;
-}
-dae::Transform dae::GameObject::GetWorldTransform() const
-{
-	if (m_TransformRequiresUpdate)
-	{
-		throw std::runtime_error("Attempted to get world transform in const function while transform was dirty");
 	}
 	return m_WorldTransform;
 }

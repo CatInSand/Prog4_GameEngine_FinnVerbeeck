@@ -17,7 +17,7 @@ namespace dae
 		RenderComponent& operator=(RenderComponent&& other) = delete;
 
 		virtual void Update() override {}
-		virtual void Render() const;
+		virtual void Render();
 		void SetTexture(const std::string& filename);
 
 	protected:
