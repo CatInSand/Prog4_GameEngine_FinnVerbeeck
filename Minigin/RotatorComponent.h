@@ -10,7 +10,7 @@ namespace dae
 	class RotatorComponent final : public Component
 	{
 	public:
-		RotatorComponent(GameObject* owner, const glm::vec3& center, float speed);
+		RotatorComponent(GameObject* owner, float speed);
 		virtual ~RotatorComponent() = default;
 		RotatorComponent(const RotatorComponent& other) = delete;
 		RotatorComponent(RotatorComponent&& other) = delete;
@@ -22,7 +22,6 @@ namespace dae
 	private:
 		void Initialize();
 
-		glm::vec3 m_Center;
 		float m_Speed;
 		float m_CurrentAngle{};
 		float m_Distance{};

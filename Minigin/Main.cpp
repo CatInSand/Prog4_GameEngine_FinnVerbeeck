@@ -57,23 +57,26 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//rotators
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	std::unique_ptr<dae::GameObject> pivot{ std::make_unique<dae::GameObject>(root.get()) };
+	pivot->SetLocalPosition(0.f, 0.f);
+
+	gameObject = std::make_unique<dae::GameObject>(pivot.get());
+	gameObject->SetLocalPosition(100.f, 0.f);
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
-	gameObject->SetLocalPosition(180, 180);
+	std::unique_ptr<dae::RotatorComponent> rotatorComponent{ std::make_unique<dae::RotatorComponent>(gameObject.get(), 1.f) };
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
-	glm::vec3 center{ 400.f, 180.f, 0.f };
-	std::unique_ptr<dae::RotatorComponent> rotatorComponent{ std::make_unique<dae::RotatorComponent>(gameObject.get(), center, 1.f) };
 	gameObject->AddComponent<dae::RotatorComponent>(std::move(rotatorComponent));
 
 	std::unique_ptr<dae::GameObject> childObject{ std::make_unique<dae::GameObject>(gameObject.get()) };
+	childObject->SetLocalPosition(100.f, 0.f);
 	renderComponent = std::make_unique<dae::RenderComponent>(childObject.get());
 	renderComponent->SetTexture("digdug.png");
-	childObject->SetLocalPosition(100, 0);
+	rotatorComponent = std::make_unique<dae::RotatorComponent>(childObject.get(), -10.f);
 	childObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
-	center = {};
-	rotatorComponent = std::make_unique<dae::RotatorComponent>(childObject.get(), center, -10.f);
 	childObject->AddComponent<dae::RotatorComponent>(std::move(rotatorComponent));
+
+	scene.Add(std::move(pivot));
 	scene.Add(std::move(gameObject));
 	scene.Add(std::move(childObject));
 
