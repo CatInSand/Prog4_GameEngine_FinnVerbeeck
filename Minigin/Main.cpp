@@ -57,7 +57,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//rotators
-	std::unique_ptr<dae::GameObject> pivot{ std::make_unique<dae::GameObject>(root.get()) };
+	/*std::unique_ptr<dae::GameObject> pivot{std::make_unique<dae::GameObject>(root.get())};
 	pivot->SetLocalPosition(0.f, 0.f);
 
 	gameObject = std::make_unique<dae::GameObject>(pivot.get());
@@ -78,7 +78,7 @@ static void load()
 
 	scene.Add(std::move(pivot));
 	scene.Add(std::move(gameObject));
-	scene.Add(std::move(childObject));
+	scene.Add(std::move(childObject));*/
 
 	//end
 	scene.Add(std::move(root));
