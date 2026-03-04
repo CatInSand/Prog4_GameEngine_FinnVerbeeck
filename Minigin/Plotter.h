@@ -94,7 +94,7 @@ namespace dae
 				{
 					startTime = std::chrono::high_resolution_clock::now();
 
-					for (int i{ 0 }; i < arr.size(); i += stepSize)
+					for (size_t i{ 0 }; i < arr.size(); i += stepSize)
 					{
 						arr[i].ID *= 2;
 					}
@@ -114,7 +114,7 @@ namespace dae
 			//Average out data
 			plotData.m_yValues.clear();
 
-			for (int iteration{ 0 }; iteration < plotData.m_xValues.size(); ++iteration)
+			for (size_t iteration{ 0 }; iteration < plotData.m_xValues.size(); ++iteration)
 			{
 				//drop lowest and highest
 				std::vector<float> samples{};
@@ -333,7 +333,7 @@ namespace dae
 			ImGui::Begin("Exercise 1");
 			ImGui::InputInt("# samples", &m_Plot1SampleCount);
 			if (ImGui::Button("Calculate plot 1"))
-				CalculatePlot<IntObject>(m_Plot1, m_Plot1SampleCount);
+				CalculatePlot<dae::Plotter::IntObject>(m_Plot1, m_Plot1SampleCount);
 			if(m_Plot1.IsReady())
 				DrawPlot(m_Plot1);
 			ImGui::End();
@@ -342,11 +342,11 @@ namespace dae
 			ImGui::Begin("Exercise 2");
 			ImGui::InputInt("# samples", &m_Plot2SampleCount);
 			if (ImGui::Button("Calculate GameObject3D plot"))
-				CalculatePlot<GameObject3D>(m_Plot2, m_Plot2SampleCount);
+				CalculatePlot<dae::Plotter::GameObject3D>(m_Plot2, m_Plot2SampleCount);
 			if(m_Plot2.IsReady())
 				DrawPlot(m_Plot2);
 			if (ImGui::Button("Calculate GameObject3DAlt plot"))
-				CalculatePlot<GameObject3DAlt>(m_Plot3, m_Plot2SampleCount);
+				CalculatePlot<dae::Plotter::GameObject3DAlt>(m_Plot3, m_Plot2SampleCount);
 			if (m_Plot3.IsReady())
 				DrawPlot(m_Plot3);
 			ImGui::End();
