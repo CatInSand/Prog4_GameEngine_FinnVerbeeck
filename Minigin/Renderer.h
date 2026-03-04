@@ -1,6 +1,8 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include "Singleton.h"
+#include <vector>
+#include "Plotter.h"
 
 namespace dae
 {
@@ -13,9 +15,12 @@ namespace dae
 		SDL_Renderer* m_renderer{};
 		SDL_Window* m_window{};
 		SDL_Color m_clearColor{};	
+
+		Plotter m_Plotter{};
+
 	public:
 		void Init(SDL_Window* window);
-		void Render() const;
+		void Render();
 		void Destroy();
 
 		void RenderTexture(const Texture2D& texture, float x, float y) const;
