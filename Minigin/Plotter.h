@@ -88,7 +88,7 @@ namespace dae
 				std::vector<std::pair<long, int>> durations{};
 				std::chrono::high_resolution_clock::time_point startTime{};
 
-				std::vector<T> arr(100000);
+				std::vector<T> arr(10000000);
 
 				for (int stepSize{ 1 }; stepSize <= 1024; stepSize *= 2)
 				{
