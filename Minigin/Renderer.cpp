@@ -8,6 +8,8 @@
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
+#include "imgui_plot.h"
+#include <algorithm>
 
 void dae::Renderer::Init(SDL_Window* window)
 {
@@ -41,7 +43,27 @@ void dae::Renderer::Render() const
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::ShowDemoWindow(); // For demonstration purposes, do not keep this in your engine
+	//ImGui::ShowDemoWindow(); // For demonstration purposes, do not keep this in your engine
+
+	{
+		std::vector<float> results{ 10.f, 20.f, 5.f, 100.f };
+		constexpr float xValues[]{ 1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f, 1024.f };
+		ImGui::PlotConfig conf{};
+		conf.values.xs = xValues;
+		conf.values.ys = results.data();
+		conf.values.count = static_cast<int32_t>(results.size());
+		conf.values.color = 0xFF'00'7F'FF;
+		conf.scale.min = 0;
+		conf.scale.max = *std::max_element(results.begin(), results.end());
+		conf.tooltip.show = true;
+		conf.tooltip.format = "x=%.0f, y=%.5f";
+		conf.grid_x.show = true;
+		conf.grid_y.show = true;
+		conf.frame_size = ImVec2(200, 100);
+		conf.line_thickness = 2.f;
+
+		ImGui::Plot("results", conf);
+	}
 
 	ImGui::Render();
 
