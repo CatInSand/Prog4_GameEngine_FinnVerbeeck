@@ -122,7 +122,7 @@ bool dae::InputState::UpdateStates()
 		ImGui_ImplSDL3_ProcessEvent(&e);
 	}
 
-#if !__EMPSCRIPTEN__
+#if !__EMSCRIPTEN__
 	m_pImpl->UpdateStates();
 #endif
 
