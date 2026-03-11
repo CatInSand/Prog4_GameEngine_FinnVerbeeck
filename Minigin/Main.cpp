@@ -17,6 +17,9 @@
 #include "InputManager.h"
 #include "MoveCommand.h"
 
+#include <windows.h>
+#include <Xinput.h>
+
 static void load()
 {
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
@@ -65,10 +68,11 @@ static void load()
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 
-	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}) };
-	std::unique_ptr<dae::MoveCommand> moveCommandDown{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}) };
-	std::unique_ptr<dae::MoveCommand> moveCommandLeft{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}) };
-	std::unique_ptr<dae::MoveCommand> moveCommandRight{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}) };
+	constexpr float SPEED{ 100.f };
+	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED) };
+	std::unique_ptr<dae::MoveCommand> moveCommandDown{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}, SPEED) };
+	std::unique_ptr<dae::MoveCommand> moveCommandLeft{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}, SPEED) };
+	std::unique_ptr<dae::MoveCommand> moveCommandRight{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}, SPEED) };
 
 	dae::KeyTrigger keyTriggerWPressed{ SDL_SCANCODE_W, dae::KeyState::pressed };
 	dae::KeyTrigger keyTriggerSPressed{ SDL_SCANCODE_S, dae::KeyState::pressed };
@@ -88,10 +92,10 @@ static void load()
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 
-	moveCommandUp = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f});
-	moveCommandDown = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f});
-	moveCommandLeft = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f});
-	moveCommandRight = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f});
+	moveCommandUp = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED * 2.f);
+	moveCommandDown = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}, SPEED * 2.f);
+	moveCommandLeft = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}, SPEED * 2.f);
+	moveCommandRight = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}, SPEED * 2.f);
 
 	dae::KeyTrigger padTriggerUpPressed{ XINPUT_GAMEPAD_DPAD_UP, dae::KeyState::pressed };
 	dae::KeyTrigger padTriggerDownPressed{ XINPUT_GAMEPAD_DPAD_DOWN, dae::KeyState::pressed };
