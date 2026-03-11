@@ -4,6 +4,7 @@
 #include <memory>
 #include "BaseCommand.h"
 #include <SDL3/SDL.h>
+#include <variant>
 
 namespace dae
 {
@@ -14,10 +15,16 @@ namespace dae
 		up,
 		pressed
 	};
-	struct KeyTrigger
+	struct KeyTrigger final
 	{
-		SDL_Scancode m_Scancode;
+		KeyTrigger(SDL_Scancode scancode, dae::KeyState keystate)
+			: m_Keystate{ keystate }, m_Code{ scancode }
+		{}
+		KeyTrigger(unsigned int padcode, dae::KeyState keystate)
+			: m_Keystate{ keystate }, m_Code{ padcode }
+		{}
 		dae::KeyState m_Keystate;
+		std::variant<SDL_Scancode, unsigned int> m_Code;
 	};
 
 	class KeyBind
@@ -31,7 +38,7 @@ namespace dae
 		bool HasKeyTrigger(const KeyTrigger& keyTrigger)
 		{
 			return keyTrigger.m_Keystate == m_KeyTrigger.m_Keystate &&
-				keyTrigger.m_Scancode == m_KeyTrigger.m_Scancode;
+				keyTrigger.m_Code == m_KeyTrigger.m_Code;
 		}
 		void ExecuteIfMatch(KeyTrigger keyTrigger)
 		{

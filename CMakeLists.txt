@@ -133,6 +133,8 @@ target_link_libraries(imgui PUBLIC SDL3::SDL3)
 if (WIN32)
   # Add VLD (Visual Leak Detector) for memory leak detection on Windows
   find_package(VLD CONFIG)
+  # Add XInput
+  target_link_libraries(${TARGET_NAME} PRIVATE xinput9_1_0.lib)
 endif()
 
 # Add steam if available

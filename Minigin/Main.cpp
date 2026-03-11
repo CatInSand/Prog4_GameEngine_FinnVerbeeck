@@ -64,19 +64,43 @@ static void load()
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+
 	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}) };
 	std::unique_ptr<dae::MoveCommand> moveCommandDown{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}) };
 	std::unique_ptr<dae::MoveCommand> moveCommandLeft{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}) };
 	std::unique_ptr<dae::MoveCommand> moveCommandRight{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}) };
 
-	dae::KeyTrigger keyTriggerWDown{ SDL_SCANCODE_W, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerSDown{ SDL_SCANCODE_S, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerADown{ SDL_SCANCODE_A, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerDDown{ SDL_SCANCODE_D, dae::KeyState::pressed };
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerWDown, std::move(moveCommandUp));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerSDown, std::move(moveCommandDown));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerADown, std::move(moveCommandLeft));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerDDown, std::move(moveCommandRight));
+	dae::KeyTrigger keyTriggerWPressed{ SDL_SCANCODE_W, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerSPressed{ SDL_SCANCODE_S, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerAPressed{ SDL_SCANCODE_A, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerDPressed{ SDL_SCANCODE_D, dae::KeyState::pressed };
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerWPressed, std::move(moveCommandUp));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerSPressed, std::move(moveCommandDown));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerAPressed, std::move(moveCommandLeft));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerDPressed, std::move(moveCommandRight));
+
+	scene.Add(std::move(gameObject));
+
+	//controller bindings
+	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject->SetLocalPosition(200.f, 0.f);
+	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
+	renderComponent->SetTexture("digdug.png");
+	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+
+	moveCommandUp = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f});
+	moveCommandDown = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f});
+	moveCommandLeft = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f});
+	moveCommandRight = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f});
+
+	dae::KeyTrigger padTriggerUpPressed{ XINPUT_GAMEPAD_DPAD_UP, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerDownPressed{ XINPUT_GAMEPAD_DPAD_DOWN, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerLeftPressed{ XINPUT_GAMEPAD_DPAD_LEFT, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerRightPressed{ XINPUT_GAMEPAD_DPAD_RIGHT, dae::KeyState::pressed };
+	dae::InputManager::GetInstance().AddKeyBind(padTriggerUpPressed, std::move(moveCommandUp));
+	dae::InputManager::GetInstance().AddKeyBind(padTriggerDownPressed, std::move(moveCommandDown));
+	dae::InputManager::GetInstance().AddKeyBind(padTriggerLeftPressed, std::move(moveCommandLeft));
+	dae::InputManager::GetInstance().AddKeyBind(padTriggerRightPressed, std::move(moveCommandRight));
 
 	scene.Add(std::move(gameObject));
 

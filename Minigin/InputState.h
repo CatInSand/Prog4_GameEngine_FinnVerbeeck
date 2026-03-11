@@ -2,7 +2,8 @@
 #define INPUT_STATE_H
 
 #include "KeyBind.h"
-//#include "Xinput.h"
+#include <windows.h>
+#include <Xinput.h>
 
 #include <unordered_map>
 
@@ -14,14 +15,18 @@ namespace dae
 		InputState() = default;
 		
 		bool UpdateStates();
-		void PressKey(SDL_Scancode scancode);
-		void ReleaseKey(SDL_Scancode scancode);
 
 		KeyState GetKeyState(SDL_Scancode scancode);
+		KeyState GetButtonState(unsigned int button) const;
 
 	private:
 		std::unordered_map<SDL_Scancode, KeyState> m_KeyBoardState{};
+		XINPUT_STATE m_GamepadStateCurrent{};
+		XINPUT_STATE m_GamepadStatePrevious{};
+		unsigned int m_ButtonsPressedThisFrame{};
+		unsigned int m_ButtonsReleasedThisFrame{};
 
+		uint8_t m_ControllerIndex{ 0 };
 	};
 }
 

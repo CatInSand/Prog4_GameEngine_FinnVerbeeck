@@ -30,10 +30,15 @@ void dae::InputManager::Execute()
 {
 	for (dae::KeyBind& keyBind : m_KeyBinds)
 	{
-		dae::KeyTrigger keyTrigger{
-			keyBind.Trigger().m_Scancode,
-			m_InputState.GetKeyState(keyBind.Trigger().m_Scancode)
-		};
+		dae::KeyTrigger keyTrigger{ keyBind.Trigger() };
+		if (std::holds_alternative<SDL_Scancode>(keyTrigger.m_Code))
+		{
+			keyTrigger.m_Keystate = m_InputState.GetKeyState(std::get<SDL_Scancode>(keyTrigger.m_Code));
+		}
+		else
+		{
+			keyTrigger.m_Keystate = m_InputState.GetButtonState(std::get<unsigned int>(keyTrigger.m_Code));
+		}
 
 		keyBind.ExecuteIfMatch(keyTrigger);
 	}

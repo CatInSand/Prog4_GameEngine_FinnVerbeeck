@@ -43,7 +43,7 @@ void dae::Renderer::Render()
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
 
-	m_Plotter.Draw();
+	//m_Plotter.Draw();
 
 	ImGui::Render();
 
