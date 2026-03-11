@@ -17,8 +17,12 @@
 #include "InputManager.h"
 #include "MoveCommand.h"
 
+#if !__EMSCRIPTEN__
 #include <windows.h>
 #include <Xinput.h>
+#else
+//emscripten includes
+#endif
 
 static void load()
 {
@@ -97,10 +101,14 @@ static void load()
 	moveCommandLeft = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}, SPEED * 2.f);
 	moveCommandRight = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}, SPEED * 2.f);
 
+#if !__EMSCRIPTEN__
 	dae::KeyTrigger padTriggerUpPressed{ XINPUT_GAMEPAD_DPAD_UP, dae::KeyState::pressed };
 	dae::KeyTrigger padTriggerDownPressed{ XINPUT_GAMEPAD_DPAD_DOWN, dae::KeyState::pressed };
 	dae::KeyTrigger padTriggerLeftPressed{ XINPUT_GAMEPAD_DPAD_LEFT, dae::KeyState::pressed };
 	dae::KeyTrigger padTriggerRightPressed{ XINPUT_GAMEPAD_DPAD_RIGHT, dae::KeyState::pressed };
+#else
+	//emscripten implementation
+#endif
 	dae::InputManager::GetInstance().AddKeyBind(padTriggerUpPressed, std::move(moveCommandUp));
 	dae::InputManager::GetInstance().AddKeyBind(padTriggerDownPressed, std::move(moveCommandDown));
 	dae::InputManager::GetInstance().AddKeyBind(padTriggerLeftPressed, std::move(moveCommandLeft));

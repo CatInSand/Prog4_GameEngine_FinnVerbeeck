@@ -1,11 +1,17 @@
 #include "InputState.h"
 #include <SDL3/SDL.h>
 #include <backends/imgui_impl_sdl3.h>
+
+#if !__EMSCRIPTEN__
 #include <windows.h>
 #include <Xinput.h>
+#else
+//emscripten includes
+#endif
 
 class dae::InputState::GamepadImplementation final
 {
+#if !__EMSCRIPTEN__
 public:
 	GamepadImplementation() = default;
 	dae::KeyState GetButtonState(unsigned int button) const
@@ -36,6 +42,10 @@ private:
 	unsigned int m_ButtonsPressedThisFrame{};
 	unsigned int m_ButtonsReleasedThisFrame{};
 	uint8_t m_ControllerIndex{ 0 };
+
+#else
+	//emscripten implementation
+#endif
 };
 
 dae::InputState::InputState()
