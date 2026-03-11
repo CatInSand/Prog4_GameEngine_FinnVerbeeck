@@ -20,11 +20,22 @@ namespace dae
 		KeyTrigger(SDL_Scancode scancode, dae::KeyState keystate)
 			: m_Keystate{ keystate }, m_Code{ scancode }
 		{}
+#if !__EMSCRIPTEN__
 		KeyTrigger(unsigned int padcode, dae::KeyState keystate)
 			: m_Keystate{ keystate }, m_Code{ padcode }
 		{}
+#else
+		KeyTrigger(SDL_GamepadButton button, dae::KeyState keystate)
+			: m_Keystate{ keystate }, m_Code{ button }
+		{
+		}
+#endif
 		dae::KeyState m_Keystate;
+#if !__EMSCRIPTEN__
 		std::variant<SDL_Scancode, unsigned int> m_Code;
+#else
+		std::variant<SDL_Scancode, SDL_GamepadButton> m_Code;
+#endif
 	};
 
 	class KeyBind

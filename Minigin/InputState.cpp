@@ -6,7 +6,8 @@
 #include <windows.h>
 #include <Xinput.h>
 #else
-//emscripten includes
+#include <SDL3/SDL_gamepad.h>
+#include <stdexcept>
 #endif
 
 class dae::InputState::GamepadImplementation final
@@ -45,6 +46,32 @@ private:
 
 #else
 	//emscripten implementation
+public:
+	GamepadImplementation()
+	{
+		SDL_Init(SDL_INIT_GAMEPAD);
+		if (!SDL_HasGamepad())
+		{
+			throw std::runtime_error("No gamepad detected");
+		}
+		int gamepadCount{};
+		SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
+		m_pGamepad = SDL_OpenGamepad(gamepads[0]);
+	}
+	~GamepadImplementation()
+	{
+		SDL_CloseGamepad(m_pGamepad);
+	}
+	dae::KeyState GetButtonState(SDL_GamepadButton button) const
+	{
+		if (SDL_GetGamepadButton(m_pGamepad, button))
+			return dae::KeyState::pressed;
+		else
+			return dae::KeyState::none;
+	}
+
+private:
+	SDL_Gamepad* m_pGamepad{};
 #endif
 };
 
@@ -95,7 +122,9 @@ bool dae::InputState::UpdateStates()
 		ImGui_ImplSDL3_ProcessEvent(&e);
 	}
 
+#if !__EMPSCRIPTEN__
 	m_pImpl->UpdateStates();
+#endif
 
 	return true;
 }
@@ -104,7 +133,15 @@ dae::KeyState dae::InputState::GetKeyState(SDL_Scancode scancode)
 {
 	return m_KeyBoardState[scancode];
 }
+
+#if !__EMSCRIPTEN__
 dae::KeyState dae::InputState::GetButtonState(unsigned int button) const
 {
 	return m_pImpl->GetButtonState(button);
 }
+#else
+dae::KeyState dae::InputState::GetButtonState(SDL_GamepadButton button) const
+{
+	return m_pImpl->GetButtonState(button);
+}
+#endif

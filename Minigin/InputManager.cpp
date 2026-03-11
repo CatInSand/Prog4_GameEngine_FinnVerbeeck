@@ -37,7 +37,11 @@ void dae::InputManager::Execute()
 		}
 		else
 		{
+#if !__EMSCRIPTEN__
 			keyTrigger.m_Keystate = m_InputState.GetButtonState(std::get<unsigned int>(keyTrigger.m_Code));
+#else
+			keyTrigger.m_Keystate = m_InputState.GetButtonState(std::get<SDL_GamepadButton>(keyTrigger.m_Code));
+#endif
 		}
 
 		keyBind.ExecuteIfMatch(keyTrigger);

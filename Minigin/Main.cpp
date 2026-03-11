@@ -107,7 +107,10 @@ static void load()
 	dae::KeyTrigger padTriggerLeftPressed{ XINPUT_GAMEPAD_DPAD_LEFT, dae::KeyState::pressed };
 	dae::KeyTrigger padTriggerRightPressed{ XINPUT_GAMEPAD_DPAD_RIGHT, dae::KeyState::pressed };
 #else
-	//emscripten implementation
+	dae::KeyTrigger padTriggerUpPressed{ SDL_GAMEPAD_BUTTON_DPAD_UP, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerDownPressed{ SDL_GAMEPAD_BUTTON_DPAD_DOWN, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerLeftPressed{ SDL_GAMEPAD_BUTTON_DPAD_LEFT, dae::KeyState::pressed };
+	dae::KeyTrigger padTriggerRightPressed{ SDL_GAMEPAD_BUTTON_DPAD_RIGHT, dae::KeyState::pressed };
 #endif
 	dae::InputManager::GetInstance().AddKeyBind(padTriggerUpPressed, std::move(moveCommandUp));
 	dae::InputManager::GetInstance().AddKeyBind(padTriggerDownPressed, std::move(moveCommandDown));
