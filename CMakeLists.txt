@@ -31,7 +31,6 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   
   Minigin/Texture2D.cpp
   Minigin/Transform.cpp
- "Minigin/Component.cpp" "Minigin/FPSCounter.cpp" "Minigin/Text.cpp"   "Minigin/DeltaTime.cpp" "Minigin/RenderComponent.cpp" "Minigin/FPSComponent.cpp" "Minigin/RotatorComponent.cpp" "Minigin/imgui_plot.cpp")
  "Minigin/Component.cpp" "Minigin/FPSCounter.cpp" "Minigin/Text.cpp"   "Minigin/DeltaTime.cpp" "Minigin/RenderComponent.cpp" "Minigin/FPSComponent.cpp" "Minigin/RotatorComponent.cpp" "Minigin/imgui_plot.cpp"  "Minigin/MoveCommand.cpp" "Minigin/InputState.cpp")
 
 # enable c++20 features

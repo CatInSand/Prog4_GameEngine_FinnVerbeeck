@@ -14,6 +14,8 @@
 #include "Scene.h"
 
 #include <filesystem>
+#include "InputManager.h"
+#include "MoveCommand.h"
 
 static void load()
 {
@@ -56,29 +58,27 @@ static void load()
 	gameObject->AddComponent<dae::FPSComponent>(std::move(fpsComponent));
 	scene.Add(std::move(gameObject));
 
-	//rotators
-	/*std::unique_ptr<dae::GameObject> pivot{std::make_unique<dae::GameObject>(root.get())};
-	pivot->SetLocalPosition(0.f, 0.f);
-
-	gameObject = std::make_unique<dae::GameObject>(pivot.get());
+	//keybinds
+	gameObject = std::make_unique<dae::GameObject>(root.get());
 	gameObject->SetLocalPosition(100.f, 0.f);
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
-	std::unique_ptr<dae::RotatorComponent> rotatorComponent{ std::make_unique<dae::RotatorComponent>(gameObject.get(), 1.f) };
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
-	gameObject->AddComponent<dae::RotatorComponent>(std::move(rotatorComponent));
+	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}) };
+	std::unique_ptr<dae::MoveCommand> moveCommandDown{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}) };
+	std::unique_ptr<dae::MoveCommand> moveCommandLeft{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}) };
+	std::unique_ptr<dae::MoveCommand> moveCommandRight{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}) };
 
-	std::unique_ptr<dae::GameObject> childObject{ std::make_unique<dae::GameObject>(gameObject.get()) };
-	childObject->SetLocalPosition(100.f, 0.f);
-	renderComponent = std::make_unique<dae::RenderComponent>(childObject.get());
-	renderComponent->SetTexture("digdug.png");
-	rotatorComponent = std::make_unique<dae::RotatorComponent>(childObject.get(), -10.f);
-	childObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
-	childObject->AddComponent<dae::RotatorComponent>(std::move(rotatorComponent));
+	dae::KeyTrigger keyTriggerWDown{ SDL_SCANCODE_W, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerSDown{ SDL_SCANCODE_S, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerADown{ SDL_SCANCODE_A, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerDDown{ SDL_SCANCODE_D, dae::KeyState::pressed };
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerWDown, std::move(moveCommandUp));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerSDown, std::move(moveCommandDown));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerADown, std::move(moveCommandLeft));
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerDDown, std::move(moveCommandRight));
 
-	scene.Add(std::move(pivot));
 	scene.Add(std::move(gameObject));
-	scene.Add(std::move(childObject));*/
 
 	//end
 	scene.Add(std::move(root));
