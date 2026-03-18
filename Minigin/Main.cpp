@@ -69,7 +69,7 @@ static void load()
 	gameObject->AddComponent<dae::FPSComponent>(std::move(fpsComponent));
 	scene.Add(std::move(gameObject));
 
-	//keybinds
+	//players
 	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
 
@@ -77,17 +77,19 @@ static void load()
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 
-	std::unique_ptr<dae::DeathObserverComponent> deathObserver{ std::make_unique<dae::DeathObserverComponent>(gameObject.get()) };
+	std::unique_ptr<dae::GameObject> displayObject{ std::make_unique<dae::GameObject>(root.get(), "Display") };
+	displayObject->SetLocalPosition(0, 100);
+	textComponent = std::make_unique<dae::Text>(displayObject.get(), "Alive", font);
+	textComponent->SetColor({ 255, 255, 255, 255 });
+	displayObject->AddComponent<dae::Text>(std::move(textComponent));
+	std::unique_ptr<dae::DeathObserverComponent> deathObserver{ std::make_unique<dae::DeathObserverComponent>(displayObject.get()) };
+
 	std::unique_ptr<dae::HealthComponent> healthComponent{ std::make_unique<dae::HealthComponent>(gameObject.get(), 3, deathObserver->Get()) };
 	std::unique_ptr<dae::DamageCommand> damageCommand{ std::make_unique<dae::DamageCommand>(healthComponent.get()) };
-	dae::KeyTrigger keyTriggerXPressed{ SDL_SCANCODE_X, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerXPressed{ SDL_SCANCODE_X, dae::KeyState::down };
 	dae::InputManager::GetInstance().AddKeyBind(keyTriggerXPressed, std::move(damageCommand));
 	gameObject->AddComponent<dae::HealthComponent>(std::move(healthComponent));
-	gameObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
-
-	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Alive", font);
-	textComponent->SetColor({ 255, 255, 255, 255 });
-	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	displayObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
 
 	constexpr float SPEED{ 100.f };
 	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED) };
@@ -105,6 +107,7 @@ static void load()
 	dae::InputManager::GetInstance().AddKeyBind(keyTriggerDPressed, std::move(moveCommandRight));
 
 	scene.Add(std::move(gameObject));
+	scene.Add(std::move(displayObject));
 
 	//controller bindings
 	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player2");
@@ -112,6 +115,22 @@ static void load()
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+
+	deathObserver = std::make_unique<dae::DeathObserverComponent>(gameObject.get());
+	healthComponent = std::make_unique<dae::HealthComponent>(gameObject.get(), 3, deathObserver->Get());
+	damageCommand = std::make_unique<dae::DamageCommand>(healthComponent.get());
+#if !__EMSCRIPTEN__
+	dae::KeyTrigger controllerTriggerXPressed{ XINPUT_GAMEPAD_X, dae::KeyState::down };
+#else
+	dae::KeyTrigger controllerTriggerXPressed{ SDL_GAMEPAD_BUTTON_LABEL_X, dae::KeyState:::down };
+#endif
+	dae::InputManager::GetInstance().AddKeyBind(controllerTriggerXPressed, std::move(damageCommand));
+	gameObject->AddComponent<dae::HealthComponent>(std::move(healthComponent));
+	gameObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
+
+	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Alive", font);
+	textComponent->SetColor({ 255, 255, 255, 255 });
+	gameObject->AddComponent<dae::Text>(std::move(textComponent));
 
 	moveCommandUp = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED * 2.f);
 	moveCommandDown = std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}, SPEED * 2.f);
