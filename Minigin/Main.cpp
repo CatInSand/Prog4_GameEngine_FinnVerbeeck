@@ -17,6 +17,10 @@
 #include "InputManager.h"
 #include "MoveCommand.h"
 
+#include "HealthComponent.h"
+#include "DamageCommand.h"
+#include "DeathObserverComponent.h"
+
 #if !__EMSCRIPTEN__
 #include <windows.h>
 #include <Xinput.h>
@@ -28,16 +32,16 @@ static void load()
 {
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
 
-	std::unique_ptr<dae::GameObject> root{ std::make_unique<dae::GameObject>(nullptr) };
+	std::unique_ptr<dae::GameObject> root{ std::make_unique<dae::GameObject>(nullptr, "Root")};
 
 	//background
-	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(root.get()) };
+	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(root.get(), "Background") };
 	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get()) };
 	renderComponent->SetTexture("background.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "Logo");
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("logo.png");
 	gameObject->SetLocalPosition(358, 180);
@@ -46,7 +50,7 @@ static void load()
 
 	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "Text");
 	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(gameObject.get(), "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
 	gameObject->SetLocalPosition(292, 20);
@@ -54,7 +58,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//fps
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "FPS counter");
 	textComponent = std::make_unique<dae::Text>(gameObject.get(), "FPS", font);
 	std::unique_ptr<dae::FPSCounter> fpsCounterComponent{ std::make_unique<dae::FPSCounter>(gameObject.get()) };
 	textComponent->SetColor({ 255, 255, 255, 255 });
@@ -66,11 +70,24 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//keybinds
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
+
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+
+	std::unique_ptr<dae::DeathObserverComponent> deathObserver{ std::make_unique<dae::DeathObserverComponent>(gameObject.get()) };
+	std::unique_ptr<dae::HealthComponent> healthComponent{ std::make_unique<dae::HealthComponent>(gameObject.get(), 3, deathObserver->Get()) };
+	std::unique_ptr<dae::DamageCommand> damageCommand{ std::make_unique<dae::DamageCommand>(healthComponent.get()) };
+	dae::KeyTrigger keyTriggerXPressed{ SDL_SCANCODE_X, dae::KeyState::pressed };
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerXPressed, std::move(damageCommand));
+	gameObject->AddComponent<dae::HealthComponent>(std::move(healthComponent));
+	gameObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
+
+	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Alive", font);
+	textComponent->SetColor({ 255, 255, 255, 255 });
+	gameObject->AddComponent<dae::Text>(std::move(textComponent));
 
 	constexpr float SPEED{ 100.f };
 	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED) };
@@ -90,7 +107,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//controller bindings
-	gameObject = std::make_unique<dae::GameObject>(root.get());
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player2");
 	gameObject->SetLocalPosition(200.f, 0.f);
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");

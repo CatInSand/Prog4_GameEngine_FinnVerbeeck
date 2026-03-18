@@ -7,8 +7,9 @@
 #include "DeltaTime.h"
 #include "RenderComponent.h"
 
-dae::GameObject::GameObject(dae::GameObject* pParent)
+dae::GameObject::GameObject(dae::GameObject* pParent, const std::string& name)
 	: m_pParent{ pParent }
+	, m_Name{ name }
 {
 	if (m_pParent != nullptr)
 	{
@@ -28,6 +29,15 @@ dae::GameObject::~GameObject()
 	}
 	//Only gets deleted after Delete() is called or goes out of scope
 	//	Either way, children will also get deleted
+}
+
+std::string dae::GameObject::Name() const
+{
+	return m_Name;
+}
+void dae::GameObject::Rename(const std::string& name)
+{
+	m_Name = name;
 }
 
 void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransform)

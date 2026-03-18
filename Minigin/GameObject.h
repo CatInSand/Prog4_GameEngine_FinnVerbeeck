@@ -12,12 +12,16 @@ namespace dae
 	class GameObject final
 	{
 	public:
-		GameObject(GameObject* pParent);
+		GameObject(GameObject* pParent, const std::string& name);
 		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
+
+		//Name & tags
+		std::string Name() const;
+		void Rename(const std::string& name);
 
 		//Components
 		template<typename T>
@@ -93,6 +97,9 @@ namespace dae
 		Transform GetWorldTransform();
 
 	private:
+		//Name & tags
+		std::string m_Name;
+
 		//Components
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
 
