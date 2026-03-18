@@ -16,11 +16,7 @@ namespace dae
 		bool UpdateStates();
 
 		KeyState GetKeyState(SDL_Scancode scancode);
-#if !__EMSCRIPTEN__
 		KeyState GetButtonState(unsigned int button) const;
-#else
-		KeyState GetButtonState(SDL_GamepadButton button) const;
-#endif
 
 	private:
 		std::unordered_map<SDL_Scancode, KeyState> m_KeyBoardState{};

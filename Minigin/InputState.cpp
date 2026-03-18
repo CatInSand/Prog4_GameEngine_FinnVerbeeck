@@ -10,9 +10,9 @@
 #include <stdexcept>
 #endif
 
+#if !__EMSCRIPTEN__
 class dae::InputState::GamepadImplementation final
 {
-#if !__EMSCRIPTEN__
 public:
 	GamepadImplementation() = default;
 	dae::KeyState GetButtonState(unsigned int button) const
@@ -43,9 +43,10 @@ private:
 	unsigned int m_ButtonsPressedThisFrame{};
 	unsigned int m_ButtonsReleasedThisFrame{};
 	uint8_t m_ControllerIndex{ 0 };
-
+};
 #else
-	//emscripten implementation
+class dae::InputState::GamepadImplementation final
+{
 public:
 	GamepadImplementation()
 	{
@@ -72,8 +73,8 @@ public:
 
 private:
 	SDL_Gamepad* m_pGamepad{};
-#endif
 };
+#endif
 
 dae::InputState::InputState()
 	: m_pImpl{ std::make_unique<GamepadImplementation>() }
@@ -134,14 +135,11 @@ dae::KeyState dae::InputState::GetKeyState(SDL_Scancode scancode)
 	return m_KeyBoardState[scancode];
 }
 
-#if !__EMSCRIPTEN__
 dae::KeyState dae::InputState::GetButtonState(unsigned int button) const
 {
+#if !__EMSCRIPTEN__
 	return m_pImpl->GetButtonState(button);
-}
 #else
-dae::KeyState dae::InputState::GetButtonState(SDL_GamepadButton button) const
-{
-	return m_pImpl->GetButtonState(button);
-}
+	return m_pImpl->GetButtonState(reinterpret_cast<SDL_GamepadButton>(button));
 #endif
+}
