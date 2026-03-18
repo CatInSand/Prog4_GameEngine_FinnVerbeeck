@@ -80,7 +80,7 @@ static void load()
 	std::unique_ptr<dae::DeathObserverComponent> deathObserver{ std::make_unique<dae::DeathObserverComponent>(gameObject.get()) };
 	std::unique_ptr<dae::HealthComponent> healthComponent{ std::make_unique<dae::HealthComponent>(gameObject.get(), 3, deathObserver->Get()) };
 	std::unique_ptr<dae::DamageCommand> damageCommand{ std::make_unique<dae::DamageCommand>(healthComponent.get()) };
-	dae::KeyTrigger keyTriggerXPressed{ SDL_SCANCODE_X, dae::KeyState::pressed };
+	dae::KeyTrigger keyTriggerXPressed{ SDL_SCANCODE_X, dae::KeyState::down };
 	dae::InputManager::GetInstance().AddKeyBind(keyTriggerXPressed, std::move(damageCommand));
 	gameObject->AddComponent<dae::HealthComponent>(std::move(healthComponent));
 	gameObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
