@@ -140,6 +140,6 @@ dae::KeyState dae::InputState::GetButtonState(unsigned int button) const
 #if !__EMSCRIPTEN__
 	return m_pImpl->GetButtonState(button);
 #else
-	return m_pImpl->GetButtonState(reinterpret_cast<SDL_GamepadButton>(button));
+	return m_pImpl->GetButtonState(static_cast<SDL_GamepadButton>(button));
 #endif
 }
