@@ -8,8 +8,8 @@
 #include "RenderComponent.h"
 
 dae::GameObject::GameObject(dae::GameObject* pParent, const std::string& name)
-	: m_pParent{ pParent }
-	, m_Name{ name }
+	: m_Name{ name }
+	, m_pParent{ pParent }
 {
 	if (m_pParent != nullptr)
 	{

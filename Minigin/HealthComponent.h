@@ -18,6 +18,7 @@ namespace dae
 
 		virtual void Update() override;
 
+		void Reset();
 		void Damage(int damage);
 		bool IsDead() const;
 		int Health() const;

@@ -16,6 +16,11 @@ void dae::HealthComponent::Update()
 {
 }
 
+void dae::HealthComponent::Reset()
+{
+	m_CurrentHealth = m_MaxHealth;
+}
+
 void dae::HealthComponent::Damage(int damage)
 {
 	if (m_CurrentHealth > 0 && m_CurrentHealth - damage <= 0)
