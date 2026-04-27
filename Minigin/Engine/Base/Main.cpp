@@ -21,6 +21,8 @@
 #include "DamageCommand.h"
 #include "DeathObserverComponent.h"
 
+#include "ServiceLocator.h"
+
 #if !__EMSCRIPTEN__
 #include <windows.h>
 #include <Xinput.h>
@@ -138,6 +140,9 @@ static void load()
 
 	//end
 	scene.Add(std::move(root));
+
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
+	dae::ServiceLocator::GetSoundSystem().Play(0, 1.f);
 }
 
 int main(int, char*[])

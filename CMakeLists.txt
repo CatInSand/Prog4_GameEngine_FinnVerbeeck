@@ -45,6 +45,8 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/Engine/Events/Observer.cpp
 
   Minigin/Engine/Systems/DeltaTime.cpp
+  Minigin/Engine/Systems/ServiceLocator.cpp
+  Minigin/Engine/Systems/SoundSystem.cpp
 
   Minigin/Game/HealthComponent.cpp
   Minigin/Game/RotatorComponent.cpp
