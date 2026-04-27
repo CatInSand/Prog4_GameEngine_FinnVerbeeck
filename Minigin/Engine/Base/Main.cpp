@@ -141,7 +141,7 @@ static void load()
 	//end
 	scene.Add(std::move(root));
 
-	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SoundSystem>());
 	dae::ServiceLocator::GetSoundSystem().Play(0, 1.f);
 }
 
