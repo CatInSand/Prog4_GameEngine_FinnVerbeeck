@@ -19,19 +19,36 @@ endif()
 
 # list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Font.cpp
-  Minigin/GameObject.cpp
-  Minigin/InputManager.cpp
-  Minigin/Main.cpp
-  Minigin/Minigin.cpp
-  Minigin/Renderer.cpp
-  Minigin/ResourceManager.cpp
-  Minigin/Scene.cpp
-  Minigin/SceneManager.cpp
-  
-  Minigin/Texture2D.cpp
-  Minigin/Transform.cpp
- "Minigin/Component.cpp" "Minigin/FPSCounter.cpp" "Minigin/Text.cpp"   "Minigin/DeltaTime.cpp" "Minigin/RenderComponent.cpp" "Minigin/FPSComponent.cpp" "Minigin/RotatorComponent.cpp" "Minigin/imgui_plot.cpp"  "Minigin/MoveCommand.cpp" "Minigin/InputState.cpp"  "Minigin/HealthComponent.cpp" "Minigin/Observer.cpp" "Minigin/DamageCommand.cpp")
+  Minigin/Engine/Base/Font.cpp
+  Minigin/Engine/Base/GameObject.cpp
+  Minigin/Engine/Base/imgui_plot.cpp
+  Minigin/Engine/Base/InputManager.cpp
+  Minigin/Engine/Base/InputState.cpp
+  Minigin/Engine/Base/Main.cpp
+  Minigin/Engine/Base/Minigin.cpp
+  Minigin/Engine/Base/Renderer.cpp
+  Minigin/Engine/Base/ResourceManager.cpp
+  Minigin/Engine/Base/Scene.cpp
+  Minigin/Engine/Base/SceneManager.cpp
+  Minigin/Engine/Base/Texture2D.cpp
+  Minigin/Engine/Base/Transform.cpp
+
+  Minigin/Engine/Commands/DamageCommand.cpp
+  Minigin/Engine/Commands/MoveCommand.cpp
+
+  Minigin/Engine/Components/Component.cpp
+  Minigin/Engine/Components/FPSComponent.cpp
+  Minigin/Engine/Components/FPSCounter.cpp
+  Minigin/Engine/Components/RenderComponent.cpp
+  Minigin/Engine/Components/Text.cpp
+
+  Minigin/Engine/Events/Observer.cpp
+
+  Minigin/Engine/Systems/DeltaTime.cpp
+
+  Minigin/Game/HealthComponent.cpp
+  Minigin/Game/RotatorComponent.cpp
+)
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -141,7 +158,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
 target_include_directories("${TARGET_NAME}" PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/
+  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Base
+  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Commands
+  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Components
+  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Events
+  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Systems
+  ${CMAKE_SOURCE_DIR}/Minigin/Game
   ${glm_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include
