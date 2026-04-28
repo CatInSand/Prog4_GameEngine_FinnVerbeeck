@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <mutex>
+#include <queue>
 
 //https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer
 
@@ -26,8 +27,10 @@ namespace dae
 			m_Tracks.reserve(TRACK_COUNT);
 			for (int index{ 0 }; index < TRACK_COUNT; ++index)
 			{
-				m_Tracks.emplace_back(MIX_CreateTrack(m_pMixer));
+				m_Tracks.push_back(MIX_CreateTrack(m_pMixer));
 			}
+
+			m_Thread = std::jthread{ &dae::SoundSystem::SoundSystemImpl::AudioMain, this, std::stop_token{} };
 		}
 		~SoundSystemImpl()
 		{
@@ -35,7 +38,7 @@ namespace dae
 			{
 				MIX_DestroyAudio(pAudio);
 			}
-			for (auto& [pTrack, mutex] : m_Tracks)
+			for (MIX_Track* pTrack : m_Tracks)
 			{
 				MIX_DestroyTrack(pTrack);
 			}
@@ -46,27 +49,9 @@ namespace dae
 
 		void Play(const sound_id id, float volume)
 		{
-			if (!m_IDPathMap.contains(id))
-			{
-				throw std::runtime_error("No sound with id:" + id);
-			}
-
-			auto& [pTrack, mutex] { GetFreeTrack() };
-
-			volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
-			MIX_SetTrackGain(pTrack, volume);
-
-			{
-				std::lock_guard<std::mutex> lock(m_MixerMutex);
-				if (!m_IDAudioMap.contains(id))
-				{
-					m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, m_IDPathMap.at(id).c_str(), false);
-				}
-				MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
-			}
-
-			MIX_PlayTrack(pTrack, 0);
-			mutex.unlock();
+			std::unique_lock<std::mutex> lock{ m_Mutex };
+			m_SoundQueue.emplace(id, volume);
+			m_ConditionVariable.notify_all();
 		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
 		{
@@ -78,30 +63,67 @@ namespace dae
 		}
 
 	private:
-		std::pair<MIX_Track*, std::mutex>& GetFreeTrack()
+		void AudioMain(std::stop_token stopToken)
 		{
-			for (auto& track : m_Tracks)
+			while (!stopToken.stop_requested())
 			{
-				if (track.second.try_lock())
+				std::unique_lock<std::mutex> lock{ m_Mutex };
+
+				while (!stopToken.stop_requested() && m_SoundQueue.empty())
 				{
-					if (!MIX_TrackPlaying(track.first))
+					//wait until notified
+					m_ConditionVariable.wait(lock);
+				}
+				while (!m_SoundQueue.empty())
+				{
+					auto [id, volume] { m_SoundQueue.front() };
+					m_SoundQueue.pop();
+					lock.unlock();
+
+					if (!m_IDPathMap.contains(id))
 					{
-						return track;
+						throw std::runtime_error("No sound with id:" + id);
 					}
-					track.second.unlock();
+
+					MIX_Track* pTrack{ GetFreeTrack() };
+
+					volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
+					MIX_SetTrackGain(pTrack, volume);
+
+					if (!m_IDAudioMap.contains(id))
+					{
+						m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, m_IDPathMap.at(id).c_str(), false);
+					}
+					MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
+
+					MIX_PlayTrack(pTrack, 0);
+				}
+			}
+		}
+		MIX_Track* GetFreeTrack()
+		{
+			for (MIX_Track* pTrack : m_Tracks)
+			{
+				if (!MIX_TrackPlaying(pTrack))
+				{
+					return pTrack;
 				}
 			}
 
 			throw std::runtime_error("Attempted to get free track while none were available");
 		}
 
-		MIX_Mixer* m_pMixer{ nullptr };
-		std::mutex m_MixerMutex;
-		float m_MasterVolume;
+		std::condition_variable m_ConditionVariable{};
+		std::jthread m_Thread{};
+		std::mutex m_Mutex{};
 
+		float m_MasterVolume;
+		MIX_Mixer* m_pMixer{ nullptr };
 		static const uint8_t TRACK_COUNT{ 4 };
-		//mutex locked from acquiring the track until it starts playing
-		std::vector<std::pair<MIX_Track*, std::mutex>> m_Tracks{};
+		std::vector<MIX_Track*> m_Tracks{};
+
+		std::queue<std::pair<sound_id, float>> m_SoundQueue{};
+
 		std::unordered_map<sound_id, MIX_Audio*> m_IDAudioMap{};
 		static const std::unordered_map<sound_id, std::string> m_IDPathMap;
 	};
