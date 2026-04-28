@@ -2,6 +2,7 @@
 #define SUBJECT_H
 
 #include "Observer.h"
+#include <vector>
 
 namespace dae
 {

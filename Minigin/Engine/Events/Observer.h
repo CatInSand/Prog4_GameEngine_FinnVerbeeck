@@ -2,6 +2,7 @@
 #define OBSERVER_H
 
 #include "Event.h"
+#include <memory>
 
 namespace dae
 {
