@@ -15,6 +15,8 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "EventQueue.h"
+#include "ServiceLocator.h"
 
 #include <time.h>
 #include <thread>
@@ -78,6 +80,10 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 	Renderer::GetInstance().Init(g_window);
 	ResourceManager::GetInstance().Init(dataPath);
+
+	constexpr float masterVolume{ 0.5f };
+	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
+	EventQueue::GetInstance().AddObserver(&ServiceLocator::GetSoundSystem());
 }
 
 dae::Minigin::~Minigin()

@@ -4,10 +4,11 @@
 #include "Observer.h"
 #include <vector>
 #include <queue>
+#include <Singleton.h>
 
 namespace dae
 {
-	class EventQueue final
+	class EventQueue final : public Singleton<EventQueue>
 	{
 	public:
 		EventQueue() = default;
@@ -20,19 +21,19 @@ namespace dae
 		{
 			for (Observer* pObserver : m_ObserverPointers)
 			{
-				pObserver->Notify(m_EventQueue.front());
+				pObserver->Notify(pEvent);
 			}
 		}
 		void Enqueue(std::unique_ptr<Event>&& pEvent)
 		{
-			m_EventQueue.push(pEvent);
+			m_EventQueue.push(std::move(pEvent));
 		}
 		void SendAll()
 		{
 			while(!m_EventQueue.empty())
 			{
 				Send(m_EventQueue.front());
-				m_EventQueue.pop()
+				m_EventQueue.pop();
 			}
 		}
 
@@ -49,6 +50,8 @@ namespace dae
 		}
 
 	private:
+		friend class Singleton<EventQueue>;
+
 		std::vector<Observer*> m_ObserverPointers{};
 		std::queue<std::unique_ptr<Event>> m_EventQueue{};
 	};
