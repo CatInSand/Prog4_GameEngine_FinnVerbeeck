@@ -21,7 +21,7 @@ namespace dae
 	{
 	public:
 		virtual ~NullSoundSystem() = default;
-		virtual void Play(const sound_id, const float)
+		virtual void Play(const sound_id, const float) override
 		{
 		}
 		virtual void Notify(std::unique_ptr<Event>&) override
