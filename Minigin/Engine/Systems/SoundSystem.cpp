@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <mutex>
 #include <queue>
+#include <stop_token>
+#include <thread>
 
 //https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer
 
@@ -82,7 +84,7 @@ namespace dae
 
 					if (!m_IDPathMap.contains(id))
 					{
-						throw std::runtime_error("No sound with id:" + id);
+						throw std::runtime_error("Attempted to access sound with unknown ID");
 					}
 
 					MIX_Track* pTrack{ GetFreeTrack() };
