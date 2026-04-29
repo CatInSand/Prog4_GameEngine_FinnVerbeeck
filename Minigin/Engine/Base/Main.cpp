@@ -21,8 +21,7 @@
 #include "DamageCommand.h"
 #include "DeathObserverComponent.h"
 
-#include "EventQueue.h"
-#include "SoundSystem.h"
+#include "SoundCommand.h"
 
 #if !__EMSCRIPTEN__
 #include <windows.h>
@@ -139,11 +138,20 @@ static void load()
 
 	scene.Add(std::move(gameObject));
 
+	//sound
+	gameObject = std::make_unique<dae::GameObject>(root.get(), "Text");
+	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Press G to play sound :D", font);
+	textComponent->SetColor({ 255, 255, 255, 255 });
+	gameObject->SetLocalPosition(20, 520);
+	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	scene.Add(std::move(gameObject));
+
+	dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
+	std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
+	dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
+
 	//end
 	scene.Add(std::move(root));
-
-	std::unique_ptr<dae::Event> pSoundEvent{ std::make_unique<dae::EventSoundRequested>(0, 1.f) };
-	dae::EventQueue::GetInstance().Enqueue(std::move(pSoundEvent));
 }
 
 int main(int, char*[])
