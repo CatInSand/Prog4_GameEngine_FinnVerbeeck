@@ -143,9 +143,7 @@ static void load()
 	scene.Add(std::move(root));
 
 	std::unique_ptr<dae::Event> pSoundEvent{ std::make_unique<dae::EventSoundRequested>(0, 1.f) };
-	dae::EventQueue::GetInstance().Send(pSoundEvent);
-
-	/*dae::ServiceLocator::GetSoundSystem().Notify(pSoundEvent);*/
+	dae::EventQueue::GetInstance().Enqueue(std::move(pSoundEvent));
 }
 
 int main(int, char*[])
