@@ -49,7 +49,7 @@ namespace dae
 	public:
 		SoundSystem(float masterVolume);
 		virtual ~SoundSystem();
-		virtual void Play(const sound_id id, const float volume = 1.f);
+		virtual void Play(const sound_id id, const float volume = 1.f) override;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
 
 	protected:
