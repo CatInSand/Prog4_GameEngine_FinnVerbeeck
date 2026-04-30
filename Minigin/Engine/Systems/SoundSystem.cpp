@@ -1,5 +1,5 @@
 #include "SoundSystem.h"
-#include "SDL3_mixer/SDL_mixer.h"
+#include "SDL3_mixer/SDL_mixer.h" 
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
@@ -51,6 +51,8 @@ namespace dae
 
 		void Play(const sound_id id, float volume)
 		{
+			assert(m_IDPathMap.contains(id));
+
 			std::unique_lock<std::mutex> lock{ m_Mutex };
 			m_SoundQueue.emplace(id, volume);
 			m_ConditionVariable.notify_all();
@@ -82,11 +84,6 @@ namespace dae
 					m_SoundQueue.pop();
 					lock.unlock();
 
-					if (!m_IDPathMap.contains(id))
-					{
-						throw std::runtime_error("Attempted to access sound with unknown ID");
-					}
-
 					MIX_Track* pTrack{ GetFreeTrack() };
 
 					volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
@@ -99,6 +96,8 @@ namespace dae
 					MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
 
 					MIX_PlayTrack(pTrack, 0);
+
+					lock.lock();
 				}
 			}
 		}
