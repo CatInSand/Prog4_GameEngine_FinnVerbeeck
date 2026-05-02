@@ -8,18 +8,13 @@
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "FPSCounter.h"
-#include "FPSComponent.h"
-#include "RotatorComponent.h"
+#include "RenderComponent.h"
+#include "SpriteComponent.h"
 #include "Scene.h"
 
 #include <filesystem>
 #include "InputManager.h"
 #include "MoveCommand.h"
-
-#include "HealthComponent.h"
-#include "DamageCommand.h"
-#include "DeathObserverComponent.h"
 
 #include "SoundCommand.h"
 
@@ -39,8 +34,7 @@ static void load()
 
 	//background
 	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
-	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get()) };
-	renderComponent->SetTexture("background.png");
+	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get(), "background.png") };
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
@@ -48,24 +42,11 @@ static void load()
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
 
-	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
-	renderComponent->SetTexture("sprites/idle.png");
-	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+	std::unique_ptr<dae::SpriteComponent> spriteComponent{
+		std::make_unique<dae::SpriteComponent>(gameObject.get(), "sprites/walk.png", dae::SpriteComponent::Type::loop, 0.2f)
+	};
 
-	constexpr float SPEED{ 100.f };
-	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED) };
-	std::unique_ptr<dae::MoveCommand> moveCommandDown{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, 1.f}, SPEED) };
-	std::unique_ptr<dae::MoveCommand> moveCommandLeft{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{-1.f, 0.f}, SPEED) };
-	std::unique_ptr<dae::MoveCommand> moveCommandRight{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{1.f, 0.f}, SPEED) };
-
-	dae::KeyTrigger keyTriggerWPressed{ SDL_SCANCODE_W, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerSPressed{ SDL_SCANCODE_S, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerAPressed{ SDL_SCANCODE_A, dae::KeyState::pressed };
-	dae::KeyTrigger keyTriggerDPressed{ SDL_SCANCODE_D, dae::KeyState::pressed };
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerWPressed, std::move(moveCommandUp));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerSPressed, std::move(moveCommandDown));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerAPressed, std::move(moveCommandLeft));
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerDPressed, std::move(moveCommandRight));
+	gameObject->AddComponent<dae::SpriteComponent>(std::move(spriteComponent));
 
 	scene.Add(std::move(gameObject));
 

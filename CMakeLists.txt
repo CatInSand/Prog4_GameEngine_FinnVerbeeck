@@ -47,7 +47,7 @@ add_library(engine STATIC
   Project/Engine/Systems/DeltaTime.cpp
   Project/Engine/Systems/ServiceLocator.cpp
   Project/Engine/Systems/SoundSystem.cpp
-)
+  "Project/Engine/Components/SpriteComponent.cpp")
 
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/Main.cpp

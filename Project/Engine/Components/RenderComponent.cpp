@@ -8,6 +8,12 @@ dae::RenderComponent::RenderComponent(dae::GameObject* owner)
 {
 }
 
+dae::RenderComponent::RenderComponent(dae::GameObject* owner, const std::string& filename)
+	: Component(owner)
+	, m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
+{
+}
+
 void dae::RenderComponent::Render()
 {
 	if (m_pTexture != nullptr)
@@ -15,8 +21,4 @@ void dae::RenderComponent::Render()
 		const auto& pos = GetOwner()->GetWorldTransform().GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 	}
-}
-void dae::RenderComponent::SetTexture(const std::string& filename)
-{
-	m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
 }
