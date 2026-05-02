@@ -9,7 +9,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "TextureComponent.h"
-#include "SpriteComponent.h"
+#include "MultiSpriteComponent.h"
 #include "Scene.h"
 
 #include <filesystem>
@@ -24,6 +24,12 @@
 #else
 //emscripten includes
 #endif
+
+enum class PlayerSprite : dae::sprite_id {
+	idle,
+	walking,
+	drilling,
+};
 
 static void load()
 {
@@ -42,12 +48,16 @@ static void load()
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
 
-	dae::Sprite sprite{ "sprites/walk.png", dae::Sprite::Type::loop, 0.2f };
-
-	std::unique_ptr<dae::SpriteComponent> spriteComponent{
-		std::make_unique<dae::SpriteComponent>(gameObject.get(), std::move(sprite))
+	std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
+		{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::single} },
+		{ static_cast<dae::sprite_id>(PlayerSprite::walking), {"sprites/walk.png", dae::Sprite::Type::loop, 0.2f} },
+		{ static_cast<dae::sprite_id>(PlayerSprite::drilling), {"sprites/swing.png", dae::Sprite::Type::swing, 0.2f} },
 	};
-	gameObject->AddComponent<dae::SpriteComponent>(std::move(spriteComponent));
+
+	std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
+		std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
+	};
+	gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
 	scene.Add(std::move(gameObject));
 
 	//sound
