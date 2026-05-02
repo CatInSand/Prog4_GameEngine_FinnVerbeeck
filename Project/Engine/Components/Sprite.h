@@ -17,7 +17,7 @@ namespace dae
 			swing,
 		};
 
-		Sprite(const std::string& filename, Type type, float timePerFrame);
+		Sprite(const std::string& filename, Type type, float timePerFrame = 1.f);
 		Sprite(const std::string& filename, Type type, float timePerFrame, glm::vec2 textureSize, uint8_t frameCount);
 
 		void Update();
