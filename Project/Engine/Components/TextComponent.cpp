@@ -7,7 +7,7 @@
 #include "GameObject.h"
 
 dae::TextComponent::TextComponent(dae::GameObject* owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
-	: RenderComponent(owner)
+	: TextureComponent(owner)
 	, m_Text{ text }
 	, m_Color{ color }
 	, m_pFont{ std::move(font) }

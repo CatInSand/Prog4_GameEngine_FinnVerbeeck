@@ -6,14 +6,14 @@
 #include "Transform.h"
 #include "Renderer.h"
 
-#include "RenderComponent.h"
+#include "TextureComponent.h"
 
 namespace dae
 {
 	class Font;
 	class Texture2D;
 	class GameObject;
-	class TextComponent : public RenderComponent
+	class TextComponent : public TextureComponent
 	{
 	public:
 		TextComponent(GameObject*, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });

@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include "DeltaTime.h"
-#include "RenderComponent.h"
+#include "TextureComponent.h"
 
 dae::GameObject::GameObject(dae::GameObject* pParent, const std::string& name)
 	: m_Name{ name }
@@ -120,7 +120,7 @@ void dae::GameObject::Render()
 	{
 		if (pComponent->m_Enabled)
 		{
-			dae::RenderComponent* pRenderComponent{ dynamic_cast<dae::RenderComponent*>(pComponent.get()) };
+			dae::TextureComponent* pRenderComponent{ dynamic_cast<dae::TextureComponent*>(pComponent.get()) };
 			if (pRenderComponent != nullptr)
 			{
 				pRenderComponent->Render();

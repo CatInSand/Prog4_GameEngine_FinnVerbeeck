@@ -39,7 +39,7 @@ add_library(engine STATIC
   Project/Engine/Components/Component.cpp
   Project/Engine/Components/FPSComponent.cpp
   Project/Engine/Components/FPSCounter.cpp
-  Project/Engine/Components/RenderComponent.cpp
+  "Project/Engine/Components/TextureComponent.cpp"
   Project/Engine/Components/TextComponent.cpp
 
   Project/Engine/Events/Observer.cpp
@@ -47,7 +47,7 @@ add_library(engine STATIC
   Project/Engine/Systems/DeltaTime.cpp
   Project/Engine/Systems/ServiceLocator.cpp
   Project/Engine/Systems/SoundSystem.cpp
-  "Project/Engine/Components/SpriteComponent.cpp")
+  "Project/Engine/Components/SpriteComponent.cpp" "Project/Engine/Components/Sprite.cpp")
 
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/Main.cpp

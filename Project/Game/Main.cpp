@@ -8,7 +8,7 @@
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "RenderComponent.h"
+#include "TextureComponent.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
 
@@ -34,20 +34,20 @@ static void load()
 
 	//background
 	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
-	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get(), "background.png") };
-	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
+	std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "background.png") };
+	gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
-	//keybinds
+	//sprites
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
 
+	dae::Sprite sprite{ "sprites/walk.png", dae::Sprite::Type::loop, 0.2f };
+
 	std::unique_ptr<dae::SpriteComponent> spriteComponent{
-		std::make_unique<dae::SpriteComponent>(gameObject.get(), "sprites/walk.png", dae::SpriteComponent::Type::loop, 0.2f)
+		std::make_unique<dae::SpriteComponent>(gameObject.get(), std::move(sprite))
 	};
-
 	gameObject->AddComponent<dae::SpriteComponent>(std::move(spriteComponent));
-
 	scene.Add(std::move(gameObject));
 
 	//sound

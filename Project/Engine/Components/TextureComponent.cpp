@@ -1,20 +1,20 @@
-#include "RenderComponent.h"
+#include "TextureComponent.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"
 
-dae::RenderComponent::RenderComponent(dae::GameObject* owner)
+dae::TextureComponent::TextureComponent(dae::GameObject* owner)
 	: Component(owner)
 {
 }
 
-dae::RenderComponent::RenderComponent(dae::GameObject* owner, const std::string& filename)
+dae::TextureComponent::TextureComponent(dae::GameObject* owner, const std::string& filename)
 	: Component(owner)
 	, m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
 {
 }
 
-void dae::RenderComponent::Render()
+void dae::TextureComponent::Render()
 {
 	if (m_pTexture != nullptr)
 	{
