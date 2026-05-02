@@ -8,7 +8,7 @@
 
 namespace dae
 {
-	class SpriteComponent final : public RenderComponent
+	class SpriteComponent : public RenderComponent
 	{
 	public:
 		SpriteComponent(GameObject* owner, Sprite&& sprite);
