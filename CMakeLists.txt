@@ -1,5 +1,7 @@
+# Project setup
+
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(Prog4_project)
 
 # Use C++20
 set(CMAKE_CXX_STANDARD 20)
@@ -7,53 +9,56 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")
-endif()
-
-if(EMSCRIPTEN)
-  set(TARGET_NAME minigin_web)
+  set(TARGET_NAME project_web)
   set(TARGET_PARAM )
 else()
-  set(TARGET_NAME minigin)
+  set(TARGET_NAME project)
   set(TARGET_PARAM WIN32)
 endif()
 
-# list source files here
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Engine/Base/Font.cpp
-  Minigin/Engine/Base/GameObject.cpp
-  Minigin/Engine/Base/imgui_plot.cpp
-  Minigin/Engine/Base/InputManager.cpp
-  Minigin/Engine/Base/InputState.cpp
-  Minigin/Engine/Base/Main.cpp
-  Minigin/Engine/Base/Minigin.cpp
-  Minigin/Engine/Base/Renderer.cpp
-  Minigin/Engine/Base/ResourceManager.cpp
-  Minigin/Engine/Base/Scene.cpp
-  Minigin/Engine/Base/SceneManager.cpp
-  Minigin/Engine/Base/Texture2D.cpp
-  Minigin/Engine/Base/Transform.cpp
 
-  Minigin/Engine/Commands/DamageCommand.cpp
-  Minigin/Engine/Commands/MoveCommand.cpp
 
-  Minigin/Engine/Components/Component.cpp
-  Minigin/Engine/Components/FPSComponent.cpp
-  Minigin/Engine/Components/FPSCounter.cpp
-  Minigin/Engine/Components/RenderComponent.cpp
-  Minigin/Engine/Components/Text.cpp
+# Create engine and game
 
-  Minigin/Engine/Events/Observer.cpp
+add_library(engine STATIC
+  Project/Engine/Base/Font.cpp
+  Project/Engine/Base/GameObject.cpp
+  Project/Engine/Base/imgui_plot.cpp
+  Project/Engine/Base/InputManager.cpp
+  Project/Engine/Base/InputState.cpp
+  Project/Engine/Base/Minigin.cpp
+  Project/Engine/Base/Renderer.cpp
+  Project/Engine/Base/ResourceManager.cpp
+  Project/Engine/Base/Scene.cpp
+  Project/Engine/Base/SceneManager.cpp
+  Project/Engine/Base/Texture2D.cpp
+  Project/Engine/Base/Transform.cpp
 
-  Minigin/Engine/Systems/DeltaTime.cpp
-  Minigin/Engine/Systems/ServiceLocator.cpp
-  Minigin/Engine/Systems/SoundSystem.cpp
+  Project/Engine/Commands/MoveCommand.cpp
 
-  Minigin/Game/HealthComponent.cpp
-  Minigin/Game/RotatorComponent.cpp
+  Project/Engine/Components/Component.cpp
+  Project/Engine/Components/FPSComponent.cpp
+  Project/Engine/Components/FPSCounter.cpp
+  Project/Engine/Components/RenderComponent.cpp
+  Project/Engine/Components/Text.cpp
+
+  Project/Engine/Events/Observer.cpp
+
+  Project/Engine/Systems/DeltaTime.cpp
+  Project/Engine/Systems/ServiceLocator.cpp
+  Project/Engine/Systems/SoundSystem.cpp
 )
 
-# enable c++20 features
-target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
+add_executable(${TARGET_NAME} ${TARGET_PARAM}
+  Project/Game/Main.cpp
+  Project/Game/HealthComponent.cpp
+  Project/Game/RotatorComponent.cpp
+  Project/Game/DamageCommand.cpp
+)
+
+
+
+# Get external libraries
 
 include(FetchContent)
 # add glm
@@ -177,7 +182,8 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_widgets.cpp
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp)
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
+)
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
@@ -193,13 +199,16 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
-target_include_directories("${TARGET_NAME}" PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Base
-  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Commands
-  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Components
-  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Events
-  ${CMAKE_SOURCE_DIR}/Minigin/Engine/Systems
-  ${CMAKE_SOURCE_DIR}/Minigin/Game
+
+
+# Add includeds and libraries
+
+target_include_directories(engine PUBLIC
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Base
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Commands
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Components
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Events
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Systems
   ${glm_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include
@@ -209,7 +218,18 @@ target_include_directories("${TARGET_NAME}" PUBLIC
   ${VLD_INCLUDE_DIR}
 )
 
-target_link_libraries("${TARGET_NAME}" PUBLIC
+target_include_directories("${TARGET_NAME}" PUBLIC
+  ${CMAKE_SOURCE_DIR}/Project/Game
+  ${glm_SOURCE_DIR}
+  ${sdl3_SOURCE_DIR}/include
+  ${sdl3_image_SOURCE_DIR}/include
+  ${sdl3_ttf_SOURCE_DIR}/include
+  ${sdl3_mixer_SOURCE_DIR}/include
+  ${imgui_SOURCE_DIR}
+  ${VLD_INCLUDE_DIR}
+)
+
+target_link_libraries(engine PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
   SDL3_mixer::SDL3_mixer
@@ -218,12 +238,24 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   ${VLD_LIBRARIES}
 )
 
+target_link_libraries("${TARGET_NAME}" PUBLIC
+  engine
+)
+
+
+
+# Set warning levels
+
 if(MSVC)
   # compile at warning level 4 + treat warnings as errors
   target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
 else()
   target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()
+
+
+
+# No touching
 
 if(EMSCRIPTEN)
   set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
@@ -246,7 +278,7 @@ if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
 elseif(WIN32)
-  # Set minigin as the default startup project
+  # Set project as the default startup project
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET_NAME})
   # Set working directory to output folder
   set_target_properties(${TARGET_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TARGET_NAME}>")
