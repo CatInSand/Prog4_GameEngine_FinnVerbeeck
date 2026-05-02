@@ -34,16 +34,14 @@ static void load()
 {
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
 
-	std::unique_ptr<dae::GameObject> root{ std::make_unique<dae::GameObject>(nullptr, "Root")};
-
 	//background
-	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(root.get(), "Background") };
+	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
 	std::unique_ptr<dae::RenderComponent> renderComponent{ std::make_unique<dae::RenderComponent>(gameObject.get()) };
 	renderComponent->SetTexture("background.png");
 	gameObject->AddComponent<dae::RenderComponent>(std::move(renderComponent));
 	scene.Add(std::move(gameObject));
 
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "Logo");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Logo");
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("logo.png");
 	gameObject->SetLocalPosition(358, 180);
@@ -52,7 +50,7 @@ static void load()
 
 	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "Text");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Text");
 	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(gameObject.get(), "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
 	gameObject->SetLocalPosition(292, 20);
@@ -60,7 +58,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//fps
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "FPS counter");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "FPS counter");
 	textComponent = std::make_unique<dae::Text>(gameObject.get(), "FPS", font);
 	std::unique_ptr<dae::FPSCounter> fpsCounterComponent{ std::make_unique<dae::FPSCounter>(gameObject.get()) };
 	textComponent->SetColor({ 255, 255, 255, 255 });
@@ -72,7 +70,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//keybinds
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player1");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player1");
 	gameObject->SetLocalPosition(100.f, 0.f);
 
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
@@ -109,7 +107,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//controller bindings
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "Player2");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player2");
 	gameObject->SetLocalPosition(200.f, 0.f);
 	renderComponent = std::make_unique<dae::RenderComponent>(gameObject.get());
 	renderComponent->SetTexture("digdug.png");
@@ -139,7 +137,7 @@ static void load()
 	scene.Add(std::move(gameObject));
 
 	//sound
-	gameObject = std::make_unique<dae::GameObject>(root.get(), "Text");
+	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Text");
 	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Press G to play sound :D", font);
 	textComponent->SetColor({ 255, 255, 255, 255 });
 	gameObject->SetLocalPosition(20, 520);
@@ -149,13 +147,13 @@ static void load()
 	dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
 	std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
 	dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
-
-	//end
-	scene.Add(std::move(root));
 }
+
+
 
 int main(int, char*[])
 {
+
 #if __EMSCRIPTEN__
 	std::filesystem::path data_location{ "" };
 #else

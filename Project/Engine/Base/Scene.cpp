@@ -44,3 +44,8 @@ void dae::Scene::DeleteQueue()
 		object->DeleteQueue();
 	}
 }
+
+dae::GameObject* dae::Scene::Root()
+{
+	return m_RootObject.get();
+}

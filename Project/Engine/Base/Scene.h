@@ -1,6 +1,7 @@
-#pragma once
+#ifndef SCENE_H
+#define SCENE_H
+
 #include <memory>
-#include <string>
 #include <vector>
 #include "GameObject.h"
 
@@ -17,6 +18,8 @@ namespace dae
 
 		void DeleteQueue();
 
+		GameObject* Root();
+
 		~Scene() = default;
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
@@ -27,7 +30,9 @@ namespace dae
 		friend class SceneManager;
 		explicit Scene() = default;
 
-		std::vector < std::unique_ptr<GameObject>> m_Objects{};
+		std::unique_ptr<GameObject> m_RootObject{ std::make_unique<GameObject>(nullptr, "Root") };
+		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 	};
-
 }
+
+#endif
