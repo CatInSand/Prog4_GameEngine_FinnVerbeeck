@@ -1,6 +1,6 @@
 #include "FPSComponent.h"
 #include "FPSCounter.h"
-#include "Text.h"
+#include "TextComponent.h"
 #include "GameObject.h"
 #include <format>
 
@@ -9,7 +9,7 @@ dae::FPSComponent::FPSComponent(dae::GameObject* owner)
 {
 	//Should be in Start function
 	m_pFPSCounterComponent = Component::GetOwner()->GetComponent<dae::FPSCounter>();
-	m_pTextComponent = Component::GetOwner()->GetComponent<dae::Text>();
+	m_pTextComponent = Component::GetOwner()->GetComponent<dae::TextComponent>();
 }
 
 void dae::FPSComponent::Update()

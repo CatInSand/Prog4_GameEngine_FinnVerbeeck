@@ -1,7 +1,7 @@
 #ifndef FPS_COUNTER_H
 #define FPS_COUNTER_H
 
-#include "Text.h"
+#include "TextComponent.h"
 #include "DeltaTime.h"
 #include <vector>
 

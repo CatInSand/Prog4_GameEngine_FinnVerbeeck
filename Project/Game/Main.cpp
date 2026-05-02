@@ -51,20 +51,20 @@ static void load()
 	std::shared_ptr<dae::Font> font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Text");
-	std::unique_ptr<dae::Text> textComponent{ std::make_unique<dae::Text>(gameObject.get(), "Programming 4 Assignment", font) };
+	std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(gameObject.get(), "Programming 4 Assignment", font) };
 	textComponent->SetColor({ 255, 255, 0, 255 });
 	gameObject->SetLocalPosition(292, 20);
-	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 	scene.Add(std::move(gameObject));
 
 	//fps
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "FPS counter");
-	textComponent = std::make_unique<dae::Text>(gameObject.get(), "FPS", font);
+	textComponent = std::make_unique<dae::TextComponent>(gameObject.get(), "FPS", font);
 	std::unique_ptr<dae::FPSCounter> fpsCounterComponent{ std::make_unique<dae::FPSCounter>(gameObject.get()) };
 	textComponent->SetColor({ 255, 255, 255, 255 });
 	gameObject->SetLocalPosition(0, 0);
 	gameObject->AddComponent<dae::FPSCounter>(std::move(fpsCounterComponent));
-	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 	std::unique_ptr<dae::FPSComponent> fpsComponent{ std::make_unique<dae::FPSComponent>(gameObject.get()) };
 	gameObject->AddComponent<dae::FPSComponent>(std::move(fpsComponent));
 	scene.Add(std::move(gameObject));
@@ -85,9 +85,9 @@ static void load()
 	gameObject->AddComponent<dae::HealthComponent>(std::move(healthComponent));
 	gameObject->AddComponent<dae::DeathObserverComponent>(std::move(deathObserver));
 
-	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Alive", font);
+	textComponent = std::make_unique<dae::TextComponent>(gameObject.get(), "Alive", font);
 	textComponent->SetColor({ 255, 255, 255, 255 });
-	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 
 	constexpr float SPEED{ 100.f };
 	std::unique_ptr<dae::MoveCommand> moveCommandUp{ std::make_unique<dae::MoveCommand>(gameObject.get(), glm::vec2{0.f, -1.f}, SPEED) };
@@ -138,10 +138,10 @@ static void load()
 
 	//sound
 	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Text");
-	textComponent = std::make_unique<dae::Text>(gameObject.get(), "Press G to play sound :D", font);
+	textComponent = std::make_unique<dae::TextComponent>(gameObject.get(), "Press G to play sound :D", font);
 	textComponent->SetColor({ 255, 255, 255, 255 });
 	gameObject->SetLocalPosition(20, 520);
-	gameObject->AddComponent<dae::Text>(std::move(textComponent));
+	gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 	scene.Add(std::move(gameObject));
 
 	dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };

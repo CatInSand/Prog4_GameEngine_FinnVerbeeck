@@ -40,7 +40,7 @@ add_library(engine STATIC
   Project/Engine/Components/FPSComponent.cpp
   Project/Engine/Components/FPSCounter.cpp
   Project/Engine/Components/RenderComponent.cpp
-  Project/Engine/Components/Text.cpp
+  Project/Engine/Components/TextComponent.cpp
 
   Project/Engine/Events/Observer.cpp
 

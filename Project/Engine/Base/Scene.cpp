@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Scene.h"
-#include "Text.h"
 
 void dae::Scene::Add(std::unique_ptr<GameObject>&& object)
 {

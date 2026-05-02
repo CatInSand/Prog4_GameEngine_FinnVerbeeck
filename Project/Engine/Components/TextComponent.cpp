@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "TextComponent.h"
 
 #include <stdexcept>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -6,7 +6,7 @@
 #include "Texture2D.h"
 #include "GameObject.h"
 
-dae::Text::Text(dae::GameObject* owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
+dae::TextComponent::TextComponent(dae::GameObject* owner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
 	: RenderComponent(owner)
 	, m_Text{ text }
 	, m_Color{ color }
@@ -14,7 +14,7 @@ dae::Text::Text(dae::GameObject* owner, const std::string& text, std::shared_ptr
 {
 }
 
-void dae::Text::Update()
+void dae::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
 	{
@@ -34,7 +34,7 @@ void dae::Text::Update()
 	}
 }
 
-void dae::Text::SetText(const std::string& text)
+void dae::TextComponent::SetText(const std::string& text)
 {
 	if (text != m_Text)
 	{
@@ -43,12 +43,12 @@ void dae::Text::SetText(const std::string& text)
 	}
 }
 
-void dae::Text::SetPosition(const float x, const float y)
+void dae::TextComponent::SetPosition(const float x, const float y)
 {
 	GetOwner()->GetWorldTransform().SetPosition(x, y);
 }
 
-void dae::Text::SetColor(const SDL_Color& color)
+void dae::TextComponent::SetColor(const SDL_Color& color)
 {
 	m_Color = color;
 	m_NeedsUpdate = true;

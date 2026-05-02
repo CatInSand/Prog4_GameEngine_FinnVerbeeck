@@ -13,15 +13,15 @@ namespace dae
 	class Font;
 	class Texture2D;
 	class GameObject;
-	class Text : public RenderComponent
+	class TextComponent : public RenderComponent
 	{
 	public:
-		Text(GameObject*, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
-		virtual ~Text() = default;
-		Text(const Text& other) = delete;
-		Text(Text&& other) = delete;
-		Text& operator=(const Text& other) = delete;
-		Text& operator=(Text&& other) = delete;
+		TextComponent(GameObject*, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
+		virtual ~TextComponent() = default;
+		TextComponent(const TextComponent& other) = delete;
+		TextComponent(TextComponent&& other) = delete;
+		TextComponent& operator=(const TextComponent& other) = delete;
+		TextComponent& operator=(TextComponent&& other) = delete;
 
 		virtual void Update() override;
 

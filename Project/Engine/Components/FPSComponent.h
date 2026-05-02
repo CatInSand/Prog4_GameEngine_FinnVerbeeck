@@ -7,7 +7,7 @@ namespace dae
 {
 	class GameObject;
 	class FPSCounter;
-	class Text;
+	class TextComponent;
 	class FPSComponent final : public Component
 	{
 	public:
@@ -22,7 +22,7 @@ namespace dae
 
 	private:
 		FPSCounter* m_pFPSCounterComponent{ nullptr };
-		Text* m_pTextComponent{ nullptr };
+		TextComponent* m_pTextComponent{ nullptr };
 	};
 }
 
