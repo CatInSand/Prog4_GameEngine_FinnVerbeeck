@@ -4,12 +4,12 @@
 #include "GameObject.h"
 
 dae::TextureComponent::TextureComponent(dae::GameObject* owner)
-	: Component(owner)
+	: RenderComponent(owner)
 {
 }
 
 dae::TextureComponent::TextureComponent(dae::GameObject* owner, const std::string& filename)
-	: Component(owner)
+	: RenderComponent(owner)
 	, m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
 {
 }

@@ -1,13 +1,12 @@
 #ifndef TEXTURE_COMPONENT_H
 #define TEXTURE_COMPONENT_H
 
-#include "Component.h"
-#include <string>
+#include "RenderComponent.h"
 
 namespace dae
 {
 	class Texture2D;
-	class TextureComponent : public Component
+	class TextureComponent : public RenderComponent
 	{
 	public:
 		TextureComponent(GameObject* owner);
@@ -18,8 +17,10 @@ namespace dae
 		TextureComponent& operator=(const TextureComponent& other) = delete;
 		TextureComponent& operator=(TextureComponent&& other) = delete;
 
-		virtual void Update() override {}
-		virtual void Render();
+		virtual void Update() override
+		{
+		}
+		virtual void Render() override;
 
 	protected:
 		std::shared_ptr<Texture2D> m_pTexture{ nullptr };

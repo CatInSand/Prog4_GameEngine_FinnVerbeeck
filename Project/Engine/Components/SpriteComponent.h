@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "TextureComponent.h"
+#include "RenderComponent.h"
 #include "Sprite.h"
 
 namespace dae
 {
-	class SpriteComponent final : public TextureComponent
+	class SpriteComponent final : public RenderComponent
 	{
 	public:
 		SpriteComponent(GameObject* owner, Sprite&& sprite);
