@@ -1,5 +1,5 @@
-#ifndef RENDER_COMPONENT_H
-#define RENDER_COMPONENT_H
+#ifndef TEXTURE_COMPONENT_H
+#define TEXTURE_COMPONENT_H
 
 #include "Component.h"
 #include <string>
