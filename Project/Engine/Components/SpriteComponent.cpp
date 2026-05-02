@@ -1,12 +1,8 @@
 #include "SpriteComponent.h"
-#include "ResourceManager.h"
-#include "DeltaTime.h"
-#include "Renderer.h"
 #include "GameObject.h"
-#include "Texture2D.h"
 
 dae::SpriteComponent::SpriteComponent(GameObject* owner, Sprite&& sprite)
-	: TextureComponent(owner)
+	: RenderComponent(owner)
 	, m_Sprite{ std::move(sprite) }
 {
 }
@@ -16,5 +12,5 @@ void dae::SpriteComponent::Update()
 }
 void dae::SpriteComponent::Render()
 {
-	m_Sprite.Update();
+	m_Sprite.Render(GetOwner()->GetWorldTransform().GetPosition());
 }
