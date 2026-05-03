@@ -10,6 +10,7 @@
 #include "ResourceManager.h"
 #include "TextureComponent.h"
 #include "MultiSpriteComponent.h"
+#include "GridComponent.h"
 #include "Scene.h"
 
 #include <filesystem>
@@ -38,32 +39,48 @@ static void load()
 	std::shared_ptr<dae::Font> smoothFont{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 	std::shared_ptr<dae::Font> arcadeFont{ dae::ResourceManager::GetInstance().LoadFont("Arcade.TTF", 36) };
 
-	//background
-	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
-	std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "background.png") };
-	gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
-	scene.Add(std::move(gameObject));
+	{
+		//background
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
+		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "background.png") };
+		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
+		scene.Add(std::move(gameObject));
+	}
 
-	//sprites
-	gameObject = std::make_unique<dae::GameObject>(scene.Root(), "Player1");
-	gameObject->SetLocalPosition(100.f, 0.f);
+	{
+		//grid
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Grid") };
+		gameObject->SetLocalPosition(150.f, 0.f);
 
-	std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
-		{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::single} },
-		{ static_cast<dae::sprite_id>(PlayerSprite::walking), {"sprites/walk.png", dae::Sprite::Type::loop, 0.2f} },
-		{ static_cast<dae::sprite_id>(PlayerSprite::drilling), {"sprites/swing.png", dae::Sprite::Type::swing, 0.2f} },
-	};
+		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
+		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
+		scene.Add(std::move(gameObject));
+	}
 
-	std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
-		std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
-	};
-	gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
-	scene.Add(std::move(gameObject));
+	{
+		//sprites
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player1") };
+		gameObject->SetLocalPosition(100.f, 0.f);
 
-	//sound
-	dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
-	std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
-	dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
+		std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
+			{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::single} },
+			{ static_cast<dae::sprite_id>(PlayerSprite::walking), {"sprites/walk.png", dae::Sprite::Type::loop, 0.2f} },
+			{ static_cast<dae::sprite_id>(PlayerSprite::drilling), {"sprites/swing.png", dae::Sprite::Type::swing, 0.2f} },
+		};
+
+		std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
+			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
+		};
+		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
+		scene.Add(std::move(gameObject));
+	}
+
+	{
+		//sound
+		dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
+		std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
+		dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
+	}
 }
 
 
