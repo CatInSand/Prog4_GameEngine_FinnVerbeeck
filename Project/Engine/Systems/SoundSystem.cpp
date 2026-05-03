@@ -32,10 +32,17 @@ namespace dae
 				m_Tracks.push_back(MIX_CreateTrack(m_pMixer));
 			}
 
-			m_Thread = std::jthread{ &dae::SoundSystem::SoundSystemImpl::AudioMain, this, std::stop_token{} };
+			m_Thread = std::jthread{ &dae::SoundSystem::SoundSystemImpl::AudioMain, this, m_StopToken };
 		}
 		~SoundSystemImpl()
 		{
+			//stop thread
+			std::unique_lock<std::mutex> lock{ m_Mutex };
+			m_StopSource.request_stop();
+			m_ConditionVariable.notify_all();
+			lock.unlock();
+
+			//cleanup
 			for (auto [id, pAudio] : m_IDAudioMap)
 			{
 				MIX_DestroyAudio(pAudio);
@@ -114,6 +121,8 @@ namespace dae
 			throw std::runtime_error("Attempted to get free track while none were available");
 		}
 
+		std::stop_source m_StopSource;
+		std::stop_token m_StopToken{ m_StopSource.get_token() };
 		std::condition_variable m_ConditionVariable{};
 		std::jthread m_Thread{};
 		std::mutex m_Mutex{};

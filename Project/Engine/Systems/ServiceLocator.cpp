@@ -10,5 +10,5 @@ dae::BaseSoundSystem& dae::ServiceLocator::GetSoundSystem()
 }
 void dae::ServiceLocator::RegisterSoundSystem(std::unique_ptr<dae::BaseSoundSystem>&& pSoundSystem)
 {
-	m_pSoundSystemInstance = (pSoundSystem == nullptr ? std::make_unique<NullSoundSystem>() : std::move(pSoundSystem));
+	m_pSoundSystemInstance = (pSoundSystem.get() == nullptr ? std::make_unique<NullSoundSystem>() : std::move(pSoundSystem));
 }
