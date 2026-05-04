@@ -58,6 +58,16 @@ static void load()
 	}
 
 	{
+		//grid
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
+		gameObject->SetLocalPosition(100.f, 30.f);
+
+		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
+		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
+		scene.Add(std::move(gameObject));
+	}
+
+	{
 		//sprites
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player1") };
 		gameObject->SetLocalPosition(100.f, 0.f);
