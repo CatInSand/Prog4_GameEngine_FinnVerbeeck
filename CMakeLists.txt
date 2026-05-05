@@ -54,7 +54,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/HealthComponent.cpp
   Project/Game/RotatorComponent.cpp
   Project/Game/DamageCommand.cpp
- "Project/Game/GridComponent.cpp")
+ "Project/Game/GridComponent.cpp" "Project/Game/Pooka.cpp")
 
 
 
