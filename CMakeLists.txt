@@ -39,22 +39,29 @@ add_library(engine STATIC
   Project/Engine/Components/Component.cpp
   Project/Engine/Components/FPSComponent.cpp
   Project/Engine/Components/FPSCounter.cpp
-  "Project/Engine/Components/TextureComponent.cpp"
+  Project/Engine/Components/TextureComponent.cpp
   Project/Engine/Components/TextComponent.cpp
+  Project/Engine/Components/SpriteComponent.cpp
+  Project/Engine/Components/Sprite.cpp
 
   Project/Engine/Events/Observer.cpp
 
   Project/Engine/Systems/DeltaTime.cpp
   Project/Engine/Systems/ServiceLocator.cpp
   Project/Engine/Systems/SoundSystem.cpp
-  "Project/Engine/Components/SpriteComponent.cpp" "Project/Engine/Components/Sprite.cpp" "Project/Engine/Systems/StateMachine.cpp")
+  Project/Engine/Systems/StateMachine.cpp
+
+  Project/Engine/Utility/Timer.cpp
+)
 
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/Main.cpp
   Project/Game/HealthComponent.cpp
   Project/Game/RotatorComponent.cpp
   Project/Game/DamageCommand.cpp
- "Project/Game/GridComponent.cpp" "Project/Game/Pooka.cpp")
+  Project/Game/GridComponent.cpp
+  Project/Game/Pooka.cpp
+)
 
 
 
@@ -209,6 +216,7 @@ target_include_directories(engine PUBLIC
   ${CMAKE_SOURCE_DIR}/Project/Engine/Components
   ${CMAKE_SOURCE_DIR}/Project/Engine/Events
   ${CMAKE_SOURCE_DIR}/Project/Engine/Systems
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Utility
   ${glm_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include
