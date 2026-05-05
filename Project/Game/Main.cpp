@@ -11,6 +11,8 @@
 #include "TextureComponent.h"
 #include "MultiSpriteComponent.h"
 #include "GridComponent.h"
+#include "StateMachine.h"
+#include "Pooka.h"
 #include "Scene.h"
 
 #include <filesystem>
@@ -58,12 +60,33 @@ static void load()
 	}
 
 	{
-		//grid
+		//pooka
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
 		gameObject->SetLocalPosition(100.f, 30.f);
 
-		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
-		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
+		std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
+			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::walk), {"sprites/pooka_walk.png", dae::Sprite::Type::loop, 0.2f} },
+			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::ghost), {"sprites/pooka_ghost.png", dae::Sprite::Type::loop, 0.2f} },
+			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::flat), {"sprites/pooka_flat.png", dae::Sprite::Type::still} },
+			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::blow), {"sprites/pooka_blow.png", dae::Sprite::Type::single} },
+		};
+
+		std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
+			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
+		};
+		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
+
+		std::vector<std::unique_ptr<dae::State>> states{};
+		states.push_back(std::make_unique<dae::Pooka::Idle>(gameObject.get()));
+		states.push_back(std::make_unique<dae::Pooka::Ghost>(gameObject.get()));
+		states.push_back(std::make_unique<dae::Pooka::Chase>(gameObject.get()));
+		states.push_back(std::make_unique<dae::Pooka::Flat>(gameObject.get()));
+		states.push_back(std::make_unique<dae::Pooka::Blow>(gameObject.get()));
+
+		std::unique_ptr<dae::StateMachine> stateMachine{
+			std::make_unique<dae::StateMachine>(gameObject.get(), std::move(states), 0)
+		};
+		gameObject->AddComponent<dae::StateMachine>(std::move(stateMachine));
 		scene.Add(std::move(gameObject));
 	}
 
