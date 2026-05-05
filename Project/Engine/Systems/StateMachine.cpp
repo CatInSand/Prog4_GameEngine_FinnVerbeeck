@@ -35,7 +35,7 @@ bool dae::StateMachine::AllStatesUnique()
 		for (int secondIndex{ firstIndex + 1 }; secondIndex < m_States.size(); ++secondIndex)
 		{
 			//for each pair of states
-			if (typeid(pState.get()) == typeid(m_States[secondIndex].get()))
+			if (typeid(*pState.get()) == typeid(*m_States[secondIndex].get()))
 			{
 				//duplicate state
 				return false;
