@@ -45,11 +45,13 @@ namespace dae
 				[](const std::unique_ptr<State>& pState) { return dynamic_cast<T*>(pState.get()) != nullptr; }
 			);
 
-			assert(it != m_pComponents.end());
+			assert(it != m_States.end());
 			m_CurrentState->Exit();
 			m_CurrentState = dynamic_cast<T*>((*it).get());
 			m_CurrentState->Enter();
 		}
+
+		State* CurrentState() const;
 
 	private:
 		bool AllStatesUnique();

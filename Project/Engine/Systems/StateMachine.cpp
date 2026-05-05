@@ -14,11 +14,17 @@ dae::StateMachine::StateMachine(GameObject* owner, std::vector<std::unique_ptr<S
 	assert(AllStatesUnique());
 
 	m_CurrentState = m_States[startState].get();
+	m_CurrentState->Enter();
 }
 
 void dae::StateMachine::Update()
 {
 	m_CurrentState->Update();
+}
+
+dae::State* dae::StateMachine::CurrentState() const
+{
+	return m_CurrentState;
 }
 
 bool dae::StateMachine::AllStatesUnique()
