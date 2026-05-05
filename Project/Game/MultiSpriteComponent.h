@@ -29,9 +29,11 @@ namespace dae
 			m_CurrentSprite.Render(GetOwner()->GetWorldTransform().GetPosition());
 		}
 
-		void SetSprite(sprite_id spriteID)
+		template<typename T>
+			requires requires (T t) { static_cast<sprite_id>(t); }
+		void SetSprite(T spriteID)
 		{
-			m_CurrentSprite = m_SpriteMap.at(spriteID);
+			m_CurrentSprite = m_SpriteMap.at(static_cast<sprite_id>(spriteID));
 		}
 
 	private:
