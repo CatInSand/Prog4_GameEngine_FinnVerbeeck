@@ -12,6 +12,7 @@ namespace dae
 	{
 	public:
 		enum class Type : uint8_t {
+			still,
 			single,
 			loop,
 			swing,

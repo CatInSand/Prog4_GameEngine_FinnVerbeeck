@@ -73,7 +73,7 @@ static void load()
 		gameObject->SetLocalPosition(100.f, 0.f);
 
 		std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
-			{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::single} },
+			{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::still} },
 			{ static_cast<dae::sprite_id>(PlayerSprite::walking), {"sprites/walk.png", dae::Sprite::Type::loop, 0.2f} },
 			{ static_cast<dae::sprite_id>(PlayerSprite::drilling), {"sprites/swing.png", dae::Sprite::Type::swing, 0.2f} },
 		};

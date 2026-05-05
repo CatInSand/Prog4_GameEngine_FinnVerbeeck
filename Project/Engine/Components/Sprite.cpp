@@ -25,24 +25,27 @@ void dae::Sprite::Update()
 {
 	m_FrameTimer += gDeltaTime;
 
-	switch (m_Type)
+	while (m_FrameTimer >= m_TimePerFrame)
 	{
-	case dae::Sprite::Type::loop:
-		while (m_FrameTimer >= m_TimePerFrame)
+		m_FrameTimer -= m_TimePerFrame;
+
+		switch (m_Type)
 		{
-			m_FrameTimer -= m_TimePerFrame;
+		case dae::Sprite::Type::loop:
 			m_CurrentFrame = (m_CurrentFrame + 1) % m_FrameCount;
-		}
-		break;
-	case dae::Sprite::Type::swing:
-		while (m_FrameTimer >= m_TimePerFrame)
-		{
-			m_FrameTimer -= m_TimePerFrame;
+			break;
+		case dae::Sprite::Type::swing:
 			m_CurrentFrame = (m_CurrentFrame + 1) % (m_FrameCount * 2 - 2);
+			break;
+		case dae::Sprite::Type::single:
+			if (m_CurrentFrame < m_FrameCount - 1)
+			{
+				++m_CurrentFrame;
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	default:
-		break;
 	}
 }
 void dae::Sprite::Render(const glm::vec2& pos)
@@ -52,9 +55,10 @@ void dae::Sprite::Render(const glm::vec2& pos)
 
 	switch (m_Type)
 	{
-	case dae::Sprite::Type::single:
+	case dae::Sprite::Type::still:
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 		break;
+	case dae::Sprite::Type::single:
 	case dae::Sprite::Type::loop:
 		srcRect = {
 			.left = static_cast<float>(m_CurrentFrame * m_SingleSize.x),
