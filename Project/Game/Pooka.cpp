@@ -1,5 +1,6 @@
 #include "Pooka.h"
 #include "GameObject.h"
+#include "MultiSpriteComponent.h"
 
 dae::Pooka::Pooka(dae::GameObject* pOwner)
 	: Component(pOwner)
@@ -19,6 +20,7 @@ dae::Pooka::Idle::Idle(GameObject* pObject)
 }
 void dae::Pooka::Idle::Update()
 {
+	m_Timer.Update();
 }
 void dae::Pooka::Idle::Enter()
 {

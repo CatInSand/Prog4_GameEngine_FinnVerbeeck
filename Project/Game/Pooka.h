@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "StateMachine.h"
-#include "EnemyStates.h"
+#include "Timer.h"
 
 namespace dae
 {
@@ -34,6 +34,8 @@ namespace dae
 
 			virtual void Enter() override;
 			virtual void Exit() override;
+		private:
+			Timer m_Timer{ 5.f };
 		};
 		class Ghost final : public State
 		{
