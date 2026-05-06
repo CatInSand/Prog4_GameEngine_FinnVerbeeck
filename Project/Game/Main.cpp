@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "TextureComponent.h"
+#include "TextComponent.h"
 #include "MultiSpriteComponent.h"
 #include "GridComponent.h"
 #include "StateMachine.h"
@@ -48,6 +49,14 @@ static void load()
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Background") };
 		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "background.png") };
 		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
+		scene.Add(std::move(gameObject));
+	}
+
+	{
+		//text
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Text") };
+		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(gameObject.get(), "no gameplay currently :(", smoothFont) };
+		gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 		scene.Add(std::move(gameObject));
 	}
 
