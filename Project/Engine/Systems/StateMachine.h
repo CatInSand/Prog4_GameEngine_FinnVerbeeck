@@ -78,7 +78,7 @@ namespace dae
 		bool AllStatesUnique()
 		{
 			int firstIndex{ 0 };
-			for (std::unique_ptr<State>& pState : m_States)
+			for (std::unique_ptr<State<dataT>>& pState : m_States)
 			{
 				for (int secondIndex{ firstIndex + 1 }; secondIndex < m_States.size(); ++secondIndex)
 				{
