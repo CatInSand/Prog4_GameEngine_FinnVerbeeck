@@ -35,7 +35,7 @@ namespace dae
 			virtual void Enter() override;
 			virtual void Exit() override;
 		private:
-			Timer m_Timer{ 5.f };
+			Timer m_Timer{ 10.f };
 		};
 		class Ghost final : public State
 		{
@@ -45,6 +45,8 @@ namespace dae
 
 			virtual void Enter() override;
 			virtual void Exit() override;
+		private:
+			Timer m_Timer{ 10.f };
 		};
 		class Chase final : public State
 		{
@@ -54,6 +56,8 @@ namespace dae
 
 			virtual void Enter() override;
 			virtual void Exit() override;
+		private:
+			Timer m_Timer{ 10.f };
 		};
 		class Flat final : public State
 		{

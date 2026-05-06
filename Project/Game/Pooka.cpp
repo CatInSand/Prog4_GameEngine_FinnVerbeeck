@@ -21,6 +21,11 @@ dae::Pooka::Idle::Idle(GameObject* pObject)
 void dae::Pooka::Idle::Update()
 {
 	m_Timer.Update();
+	if (m_Timer.Done())
+	{
+		m_Timer.Reset();
+		m_pObject->GetComponent<StateMachine>()->SetState<Ghost>();
+	}
 }
 void dae::Pooka::Idle::Enter()
 {
@@ -36,6 +41,12 @@ dae::Pooka::Ghost::Ghost(GameObject* pObject)
 }
 void dae::Pooka::Ghost::Update()
 {
+	m_Timer.Update();
+	if (m_Timer.Done())
+	{
+		m_Timer.Reset();
+		m_pObject->GetComponent<StateMachine>()->SetState<Chase>();
+	}
 }
 void dae::Pooka::Ghost::Enter()
 {
@@ -51,6 +62,12 @@ dae::Pooka::Chase::Chase(GameObject* pObject)
 }
 void dae::Pooka::Chase::Update()
 {
+	m_Timer.Update();
+	if (m_Timer.Done())
+	{
+		m_Timer.Reset();
+		m_pObject->GetComponent<StateMachine>()->SetState<Flat>();
+	}
 }
 void dae::Pooka::Chase::Enter()
 {

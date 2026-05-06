@@ -72,7 +72,7 @@ static void load()
 		};
 
 		std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
-			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
+			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 0)
 		};
 		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
 
