@@ -32,14 +32,19 @@ namespace dae
 		class Idle final : public Pooka::State
 		{
 		public:
+			Idle(StateData* pData) : Pooka::State(pData) {}
 			virtual void Update() override;
 
 			virtual void Enter() override;
 			virtual void Exit() override;
+
+		private:
+			float m_DetectionRadius{ 64.f };
 		};
 		class Ghost final : public Pooka::State
 		{
 		public:
+			Ghost(StateData* pData) : Pooka::State(pData) {}
 			virtual void Update() override;
 
 			virtual void Enter() override;
@@ -48,6 +53,7 @@ namespace dae
 		class Chase final : public Pooka::State
 		{
 		public:
+			Chase(StateData* pData) : Pooka::State(pData) {}
 			virtual void Update() override;
 
 			virtual void Enter() override;
@@ -56,6 +62,7 @@ namespace dae
 		class Flat final : public Pooka::State
 		{
 		public:
+			Flat(StateData* pData) : Pooka::State(pData) {}
 			virtual void Update() override;
 
 			virtual void Enter() override;
@@ -64,6 +71,16 @@ namespace dae
 		class Blow final : public Pooka::State
 		{
 		public:
+			Blow(StateData* pData) : Pooka::State(pData) {}
+			virtual void Update() override;
+
+			virtual void Enter() override;
+			virtual void Exit() override;
+		};
+		class Deflate final : public Pooka::State
+		{
+		public:
+			Deflate(StateData* pData) : Pooka::State(pData) {}
 			virtual void Update() override;
 
 			virtual void Enter() override;
