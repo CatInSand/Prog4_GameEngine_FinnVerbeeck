@@ -35,7 +35,8 @@ namespace dae
 
 		void PushBack(std::unique_ptr<T>&& pComponent)
 		{
-			m_Components.push_back(pComponent);
+			assert(pComponent->GetOwner() != nullptr);
+			m_Components.push_back(std::move(pComponent));
 		}
 
 		T* Get(size_t index)
@@ -53,15 +54,15 @@ namespace dae
 	class RenderComponentList final : public RenderComponent
 	{
 	public:
-		ComponentList(GameObject* pOwner)
+		RenderComponentList(GameObject* pOwner)
 			: RenderComponent(pOwner)
 		{
 		}
-		virtual ~ComponentList() = default;
-		ComponentList(const ComponentList& other) = delete;
-		ComponentList(ComponentList&& other) = delete;
-		ComponentList& operator=(const ComponentList& other) = delete;
-		ComponentList& operator=(ComponentList&& other) = delete;
+		virtual ~RenderComponentList() = default;
+		RenderComponentList(const RenderComponentList& other) = delete;
+		RenderComponentList(RenderComponentList&& other) = delete;
+		RenderComponentList& operator=(const RenderComponentList& other) = delete;
+		RenderComponentList& operator=(RenderComponentList&& other) = delete;
 
 		virtual void Update() override
 		{

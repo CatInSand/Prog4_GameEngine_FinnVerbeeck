@@ -15,6 +15,7 @@
 #include "Settings.h"
 #include "Pooka.h"
 #include "Scene.h"
+#include "ComponentList.h"
 
 #include <filesystem>
 #include "InputManager.h"
@@ -54,6 +55,11 @@ static void load()
 		//grid
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Grid") };
 		gameObject->SetLocalPosition(150.f, 0.f);
+
+		std::unique_ptr<dae::RenderComponentList<dae::TextureComponent>> textureComponentList{
+			std::make_unique<dae::RenderComponentList<dae::TextureComponent>>(gameObject.get())
+		};
+		gameObject->AddComponent<dae::RenderComponentList<dae::TextureComponent>>(std::move(textureComponentList));
 
 		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
 		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));

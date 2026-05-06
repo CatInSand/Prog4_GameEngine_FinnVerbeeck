@@ -52,7 +52,7 @@ add_library(engine STATIC
   Project/Engine/Systems/StateMachine.cpp
 
   Project/Engine/Utility/Timer.cpp
-)
+ )
 
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/Main.cpp

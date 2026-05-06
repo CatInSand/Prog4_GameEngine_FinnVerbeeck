@@ -11,6 +11,8 @@ namespace dae
 	class Scene final
 	{
 	public:
+		Scene() = default;
+
 		void Add(std::unique_ptr<GameObject>&& object);
 		void RemoveAll();
 
@@ -33,9 +35,6 @@ namespace dae
 		Scene& operator=(Scene&& other) = delete;
 
 	private:
-		friend class SceneManager;
-		explicit Scene() = default;
-
 		std::unique_ptr<GameObject> m_RootObject{ std::make_unique<GameObject>(nullptr, "Root") };
 		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 	};
