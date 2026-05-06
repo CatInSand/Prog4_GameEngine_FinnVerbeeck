@@ -12,6 +12,7 @@
 #include "MultiSpriteComponent.h"
 #include "GridComponent.h"
 #include "StateMachine.h"
+#include "Settings.h"
 #include "Pooka.h"
 #include "Scene.h"
 
@@ -120,7 +121,6 @@ static void load()
 
 int main(int, char*[])
 {
-
 #if __EMSCRIPTEN__
 	std::filesystem::path data_location{ "" };
 #else
@@ -129,7 +129,14 @@ int main(int, char*[])
 		data_location = "../Data/";
 #endif
 
-	dae::Minigin engine(data_location);
+	dae::Settings settings{
+		.screenWidth = 1080,
+		.screenHeight = 720,
+		.gameWidth = 224,
+		.gameHeight = 288,
+	};
+
+	dae::Minigin engine(data_location, std::move(settings));
 	engine.Run(load);
 
     return 0;

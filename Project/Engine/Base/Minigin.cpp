@@ -57,7 +57,8 @@ void PrintSDLVersion()
 	LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-dae::Minigin::Minigin(const std::filesystem::path& dataPath)
+dae::Minigin::Minigin(const std::filesystem::path& dataPath, Settings&& settings)
+	: m_Settings{ std::move(settings) }
 {
 	PrintSDLVersion();
 	
@@ -69,8 +70,8 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
-		800,
-		600,
+		m_Settings.screenWidth,
+		m_Settings.screenHeight,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
