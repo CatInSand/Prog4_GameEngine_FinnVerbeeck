@@ -39,7 +39,7 @@ namespace dae
 			virtual void Exit() override;
 
 		private:
-			float m_DetectionRadius{ 64.f };
+			//float m_DetectionRadius{ 64.f };
 		};
 		class Ghost final : public Pooka::State
 		{
