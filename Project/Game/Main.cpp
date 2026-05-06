@@ -37,6 +37,7 @@ enum class PlayerSprite : dae::sprite_id {
 	drilling,
 };
 
+
 static void load()
 {
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
