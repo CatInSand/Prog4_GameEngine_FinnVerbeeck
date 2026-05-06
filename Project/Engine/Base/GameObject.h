@@ -18,10 +18,14 @@ namespace dae
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
-
+		
 		//Name & tags
 		std::string Name() const;
 		void Rename(const std::string& name);
+		bool HasTag(const std::string& tag) const;
+		void AddTag(const std::string& tag);
+		void RemoveTag(const std::string& tag);
+		std::vector<std::string> Tags() const;
 
 		//Components
 		template<typename T>
@@ -99,6 +103,7 @@ namespace dae
 	private:
 		//Name & tags
 		std::string m_Name;
+		std::vector<std::string> m_Tags{};
 
 		//Components
 		std::vector<std::unique_ptr<Component>> m_pComponents{};

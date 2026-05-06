@@ -39,6 +39,27 @@ void dae::GameObject::Rename(const std::string& name)
 {
 	m_Name = name;
 }
+bool dae::GameObject::HasTag(const std::string& tag) const
+{
+	const auto it{ std::find(m_Tags.cbegin(), m_Tags.cend(), tag) };
+	if (it != m_Tags.cend())
+	{
+		return true;
+	}
+	return false;
+}
+void dae::GameObject::AddTag(const std::string& tag)
+{
+	m_Tags.push_back(tag);
+}
+void dae::GameObject::RemoveTag(const std::string& tag)
+{
+	m_Tags.erase(std::remove(m_Tags.begin(), m_Tags.end(), tag), m_Tags.end());
+}
+std::vector<std::string> dae::GameObject::Tags() const
+{
+	return m_Tags;
+}
 
 void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransform)
 {
