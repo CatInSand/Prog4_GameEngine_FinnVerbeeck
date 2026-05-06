@@ -56,7 +56,7 @@ namespace dae
 		}
 
 		template<typename T>
-			requires requires () { std::derived_from<T, State<dataT>>; }
+			requires std::derived_from<T, State<dataT>>
 		void SetState()
 		{
 			auto it = std::find_if(m_States.begin(), m_States.end(),
