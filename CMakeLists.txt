@@ -49,7 +49,7 @@ add_library(engine STATIC
   Project/Engine/Systems/DeltaTime.cpp
   Project/Engine/Systems/ServiceLocator.cpp
   Project/Engine/Systems/SoundSystem.cpp
-  Project/Engine/Systems/StateMachine.cpp
+  
 
   Project/Engine/Utility/Timer.cpp
  )
