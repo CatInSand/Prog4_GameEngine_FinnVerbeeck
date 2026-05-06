@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 #include "GameObject.h"
 
 namespace dae
@@ -12,6 +13,9 @@ namespace dae
 	public:
 		void Add(std::unique_ptr<GameObject>&& object);
 		void RemoveAll();
+
+		GameObject* GetObjectWithName(const std::string& name);
+		GameObject* GetObjectWithTag(const std::string& tag);
 
 		void Update();
 		void Render() const;

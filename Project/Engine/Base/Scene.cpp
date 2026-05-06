@@ -12,6 +12,29 @@ void dae::Scene::RemoveAll()
 	m_Objects.clear();
 }
 
+dae::GameObject* dae::Scene::GetObjectWithName(const std::string& name)
+{
+	for (std::unique_ptr<GameObject>& pObject : m_Objects)
+	{
+		if (pObject->Name() == name)
+		{
+			return pObject.get();
+		}
+	}
+	return nullptr;
+}
+dae::GameObject* dae::Scene::GetObjectWithTag(const std::string& tag)
+{
+	for (std::unique_ptr<GameObject>& pObject : m_Objects)
+	{
+		if (pObject->HasTag(tag))
+		{
+			return pObject.get();
+		}
+	}
+	return nullptr;
+}
+
 void dae::Scene::Update()
 {
 	for(auto& object : m_Objects)
