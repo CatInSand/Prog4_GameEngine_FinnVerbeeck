@@ -7,9 +7,8 @@
 
 namespace dae
 {
-	class Pooka final : public Component
+	namespace Pooka
 	{
-	public:
 		enum class Sprites {
 			walk,
 			ghost,
@@ -17,70 +16,60 @@ namespace dae
 			blow,
 		};
 
-		Pooka(GameObject* pOwner);
-		virtual ~Pooka() = default;
-		Pooka(const Pooka& other) = delete;
-		Pooka(Pooka&& other) = delete;
-		Pooka& operator=(const Pooka& other) = delete;
-		Pooka& operator=(Pooka&& other) = delete;
-
-		virtual void Update() override;
-
-		class Idle final : public State
+		struct StateData
 		{
 		public:
-			Idle(GameObject* pObject);
-			virtual void Update() override;
+			StateData(GameObject* pPookaObject);
 
-			virtual void Enter() override;
-			virtual void Exit() override;
-		private:
-			Timer m_Timer{ 10.f };
+			GameObject* pPooka;
+			GameObject* pPlayer;
+			Timer timer{ 10.f };
 		};
-		class Ghost final : public State
-		{
-		public:
-			Ghost(GameObject* pObject);
-			virtual void Update() override;
 
-			virtual void Enter() override;
-			virtual void Exit() override;
-		private:
-			Timer m_Timer{ 10.f };
-		};
-		class Chase final : public State
-		{
-		public:
-			Chase(GameObject* pObject);
-			virtual void Update() override;
+		using StateMachine = dae::StateMachine<StateData>;
+		using State = dae::State<StateData>;
 
-			virtual void Enter() override;
-			virtual void Exit() override;
-		private:
-			Timer m_Timer{ 10.f };
-		};
-		class Flat final : public State
+		class Idle final : public Pooka::State
 		{
 		public:
-			Flat(GameObject* pObject);
 			virtual void Update() override;
 
 			virtual void Enter() override;
 			virtual void Exit() override;
 		};
-		class Blow final : public State
+		class Ghost final : public Pooka::State
 		{
 		public:
-			Blow(GameObject* pObject);
 			virtual void Update() override;
 
 			virtual void Enter() override;
 			virtual void Exit() override;
 		};
+		class Chase final : public Pooka::State
+		{
+		public:
+			virtual void Update() override;
 
-	private:
-		StateMachine* m_pStateMachine{ nullptr };
-	};
+			virtual void Enter() override;
+			virtual void Exit() override;
+		};
+		class Flat final : public Pooka::State
+		{
+		public:
+			virtual void Update() override;
+
+			virtual void Enter() override;
+			virtual void Exit() override;
+		};
+		class Blow final : public Pooka::State
+		{
+		public:
+			virtual void Update() override;
+
+			virtual void Enter() override;
+			virtual void Exit() override;
+		};
+	}
 }
 
 #endif

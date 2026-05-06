@@ -83,17 +83,21 @@ static void load()
 		};
 		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
 
-		std::vector<std::unique_ptr<dae::State>> states{};
-		states.push_back(std::make_unique<dae::Pooka::Idle>(gameObject.get()));
-		states.push_back(std::make_unique<dae::Pooka::Ghost>(gameObject.get()));
-		states.push_back(std::make_unique<dae::Pooka::Chase>(gameObject.get()));
-		states.push_back(std::make_unique<dae::Pooka::Flat>(gameObject.get()));
-		states.push_back(std::make_unique<dae::Pooka::Blow>(gameObject.get()));
-
-		std::unique_ptr<dae::StateMachine> stateMachine{
-			std::make_unique<dae::StateMachine>(gameObject.get(), std::move(states), 0)
+		std::unique_ptr<dae::Pooka::StateData> pookaStateData{
+			std::make_unique<dae::Pooka::StateData>(gameObject.get())
 		};
-		gameObject->AddComponent<dae::StateMachine>(std::move(stateMachine));
+		std::vector<std::unique_ptr<dae::Pooka::State>> states{};
+		states.push_back(std::make_unique<dae::Pooka::Idle>(pookaStateData.get()));
+		states.push_back(std::make_unique<dae::Pooka::Ghost>(pookaStateData.get()));
+		states.push_back(std::make_unique<dae::Pooka::Chase>(pookaStateData.get()));
+		states.push_back(std::make_unique<dae::Pooka::Flat>(pookaStateData.get()));
+		states.push_back(std::make_unique<dae::Pooka::Blow>(pookaStateData.get()));
+
+		std::unique_ptr<dae::Pooka::StateMachine> stateMachine{
+			std::make_unique<dae::Pooka::StateMachine>(gameObject.get(), std::move(states), std::move(pookaStateData), 0)
+		};
+
+		gameObject->AddComponent<dae::Pooka::StateMachine>(std::move(stateMachine));
 		scene.Add(std::move(gameObject));
 	}
 
