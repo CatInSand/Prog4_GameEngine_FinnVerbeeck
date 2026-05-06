@@ -34,6 +34,30 @@ dae::GameObject* dae::Scene::GetObjectWithTag(const std::string& tag)
 	}
 	return nullptr;
 }
+std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithName(const std::string& name)
+{
+	std::vector<dae::GameObject*> result{};
+	for (std::unique_ptr<GameObject>& pObject : m_Objects)
+	{
+		if (pObject->Name() == name)
+		{
+			result.push_back(pObject.get());
+		}
+	}
+	return result;
+}
+std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithTag(const std::string& tag)
+{
+	std::vector<dae::GameObject*> result{};
+	for (std::unique_ptr<GameObject>& pObject : m_Objects)
+	{
+		if (pObject->HasTag(tag))
+		{
+			result.push_back(pObject.get());
+		}
+	}
+	return result;
+}
 
 void dae::Scene::Update()
 {

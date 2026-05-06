@@ -16,6 +16,8 @@ namespace dae
 
 		GameObject* GetObjectWithName(const std::string& name);
 		GameObject* GetObjectWithTag(const std::string& tag);
+		std::vector<GameObject*> GetAllObjectsWithName(const std::string& name);
+		std::vector<GameObject*> GetAllObjectsWithTag(const std::string& tag);
 
 		void Update();
 		void Render() const;
