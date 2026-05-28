@@ -23,7 +23,7 @@ dae::Sprite::Sprite(const std::string& filename, Type type, float timePerFrame, 
 
 void dae::Sprite::Update()
 {
-	m_FrameTimer += gDeltaTime;
+	m_FrameTimer += time::gDeltaTime;
 
 	while (m_FrameTimer >= m_TimePerFrame)
 	{

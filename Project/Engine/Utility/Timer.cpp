@@ -10,7 +10,7 @@ dae::Timer::Timer(float duration)
 
 void dae::Timer::Update()
 {
-	m_ElapsedTime += gDeltaTime;
+	m_ElapsedTime += time::gDeltaTime;
 }
 
 void dae::Timer::Reset()
@@ -32,5 +32,5 @@ bool dae::Timer::Done() const
 }
 bool dae::Timer::DoneThisFrame() const
 {
-	return m_ElapsedTime >= m_Duration && m_ElapsedTime - gDeltaTime < m_Duration;
+	return m_ElapsedTime >= m_Duration && m_ElapsedTime - time::gDeltaTime < m_Duration;
 }

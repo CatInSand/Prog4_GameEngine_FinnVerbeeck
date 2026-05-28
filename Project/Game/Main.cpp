@@ -5,7 +5,7 @@
 #include <vld.h>
 #endif
 
-#include "Minigin.h"
+#include "Engine.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "TextureComponent.h"
@@ -156,7 +156,7 @@ int main(int, char*[])
 		.gameHeight = 288,
 	};
 
-	dae::Minigin engine(data_location, std::move(settings));
+	dae::Engine engine(data_location, std::move(settings));
 	engine.Run(load);
 
     return 0;

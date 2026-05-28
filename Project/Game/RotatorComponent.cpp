@@ -13,7 +13,7 @@ void dae::RotatorComponent::Update()
 {
 	constexpr float TAU{ 2 * 3.1415f };
 
-	m_CurrentAngle += m_Speed * dae::gDeltaTime;
+	m_CurrentAngle += m_Speed * time::gDeltaTime;
 
 	m_CurrentAngle = m_CurrentAngle - floor(m_CurrentAngle / TAU) * TAU;
 

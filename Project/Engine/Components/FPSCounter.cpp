@@ -10,7 +10,7 @@ dae::FPSCounter::FPSCounter(dae::GameObject* owner)
 
 void dae::FPSCounter::Update()
 {
-	m_Framerates.push_back(1.f / gDeltaTime);
+	m_Framerates.push_back(1.f / time::gDeltaTime);
 
 	if (m_Framerates.size() == m_FrameCount)
 	{
