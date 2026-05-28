@@ -44,13 +44,10 @@ add_library(engine STATIC
   Project/Engine/Components/SpriteComponent.cpp
   Project/Engine/Components/Sprite.cpp
 
-  Project/Engine/Events/Observer.cpp
-
   Project/Engine/Systems/DeltaTime.cpp
   Project/Engine/Systems/ServiceLocator.cpp
   Project/Engine/Systems/SoundSystem.cpp
   
-
   Project/Engine/Utility/Timer.cpp
  )
 
@@ -59,6 +56,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Project/Game/HealthComponent.cpp
   Project/Game/RotatorComponent.cpp
   Project/Game/DamageCommand.cpp
+  Project/Game/DeathObserver.cpp
   Project/Game/GridComponent.cpp
   Project/Game/Pooka.cpp
 )

@@ -1,5 +1,6 @@
 #include "HealthComponent.h"
 #include "GameObject.h"
+#include "GameEvents.h"
 
 dae::HealthComponent::HealthComponent(dae::GameObject* pOwner, unsigned int maxHealth, Observer* pObserver)
 	: Component(pOwner)

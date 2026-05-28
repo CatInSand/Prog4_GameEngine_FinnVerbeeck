@@ -35,7 +35,7 @@ namespace dae
 	{
 	public:
 		EventSoundRequested(sound_id id, float volume)
-			: Event(hash::make_sdbm_hash("SoundRequested"))
+			: Event("SoundRequested"_h)
 			, m_ID{ id }
 			, m_Volume{ volume }
 		{

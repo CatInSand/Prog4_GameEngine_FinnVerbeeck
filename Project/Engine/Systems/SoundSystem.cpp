@@ -66,7 +66,7 @@ namespace dae
 		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
 		{
-			if (pEvent->m_ID == hash::make_sdbm_hash("SoundRequested"))
+			if (pEvent->m_ID == "SoundRequested"_h)
 			{
 				EventSoundRequested* currentEvent{ reinterpret_cast<EventSoundRequested*>(pEvent.get()) };
 				Play(currentEvent->m_ID, currentEvent->m_Volume);

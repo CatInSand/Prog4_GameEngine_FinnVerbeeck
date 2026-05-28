@@ -12,13 +12,6 @@ namespace dae
 		virtual ~Observer() = default;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) = 0;
 	};
-
-	class DeathObserver final : public Observer
-	{
-	public:
-		virtual ~DeathObserver() = default;
-		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
-	};
 }
 
 #endif
