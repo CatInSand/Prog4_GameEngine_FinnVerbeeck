@@ -18,7 +18,7 @@ namespace dae
 		bool DoneThisFrame() const;
 
 	private:
-		const float m_Duration;
+		float m_Duration; //non-const cause changes during assignment
 		float m_ElapsedTime{ 0.f };
 	};
 }
