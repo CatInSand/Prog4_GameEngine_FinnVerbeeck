@@ -26,7 +26,7 @@ add_library(engine STATIC
   Project/Engine/Base/imgui_plot.cpp
   Project/Engine/Base/InputManager.cpp
   Project/Engine/Base/InputState.cpp
-  Project/Engine/Base/Minigin.cpp
+  "Project/Engine/Base/Engine.cpp"
   Project/Engine/Base/Renderer.cpp
   Project/Engine/Base/ResourceManager.cpp
   Project/Engine/Base/Scene.cpp

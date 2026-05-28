@@ -10,7 +10,7 @@
 #include <SDL3/SDL.h>
 //#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include "Minigin.h"
+#include "Engine.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -22,7 +22,7 @@
 #include <thread>
 #include "DeltaTime.h"
 
-SDL_Window* g_window{};
+SDL_Window* g_Window{};
 
 void LogSDLVersion(const std::string& message, int major, int minor, int patch)
 {
@@ -57,7 +57,7 @@ void PrintSDLVersion()
 	LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-dae::Minigin::Minigin(const std::filesystem::path& dataPath, Settings&& settings)
+dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 	: m_Settings{ std::move(settings) }
 {
 	PrintSDLVersion();
@@ -68,44 +68,50 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath, Settings&& settings
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
 
-	g_window = SDL_CreateWindow(
+	g_Window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		m_Settings.screenWidth,
 		m_Settings.screenHeight,
 		SDL_WINDOW_OPENGL
 	);
-	if (g_window == nullptr) 
+	if (g_Window == nullptr) 
 	{
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
-	Renderer::GetInstance().Init(g_window);
+	Renderer::GetInstance().Init(g_Window);
 	ResourceManager::GetInstance().Init(dataPath);
 
 	constexpr float masterVolume{ 0.5f };
+
+#ifdef DEBUG
+	ServiceLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystem>(masterVolume)));
+#else
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
+#endif // DEBUG
+
 	EventQueue::GetInstance().AddObserver(&ServiceLocator::GetSoundSystem());
 }
 
-dae::Minigin::~Minigin()
+dae::Engine::~Engine()
 {
 	Renderer::GetInstance().Destroy();
-	SDL_DestroyWindow(g_window);
-	g_window = nullptr;
+	SDL_DestroyWindow(g_Window);
+	g_Window = nullptr;
 
 	ServiceLocator::RegisterSoundSystem(nullptr);
 	SDL_Quit();
 }
 
-void dae::Minigin::Run(const std::function<void()>& load)
+void dae::Engine::Run(const std::function<void()>& load)
 {
 	//initialize
 	load();
 #ifndef __EMSCRIPTEN__
 
-	while (!m_quit)
+	while (!m_Quit)
 	{
-		dae::Minigin::RunOneFrame();
+		dae::Engine::RunOneFrame();
 	}
 
 #else
@@ -113,21 +119,11 @@ void dae::Minigin::Run(const std::function<void()>& load)
 #endif
 }
 
-void dae::Minigin::RunOneFrame()
+void dae::Engine::RunOneFrame()
 {
-	dae::gDeltaTime = GetDeltaTime();
+	time::CalculateDeltaTime();
 
-	m_quit = !InputManager::GetInstance().ProcessInput();
+	m_Quit = !InputManager::GetInstance().ProcessInput();
 	SceneManager::GetInstance().Update();
 	Renderer::GetInstance().Render();
-}
-
-float dae::Minigin::GetDeltaTime()
-{
-	uint64_t currentTime{ SDL_GetTicks() };
-	float deltaTime{ static_cast<float>((currentTime - m_LastTime) / 1000.f) };
-
-	m_LastTime = currentTime;
-
-	return deltaTime;
 }
