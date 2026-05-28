@@ -84,11 +84,11 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 
 	constexpr float masterVolume{ 0.5f };
 
-#ifdef DEBUG
+#ifndef NDEBUG
 	ServiceLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystem>(masterVolume)));
 #else
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
-#endif // DEBUG
+#endif
 
 	EventQueue::GetInstance().AddObserver(&ServiceLocator::GetSoundSystem());
 }
@@ -107,13 +107,11 @@ void dae::Engine::Run(const std::function<void()>& load)
 {
 	//initialize
 	load();
-#ifndef __EMSCRIPTEN__
 
-	while (!m_Quit)
-	{
+#ifndef __EMSCRIPTEN__
+	while (!m_Quit) {
 		dae::Engine::RunOneFrame();
 	}
-
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif

@@ -10,10 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(EMSCRIPTEN)
   message("Using Emscripten!")
   set(TARGET_NAME project_web)
-  set(TARGET_PARAM )
+  #set(TARGET_PARAM )
 else()
   set(TARGET_NAME project)
-  set(TARGET_PARAM WIN32)
+  #set(TARGET_PARAM WIN32)
 endif()
 
 
@@ -26,7 +26,7 @@ add_library(engine STATIC
   Project/Engine/Base/imgui_plot.cpp
   Project/Engine/Base/InputManager.cpp
   Project/Engine/Base/InputState.cpp
-  "Project/Engine/Base/Engine.cpp"
+  Project/Engine/Base/Engine.cpp
   Project/Engine/Base/Renderer.cpp
   Project/Engine/Base/ResourceManager.cpp
   Project/Engine/Base/Scene.cpp
@@ -51,7 +51,7 @@ add_library(engine STATIC
   Project/Engine/Utility/Timer.cpp
  )
 
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
+add_executable(${TARGET_NAME} #${TARGET_PARAM} #removed target param to open console window
   Project/Game/Main.cpp
   Project/Game/HealthComponent.cpp
   Project/Game/RotatorComponent.cpp

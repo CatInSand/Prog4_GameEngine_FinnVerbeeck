@@ -37,7 +37,6 @@ enum class PlayerSprite : dae::sprite_id {
 	drilling,
 };
 
-
 static void load()
 {
 	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
@@ -136,8 +135,6 @@ static void load()
 		dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
 	}
 }
-
-
 
 int main(int, char*[])
 {

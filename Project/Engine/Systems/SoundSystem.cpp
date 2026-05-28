@@ -157,3 +157,22 @@ void dae::SoundSystem::Notify(std::unique_ptr<dae::Event>& pEvent)
 {
 	m_pImpl->Notify(pEvent);
 }
+
+dae::LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<BaseSoundSystem>&& pSoundSystem)
+	: m_pSoundSystem{ std::move(pSoundSystem) }
+{
+}
+void dae::LoggingSoundSystem::Play(sound_id id, float volume = 1.f)
+{
+	std::cout << "Playing sound with id " << id << " at volume " << volume << "\n";
+	m_pSoundSystem->Play(id, volume);
+}
+void dae::LoggingSoundSystem::Notify(std::unique_ptr<Event>& pEvent)
+{
+	if (pEvent->m_ID == "SoundRequested"_h)
+	{
+		EventSoundRequested* currentEvent{ reinterpret_cast<EventSoundRequested*>(pEvent.get()) };
+		std::cout << "Playing sound with id " << currentEvent->m_ID << " at volume " << currentEvent->m_Volume << "\n";
+	}
+	m_pSoundSystem->Notify(pEvent);
+}
