@@ -1,5 +1,8 @@
 #include "Timer.h"
+
 #include <cassert>
+#include <cmath>
+
 #include "DeltaTime.h"
 
 dae::Timer::Timer(float duration)
@@ -15,6 +18,22 @@ void dae::Timer::Update()
 void dae::Timer::Reset()
 {
 	m_ElapsedTime = 0.f;
+}
+int dae::Timer::ModuloGet()
+{
+	int timesDone{ static_cast<int>(m_ElapsedTime / m_Duration) };
+	m_ElapsedTime = std::fmod(m_ElapsedTime, m_Duration);;
+	return timesDone;
+}
+bool dae::Timer::DecrementGet()
+{
+	if (Done())
+	{
+		m_ElapsedTime -= m_Duration;
+		return true;
+	}
+
+	return false;
 }
 
 float dae::Timer::ElapsedTime() const

@@ -8,8 +8,23 @@ namespace dae
 	public:
 		Timer(float duration);
 
+		/*
+		Increments elapsed time by dae::time::gDeltaTime
+		*/
 		void Update();
+		/*
+		Sets elapsed time to 0
+		*/
 		void Reset();
+
+		/*
+		Returns the number of times duration has elapsed and applies modulo to elapsed time using duration
+		*/
+		int ModuloGet();
+		/*
+		Returns true if done and decrements elapsed time by duration
+		*/
+		bool DecrementGet();
 
 		float ElapsedTime() const;
 		float Duration() const;
