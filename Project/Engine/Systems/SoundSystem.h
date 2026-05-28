@@ -11,19 +11,6 @@ namespace dae
 {
 	using sound_id = uint16_t;
 
-	//sound events
-	class EventSoundRequested final : public Event
-	{
-	public:
-		EventSoundRequested(sound_id id, float volume)
-			: Event("SoundRequested"_h)
-			, m_ID{ id }
-			, m_Volume{ volume }
-		{}
-		const sound_id m_ID;
-		const float m_Volume;
-	};
-
 	class BaseSoundSystem : public Observer
 	{
 	public:
@@ -36,12 +23,8 @@ namespace dae
 	{
 	public:
 		virtual ~NullSoundSystem() = default;
-		virtual void Play(const sound_id, const float) override
-		{
-		}
-		virtual void Notify(std::unique_ptr<Event>&) override
-		{
-		}
+		virtual void Play(const sound_id, const float) override {}
+		virtual void Notify(std::unique_ptr<Event>&) override {}
 	};
 
 	class SoundSystem : public BaseSoundSystem
@@ -67,6 +50,19 @@ namespace dae
 
 	private:
 		std::unique_ptr<BaseSoundSystem> m_pSoundSystem;
+	};
+
+	//sound events
+	class EventSoundRequested final : public Event
+	{
+	public:
+		EventSoundRequested(sound_id id, float volume)
+			: Event("SoundRequested"_h)
+			, m_ID{ id }
+			, m_Volume{ volume }
+		{}
+		const sound_id m_ID;
+		const float m_Volume;
 	};
 }
 

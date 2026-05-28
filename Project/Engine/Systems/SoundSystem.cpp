@@ -1,5 +1,5 @@
 #include "SoundSystem.h"
-#include "SDL3_mixer/SDL_mixer.h" 
+
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
@@ -8,6 +8,8 @@
 #include <queue>
 #include <stop_token>
 #include <thread>
+
+#include "SDL3_mixer/SDL_mixer.h"
 
 //https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer
 
@@ -118,7 +120,11 @@ namespace dae
 				}
 			}
 
-			throw std::runtime_error("Attempted to get free track while none were available");
+			//no free tracks
+			static int16_t currentStoppedTrack{ -1 };
+			currentStoppedTrack = (currentStoppedTrack + 1) % TRACK_COUNT;
+			MIX_StopTrack(m_Tracks[currentStoppedTrack], 0);
+			return m_Tracks[currentStoppedTrack];
 		}
 
 		std::stop_source m_StopSource;
@@ -129,7 +135,7 @@ namespace dae
 
 		float m_MasterVolume;
 		MIX_Mixer* m_pMixer{ nullptr };
-		static const uint8_t TRACK_COUNT{ 4 };
+		static const uint8_t TRACK_COUNT{ 16 };
 		std::vector<MIX_Track*> m_Tracks{};
 
 		std::queue<std::pair<sound_id, float>> m_SoundQueue{};

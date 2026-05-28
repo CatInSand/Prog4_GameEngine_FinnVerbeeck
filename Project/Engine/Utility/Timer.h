@@ -13,12 +13,13 @@ namespace dae
 
 		float ElapsedTime() const;
 		float Duration() const;
+
 		bool Done() const;
 		bool DoneThisFrame() const;
 
 	private:
 		const float m_Duration;
-		float m_ElapsedTime{};
+		float m_ElapsedTime{ 0.f };
 	};
 }
 

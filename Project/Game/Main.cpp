@@ -147,15 +147,22 @@ int main(int, char*[])
 		data_location = "../Data/";
 #endif
 
-	dae::Settings settings{
-		.screenWidth = 1080,
-		.screenHeight = 720,
-		.gameWidth = 224,
-		.gameHeight = 288,
-	};
+	try
+	{
+		dae::Settings settings{
+			.screenWidth = 1080,
+			.screenHeight = 720,
+			.gameWidth = 224,
+			.gameHeight = 288,
+		};
 
-	dae::Engine engine(data_location, std::move(settings));
-	engine.Run(load);
+		dae::Engine engine(data_location, std::move(settings));
+		engine.Run(load);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << "Exception thrown: " << e.what() << "\n";
+	}
 
     return 0;
 }
