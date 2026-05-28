@@ -1,8 +1,9 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
-#include "Event.h"
 #include <memory>
+
+#include "Event.h"
 
 namespace dae
 {

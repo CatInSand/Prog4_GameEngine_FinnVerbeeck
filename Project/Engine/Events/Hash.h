@@ -35,9 +35,9 @@ namespace dae
 
 	namespace hash_literals
 	{
-		consteval dae::hash_t operator""_h(const char* string, size_t length)
+		consteval hash_t operator""_h(const char* string, size_t length)
 		{
-			return dae::make_hash(string, length);
+			return make_hash(string, length);
 		}
 	}
 }

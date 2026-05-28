@@ -1,14 +1,18 @@
 #ifndef SUBJECT_H
 #define SUBJECT_H
 
-#include "Observer.h"
 #include <vector>
+
+#include "Observer.h"
 
 namespace dae
 {
-	class Subject final
+	class _BaseSubject
 	{
 	public:
+		_BaseSubject() = default;
+		virtual ~_BaseSubject() = default;
+
 		void AddObserver(Observer* pObserver)
 		{
 			m_Observers.push_back(pObserver);
@@ -20,7 +24,9 @@ namespace dae
 				m_Observers.end()
 			);
 		}
-		void NotifyObservers(std::unique_ptr<Event>& pEvent)
+
+	protected:
+		void _NotifyObservers(std::unique_ptr<Event>& pEvent)
 		{
 			for (Observer* pObserver : m_Observers)
 			{
@@ -28,8 +34,19 @@ namespace dae
 			}
 		}
 
-	private:
 		std::vector<Observer*> m_Observers{};
+	};
+
+	class Subject final : public _BaseSubject
+	{
+	public:
+		Subject() = default;
+		virtual ~Subject() = default;
+
+		void NotifyObservers(std::unique_ptr<Event>& pEvent)
+		{
+			_NotifyObservers(pEvent);
+		}
 	};
 }
 
