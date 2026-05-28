@@ -8,12 +8,12 @@
 
 namespace dae
 {
-	template<typename F, typename... fArgs>
-		requires std::invocable<F, fArgs...>
+	template<typename Fn, typename... fArgs>
+		requires std::invocable<Fn, fArgs...>
 	class OmniCommand final : public BaseCommand
 	{
 	public:
-		OmniCommand(F function, fArgs&&... args)
+		OmniCommand(Fn function, fArgs&&... args)
 			: m_Function{ function }
 			, m_Arguments{ std::make_tuple(std::forward<fArgs>(args)...) }
 		{
@@ -25,7 +25,7 @@ namespace dae
 		}
 
 	private:
-		F m_Function;
+		Fn m_Function;
 		std::tuple<fArgs...> m_Arguments;
 	};
 }
