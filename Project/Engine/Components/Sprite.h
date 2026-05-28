@@ -5,6 +5,8 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include "Timer.h"
+
 namespace dae
 {
 	class Texture2D;
@@ -39,8 +41,7 @@ namespace dae
 		};
 
 		std::shared_ptr<Texture2D> m_pTexture;
-		float m_TimePerFrame;
-		float m_FrameTimer{ 0.f };
+		Timer m_FrameTimer;
 		Size m_SingleSize;
 		uint8_t m_FrameCount;
 		uint8_t m_CurrentFrame{ 0 };

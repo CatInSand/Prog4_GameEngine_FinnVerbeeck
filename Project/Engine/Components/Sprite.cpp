@@ -6,7 +6,7 @@
 
 dae::Sprite::Sprite(const std::string& filename, Type type, float timePerFrame)
 	: m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
-	, m_TimePerFrame{ timePerFrame }
+	, m_FrameTimer{ timePerFrame }
 	, m_SingleSize{ static_cast<uint16_t>(m_pTexture->GetSize().y), static_cast<uint16_t>(m_pTexture->GetSize().y) }
 	, m_FrameCount{ static_cast<uint8_t>(m_pTexture->GetSize().x / m_pTexture->GetSize().y) }
 	, m_Type{ type }
@@ -14,7 +14,7 @@ dae::Sprite::Sprite(const std::string& filename, Type type, float timePerFrame)
 }
 dae::Sprite::Sprite(const std::string& filename, Type type, float timePerFrame, glm::vec2 textureSize, uint8_t frameCount)
 	: m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
-	, m_TimePerFrame{ timePerFrame }
+	, m_FrameTimer{ timePerFrame }
 	, m_SingleSize{ static_cast<uint16_t>(textureSize.y), static_cast<uint16_t>(textureSize.y) }
 	, m_FrameCount{ frameCount }
 	, m_Type{ type }
@@ -23,28 +23,29 @@ dae::Sprite::Sprite(const std::string& filename, Type type, float timePerFrame, 
 
 void dae::Sprite::Update()
 {
-	m_FrameTimer += time::gDeltaTime;
+	m_FrameTimer.Update();
 
-	while (m_FrameTimer >= m_TimePerFrame)
+	if (m_FrameTimer.Done())
 	{
-		m_FrameTimer -= m_TimePerFrame;
-
-		switch (m_Type)
+		for (int timesDone{ m_FrameTimer.ModuloGet() }; timesDone > 0; --timesDone)
 		{
-		case dae::Sprite::Type::loop:
-			m_CurrentFrame = (m_CurrentFrame + 1) % m_FrameCount;
-			break;
-		case dae::Sprite::Type::swing:
-			m_CurrentFrame = (m_CurrentFrame + 1) % (m_FrameCount * 2 - 2);
-			break;
-		case dae::Sprite::Type::single:
-			if (m_CurrentFrame < m_FrameCount - 1)
+			switch (m_Type)
 			{
-				++m_CurrentFrame;
+			case dae::Sprite::Type::loop:
+				m_CurrentFrame = (m_CurrentFrame + 1) % m_FrameCount;
+				break;
+			case dae::Sprite::Type::swing:
+				m_CurrentFrame = (m_CurrentFrame + 1) % (m_FrameCount * 2 - 2);
+				break;
+			case dae::Sprite::Type::single:
+				if (m_CurrentFrame < m_FrameCount - 1)
+				{
+					++m_CurrentFrame;
+				}
+				break;
+			default:
+				break;
 			}
-			break;
-		default:
-			break;
 		}
 	}
 }
