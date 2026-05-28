@@ -162,7 +162,7 @@ dae::LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<BaseSoundSystem>&& p
 	: m_pSoundSystem{ std::move(pSoundSystem) }
 {
 }
-void dae::LoggingSoundSystem::Play(sound_id id, float volume = 1.f)
+void dae::LoggingSoundSystem::Play(sound_id id, float volume)
 {
 	std::cout << "Playing sound with id " << id << " at volume " << volume << "\n";
 	m_pSoundSystem->Play(id, volume);

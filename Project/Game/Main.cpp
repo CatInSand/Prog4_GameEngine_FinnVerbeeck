@@ -101,6 +101,7 @@ static void load()
 		states.push_back(std::make_unique<dae::Pooka::Chase>(pookaStateData.get()));
 		states.push_back(std::make_unique<dae::Pooka::Flat>(pookaStateData.get()));
 		states.push_back(std::make_unique<dae::Pooka::Blow>(pookaStateData.get()));
+		states.push_back(std::make_unique<dae::Pooka::Deflate>(pookaStateData.get()));
 
 		std::unique_ptr<dae::Pooka::StateMachine> stateMachine{
 			std::make_unique<dae::Pooka::StateMachine>(gameObject.get(), std::move(states), std::move(pookaStateData), 0)

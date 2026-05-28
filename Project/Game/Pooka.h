@@ -23,7 +23,7 @@ namespace dae
 
 			GameObject* pPooka;
 			GameObject* pPlayer;
-			Timer timer{ 10.f };
+			Timer timer{ 3.f };
 		};
 
 		using StateMachine = dae::StateMachine<StateData>;
