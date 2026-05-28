@@ -1,8 +1,8 @@
 #include "Component.h"
 #include "GameObject.h"
 
-dae::Component::Component(dae::GameObject* owner)
-	: m_Owner{ owner }
+dae::Component::Component(dae::GameObject* pOwner)
+	: m_pOwner{ pOwner }
 {
 
 }
@@ -19,9 +19,9 @@ bool dae::Component::IsMarkedForDeletion() const
 
 dae::GameObject* dae::Component::GetOwner()
 {
-	return m_Owner;
+	return m_pOwner;
 }
 const dae::GameObject* dae::Component::GetOwner() const
 {
-	return m_Owner;
+	return m_pOwner;
 }

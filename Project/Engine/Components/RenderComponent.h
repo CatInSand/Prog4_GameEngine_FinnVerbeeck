@@ -18,8 +18,8 @@ namespace dae
 		virtual void Render() = 0;
 
 	protected:
-		explicit RenderComponent(GameObject* owner)
-			: Component(owner)
+		explicit RenderComponent(GameObject* pOwner)
+			: Component(pOwner)
 		{
 		}
 	};

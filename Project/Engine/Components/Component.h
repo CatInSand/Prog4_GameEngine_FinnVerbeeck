@@ -24,13 +24,13 @@ namespace dae
 		bool m_Enabled{ true };
 
 	protected:
-		explicit Component(GameObject* owner);
+		explicit Component(GameObject* pOwner);
 		GameObject* GetOwner();
 		const GameObject* GetOwner() const;
 
 	private:
 		bool m_MarkedForDeletion{ false };
-		GameObject* m_Owner;
+		GameObject*const m_pOwner;
 	};
 }
 
