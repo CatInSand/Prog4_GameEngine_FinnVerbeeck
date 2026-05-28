@@ -12,7 +12,6 @@ namespace dae
 		ObjectCommand(GameObject* targetObject)
 			: m_TargetObject{ targetObject }
 		{
-
 		}
 		virtual ~ObjectCommand() = default;
 

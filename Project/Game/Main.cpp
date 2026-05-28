@@ -31,11 +31,23 @@
 //emscripten includes
 #endif
 
+#include "OmniCommand.h"
+
 enum class PlayerSprite : dae::sprite_id {
 	idle,
 	walking,
 	drilling,
 };
+
+void PrintSomething()
+{
+	std::cout << "Something\n";
+}
+
+void PrintNumber(float number)
+{
+	std::cout << "Number " << number << "\n";
+}
 
 static void load()
 {
@@ -43,6 +55,11 @@ static void load()
 
 	std::shared_ptr<dae::Font> smoothFont{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
 	std::shared_ptr<dae::Font> arcadeFont{ dae::ResourceManager::GetInstance().LoadFont("Arcade.TTF", 36) };
+
+	dae::OmniCommand omniCommand{ &PrintSomething };
+	dae::OmniCommand omniCommandNumber{ &PrintNumber, 1.f };
+	omniCommand.Execute();
+	omniCommandNumber.Execute();
 
 	{
 		//background

@@ -11,8 +11,6 @@
 namespace dae
 {
 	class Font;
-	class Texture2D;
-	class GameObject;
 	class TextComponent : public TextureComponent
 	{
 	public:

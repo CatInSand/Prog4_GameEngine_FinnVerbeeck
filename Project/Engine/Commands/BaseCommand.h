@@ -8,7 +8,6 @@ namespace dae
 	public:
 		virtual ~BaseCommand() = default;
 		virtual void Execute() = 0;
-
 	};
 }
 
