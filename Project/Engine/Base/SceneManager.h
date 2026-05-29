@@ -12,8 +12,11 @@ namespace dae
 	{
 	public:
 		Scene& CreateScene();
-
+		Scene& CreateScene(const std::string& sceneName);
 		Scene* CurrentScene();
+
+		void SetScene(const std::string& sceneName);
+		void SetScene(size_t index);
 
 		void Update();
 		void Render();

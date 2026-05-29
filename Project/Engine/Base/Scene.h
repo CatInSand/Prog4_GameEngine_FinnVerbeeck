@@ -11,7 +11,12 @@ namespace dae
 	class Scene final
 	{
 	public:
-		Scene() = default;
+		Scene(const std::string& name);
+		~Scene() = default;
+		Scene(const Scene& other) = delete;
+		Scene(Scene&& other) = delete;
+		Scene& operator=(const Scene& other) = delete;
+		Scene& operator=(Scene&& other) = delete;
 
 		void Add(std::unique_ptr<GameObject>&& object);
 		void RemoveAll();
@@ -26,15 +31,11 @@ namespace dae
 
 		void DeleteQueue();
 
-		GameObject* Root();
-
-		~Scene() = default;
-		Scene(const Scene& other) = delete;
-		Scene(Scene&& other) = delete;
-		Scene& operator=(const Scene& other) = delete;
-		Scene& operator=(Scene&& other) = delete;
+		GameObject* Root() const;
+		std::string Name() const;
 
 	private:
+		std::string m_Name;
 		std::unique_ptr<GameObject> m_RootObject{ std::make_unique<GameObject>(nullptr, "Root") };
 		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 	};

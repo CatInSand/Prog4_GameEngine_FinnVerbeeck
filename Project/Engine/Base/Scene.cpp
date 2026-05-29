@@ -1,6 +1,11 @@
 #include <algorithm>
 #include "Scene.h"
 
+dae::Scene::Scene(const std::string& name)
+	: m_Name{ name }
+{
+}
+
 void dae::Scene::Add(std::unique_ptr<GameObject>&& object)
 {
 	assert(object != nullptr && "Cannot add a null GameObject to the scene.");
@@ -91,7 +96,11 @@ void dae::Scene::DeleteQueue()
 	}
 }
 
-dae::GameObject* dae::Scene::Root()
+dae::GameObject* dae::Scene::Root() const
 {
 	return m_RootObject.get();
+}
+std::string dae::Scene::Name() const
+{
+	return m_Name;
 }
