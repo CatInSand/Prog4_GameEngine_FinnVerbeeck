@@ -9,11 +9,11 @@
 
 namespace dae
 {
-	class EventQueue final : public _BaseSubject, public Singleton<EventQueue>
+	class EventQueue : public _BaseSubject, public Singleton<EventQueue>
 	{
 	public:
 		EventQueue() = default;
-		~EventQueue() = default;
+		virtual ~EventQueue() = default;
 
 		void BypassSend(std::unique_ptr<Event>& pEvent)
 		{

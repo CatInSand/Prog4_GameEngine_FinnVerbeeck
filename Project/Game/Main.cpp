@@ -31,8 +31,6 @@
 //emscripten includes
 #endif
 
-#include "OmniCommand.h"
-
 enum class PlayerSprite : dae::sprite_id {
 	idle,
 	walking,

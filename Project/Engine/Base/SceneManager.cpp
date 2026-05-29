@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "EventQueue.h"
+#include "CollisionQueue.h"
 
 dae::Scene& dae::SceneManager::CreateScene()
 {
@@ -43,8 +44,9 @@ void dae::SceneManager::SetScene(size_t index)
 
 void dae::SceneManager::Update()
 {
-	dae::EventQueue::Instance().SendAll();
+	EventQueue::Instance().SendAll();
 	m_CurrentScene->Update();
+	CollisionQueue::Instance().CheckAndSend();
 }
 void dae::SceneManager::Render()
 {

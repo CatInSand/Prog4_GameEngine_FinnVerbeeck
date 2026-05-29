@@ -49,7 +49,7 @@ add_library(engine STATIC
   Project/Engine/Systems/SoundSystem.cpp
   
   Project/Engine/Utility/Timer.cpp
- )
+   "Project/Engine/Collisions/CollisionQueue.cpp" "Project/Engine/Collisions/ColliderComponent.cpp")
 
 add_executable(${TARGET_NAME} #${TARGET_PARAM} #removed target param to open console window
   Project/Game/Main.cpp
@@ -188,6 +188,7 @@ find_package(Steamworks QUIET)
 
 target_include_directories(engine PUBLIC
   ${CMAKE_SOURCE_DIR}/Project/Engine/Base
+  ${CMAKE_SOURCE_DIR}/Project/Engine/Collisions
   ${CMAKE_SOURCE_DIR}/Project/Engine/Commands
   ${CMAKE_SOURCE_DIR}/Project/Engine/Components
   ${CMAKE_SOURCE_DIR}/Project/Engine/Events

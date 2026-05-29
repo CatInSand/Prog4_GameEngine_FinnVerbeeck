@@ -8,8 +8,7 @@
 
 namespace dae
 {
-	enum class KeyState : char
-	{
+	enum class KeyState : char {
 		none,
 		down,
 		up,
