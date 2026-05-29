@@ -171,6 +171,14 @@ if(NOT SDL3_mixer_FOUND)
   endif()
 endif()
 
+FetchContent_Declare(
+    cat
+    GIT_REPOSITORY https://github.com/CatInSand/cat.git
+    GIT_TAG v0.0.1-alpha.1
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(cat)
+
 if (WIN32)
   # Add VLD (Visual Leak Detector) for memory leak detection on Windows
   find_package(VLD CONFIG)
@@ -195,6 +203,7 @@ target_include_directories(engine PUBLIC
   ${CMAKE_SOURCE_DIR}/Project/Engine/Systems
   ${CMAKE_SOURCE_DIR}/Project/Engine/Utility
   ${glm_SOURCE_DIR}
+  ${cat_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include
   ${sdl3_ttf_SOURCE_DIR}/include
@@ -205,6 +214,7 @@ target_include_directories(engine PUBLIC
 target_include_directories("${TARGET_NAME}" PUBLIC
   ${CMAKE_SOURCE_DIR}/Project/Game
   ${glm_SOURCE_DIR}
+  ${cat_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include
   ${sdl3_ttf_SOURCE_DIR}/include
@@ -217,6 +227,7 @@ target_link_libraries(engine PUBLIC
   SDL3_ttf::SDL3_ttf
   SDL3_mixer::SDL3_mixer
   glm::glm
+  cat
   ${VLD_LIBRARIES}
 )
 
