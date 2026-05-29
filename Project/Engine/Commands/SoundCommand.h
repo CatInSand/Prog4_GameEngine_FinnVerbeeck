@@ -19,7 +19,7 @@ namespace dae
 		virtual void Execute() override
 		{
 			std::unique_ptr<dae::Event> pSoundEvent{ std::make_unique<dae::EventSoundRequested>(m_ID, m_Volume) };
-			dae::EventQueue::GetInstance().Enqueue(std::move(pSoundEvent));
+			dae::EventQueue::Instance().Enqueue(std::move(pSoundEvent));
 		}
 
 	private:

@@ -19,7 +19,7 @@ dae::Scene* dae::SceneManager::CurrentScene()
 
 void dae::SceneManager::Update()
 {
-	dae::EventQueue::GetInstance().SendAll();
+	dae::EventQueue::Instance().SendAll();
 	m_CurrentScene->Update();
 }
 

@@ -41,10 +41,10 @@ enum class PlayerSprite : dae::sprite_id {
 
 static void load()
 {
-	dae::Scene& scene{ dae::SceneManager::GetInstance().CreateScene() };
+	dae::Scene& scene{ dae::SceneManager::Instance().CreateScene() };
 
-	std::shared_ptr<dae::Font> smoothFont{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
-	std::shared_ptr<dae::Font> arcadeFont{ dae::ResourceManager::GetInstance().LoadFont("Arcade.TTF", 36) };
+	std::shared_ptr<dae::Font> smoothFont{ dae::ResourceManager::Instance().LoadFont("Lingua.otf", 36) };
+	std::shared_ptr<dae::Font> arcadeFont{ dae::ResourceManager::Instance().LoadFont("Arcade.TTF", 36) };
 
 	{
 		//background
@@ -135,7 +135,7 @@ static void load()
 		//sound
 		dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
 		std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
-		dae::InputManager::GetInstance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
+		dae::InputManager::Instance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
 	}
 }
 
@@ -156,6 +156,7 @@ int main(int, char*[])
 			.screenHeight = 720,
 			.gameWidth = 224,
 			.gameHeight = 288,
+			.masterVolume = 0.2f,
 		};
 
 		dae::Engine engine(data_location, std::move(settings));

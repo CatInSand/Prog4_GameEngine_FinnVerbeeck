@@ -12,6 +12,8 @@ namespace dae
 
 		uint16_t gameWidth;
 		uint16_t gameHeight;
+
+		float masterVolume{ 1.f };
 	};
 }
 

@@ -82,10 +82,8 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 	Renderer::Instance().Init(g_Window);
 	ResourceManager::Instance().Init(dataPath);
 
-	constexpr float masterVolume{ 0.5f };
-
 #ifndef NDEBUG
-	ServiceLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystem>(masterVolume)));
+	ServiceLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystem>(m_Settings.masterVolume)));
 #else
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
 #endif
