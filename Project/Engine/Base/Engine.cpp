@@ -79,8 +79,8 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
-	Renderer::GetInstance().Init(g_Window);
-	ResourceManager::GetInstance().Init(dataPath);
+	Renderer::Instance().Init(g_Window);
+	ResourceManager::Instance().Init(dataPath);
 
 	constexpr float masterVolume{ 0.5f };
 
@@ -90,12 +90,12 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
 #endif
 
-	EventQueue::GetInstance().AddObserver(&ServiceLocator::GetSoundSystem());
+	EventQueue::Instance().AddObserver(&ServiceLocator::GetSoundSystem());
 }
 
 dae::Engine::~Engine()
 {
-	Renderer::GetInstance().Destroy();
+	Renderer::Instance().Destroy();
 	SDL_DestroyWindow(g_Window);
 	g_Window = nullptr;
 
@@ -121,7 +121,7 @@ void dae::Engine::RunOneFrame()
 {
 	time::CalculateDeltaTime();
 
-	m_Quit = !InputManager::GetInstance().ProcessInput();
-	SceneManager::GetInstance().Update();
-	Renderer::GetInstance().Render();
+	m_Quit = !InputManager::Instance().ProcessInput();
+	SceneManager::Instance().Update();
+	Renderer::Instance().Render();
 }

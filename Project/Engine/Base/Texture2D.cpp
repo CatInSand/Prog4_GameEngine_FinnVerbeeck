@@ -14,7 +14,7 @@ dae::Texture2D::Texture2D(const std::string& fullPath)
         throw std::runtime_error(std::string("Failed to load PNG: ") + SDL_GetError());
 
     m_Texture = SDL_CreateTextureFromSurface(
-        Renderer::GetInstance().GetSDLRenderer(),
+        Renderer::Instance().GetSDLRenderer(),
         surface
     );
 

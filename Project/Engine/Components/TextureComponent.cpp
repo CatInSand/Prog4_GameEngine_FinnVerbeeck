@@ -10,7 +10,7 @@ dae::TextureComponent::TextureComponent(dae::GameObject* owner)
 
 dae::TextureComponent::TextureComponent(dae::GameObject* owner, const std::string& filename)
 	: RenderComponent(owner)
-	, m_pTexture{ ResourceManager::GetInstance().LoadTexture(filename) }
+	, m_pTexture{ ResourceManager::Instance().LoadTexture(filename) }
 {
 }
 
@@ -19,6 +19,6 @@ void dae::TextureComponent::Render()
 	if (m_pTexture != nullptr)
 	{
 		const glm::vec2 pos{ GetOwner()->GetWorldTransform().position };
-		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
+		Renderer::Instance().RenderTexture(*m_pTexture, pos.x, pos.y);
 	}
 }
