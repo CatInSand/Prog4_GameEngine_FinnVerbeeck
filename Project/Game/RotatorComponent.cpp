@@ -25,7 +25,7 @@ void dae::RotatorComponent::Update()
 
 void dae::RotatorComponent::Initialize()
 {
-	glm::vec3 centerToObject{ Component::GetOwner()->GetWorldTransform().GetPosition() };
+	glm::vec2 centerToObject{ Component::GetOwner()->GetWorldTransform().position };
 	m_CurrentAngle = atan2(centerToObject.y, centerToObject.x);
 	m_Distance = glm::length(centerToObject);
 }

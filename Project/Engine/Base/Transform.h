@@ -3,13 +3,19 @@
 
 namespace dae
 {
-	class Transform final
+	struct Transform final
 	{
-	public:
-		const glm::vec3& GetPosition() const { return m_position; }
-		void SetPosition(float x, float y, float z = 0);
-		void SetPosition(const glm::vec3& position);
-	private:
-		glm::vec3 m_position;
+		Transform(glm::vec2 position = {0.f, 0.f}, float rotation = 0.f, glm::vec2 scale = {1.f, 1.f});
+
+		void Move(glm::vec2 deltaPos);
+		void Move(float deltaX, float deltaY);
+		void Rotate(float deltaAngle);
+		//void Scale(glm::vec2 deltaScale); //confusing name
+
+		Transform operator*(const Transform& other);
+
+		glm::vec2 position;
+		float rotation;
+		glm::vec2 scale;
 	};
 }

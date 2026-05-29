@@ -18,7 +18,7 @@ void dae::TextureComponent::Render()
 {
 	if (m_pTexture != nullptr)
 	{
-		const auto& pos = GetOwner()->GetWorldTransform().GetPosition();
+		const glm::vec2 pos{ GetOwner()->GetWorldTransform().position };
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 	}
 }

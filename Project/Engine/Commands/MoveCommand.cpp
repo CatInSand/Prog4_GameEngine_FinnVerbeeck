@@ -10,7 +10,7 @@ dae::MoveCommand::MoveCommand(dae::GameObject* targetObject, const glm::vec2& di
 void dae::MoveCommand::Execute()
 {
 	glm::vec2 newPos{
-		glm::vec2{m_TargetObject->GetLocalTransform().GetPosition()}
+		m_TargetObject->GetLocalTransform().position
 		+ glm::normalize(m_Direction) * time::gDeltaTime * m_Speed
 	};
 	m_TargetObject->SetLocalPosition(newPos.x, newPos.y);

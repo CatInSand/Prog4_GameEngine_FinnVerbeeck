@@ -70,18 +70,18 @@ void dae::GameObject::SetParent(dae::GameObject* pParent, bool keepWorldTransfor
 		return;
 	}
 
-	glm::vec3 pos{ GetWorldTransform().GetPosition() };
+	glm::vec2 pos{ GetWorldTransform().position };
 
 	if (pParent == GetRoot())
 	{
-		SetLocalPosition(pos.x, pos.y);
+		SetLocalPosition(pos);
 	}
 	else
 	{
 		if (keepWorldTransform)
 		{
-			glm::vec3 parentPos{ pParent->GetWorldTransform().GetPosition() };
-			SetLocalPosition(pos.x - parentPos.x, pos.y - parentPos.y);
+			glm::vec2 parentPos{ pParent->GetWorldTransform().position };
+			SetLocalPosition(pos - parentPos);
 		}
 		SetTransformDirty();
 	}
@@ -171,7 +171,11 @@ void dae::GameObject::DeleteQueue()
 
 void dae::GameObject::SetLocalPosition(float x, float y)
 {
-	m_LocalTransform.SetPosition(x, y, 0.0f);
+	SetLocalPosition({ x, y });
+}
+void dae::GameObject::SetLocalPosition(glm::vec2 pos)
+{
+	m_LocalTransform.position = pos;
 	SetTransformDirty();
 }
 dae::Transform dae::GameObject::GetLocalTransform() const
@@ -231,8 +235,7 @@ void dae::GameObject::CalculateWorldTransform()
 	}
 	else
 	{
-		glm::vec3 newWorldPos{ m_LocalTransform.GetPosition() + m_pParent->GetWorldTransform().GetPosition() };
-		m_WorldTransform.SetPosition(newWorldPos.x, newWorldPos.y);
+		m_WorldTransform = m_LocalTransform * m_pParent->GetWorldTransform();
 	}
 	m_TransformRequiresUpdate = false;
 }

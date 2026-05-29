@@ -26,7 +26,7 @@ namespace dae
 		}
 		virtual void Render() override
 		{
-			m_CurrentSprite.Render(GetOwner()->GetWorldTransform().GetPosition());
+			m_CurrentSprite.Render(GetOwner()->GetWorldTransform().position);
 		}
 
 		template<typename T>

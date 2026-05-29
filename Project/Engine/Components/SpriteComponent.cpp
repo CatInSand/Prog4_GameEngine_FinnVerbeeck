@@ -12,5 +12,5 @@ void dae::SpriteComponent::Update()
 }
 void dae::SpriteComponent::Render()
 {
-	m_Sprite.Render(GetOwner()->GetWorldTransform().GetPosition());
+	m_Sprite.Render(GetOwner()->GetWorldTransform().position);
 }
