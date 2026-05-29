@@ -2,13 +2,13 @@
 #define EVENT_H
 
 #include "GameObject.h"
-#include "Hash.h"
+#include <cat/hash.h>
 
-using namespace dae::hash_literals; //add hash literal overload "string"_h
+using namespace cat::hash_literals; //add hash literal overload "string"_h
 
 namespace dae
 {
-	using EventID = hash_t;
+	using EventID = cat::hash_t;
 
 	class Event
 	{
