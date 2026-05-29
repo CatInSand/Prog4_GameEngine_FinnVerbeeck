@@ -1,6 +1,6 @@
 #include "InputState.h"
+
 #include <SDL3/SDL.h>
-#include <backends/imgui_impl_sdl3.h>
 
 #if !__EMSCRIPTEN__
 #include <windows.h>
@@ -118,9 +118,6 @@ bool dae::InputState::UpdateStates()
 		default:
 			break;
 		}
-
-		//process event for IMGUI
-		ImGui_ImplSDL3_ProcessEvent(&e);
 	}
 
 #if !__EMSCRIPTEN__

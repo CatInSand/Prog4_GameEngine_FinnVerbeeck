@@ -23,7 +23,7 @@ endif()
 add_library(engine STATIC
   Project/Engine/Base/Font.cpp
   Project/Engine/Base/GameObject.cpp
-  Project/Engine/Base/imgui_plot.cpp
+  
   Project/Engine/Base/InputManager.cpp
   Project/Engine/Base/InputState.cpp
   Project/Engine/Base/Engine.cpp
@@ -171,28 +171,6 @@ if(NOT SDL3_mixer_FOUND)
   endif()
 endif()
 
-# Dear ImGui
-FetchContent_Declare(
-  imgui
-  GIT_REPOSITORY https://github.com/ocornut/imgui
-  GIT_TAG v1.92.5-docking
-  GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(imgui)
-
-add_library(imgui STATIC
-  ${imgui_SOURCE_DIR}/imgui.cpp
-  ${imgui_SOURCE_DIR}/imgui_draw.cpp
-  ${imgui_SOURCE_DIR}/imgui_tables.cpp
-  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-  ${imgui_SOURCE_DIR}/imgui_demo.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
-)
-
-target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
-target_link_libraries(imgui PUBLIC SDL3::SDL3)
-
 if (WIN32)
   # Add VLD (Visual Leak Detector) for memory leak detection on Windows
   find_package(VLD CONFIG)
@@ -220,7 +198,6 @@ target_include_directories(engine PUBLIC
   ${sdl3_image_SOURCE_DIR}/include
   ${sdl3_ttf_SOURCE_DIR}/include
   ${sdl3_mixer_SOURCE_DIR}/include
-  ${imgui_SOURCE_DIR}
   ${VLD_INCLUDE_DIR}
 )
 
@@ -231,7 +208,6 @@ target_include_directories("${TARGET_NAME}" PUBLIC
   ${sdl3_image_SOURCE_DIR}/include
   ${sdl3_ttf_SOURCE_DIR}/include
   ${sdl3_mixer_SOURCE_DIR}/include
-  ${imgui_SOURCE_DIR}
   ${VLD_INCLUDE_DIR}
 )
 
@@ -240,7 +216,6 @@ target_link_libraries(engine PUBLIC
   SDL3_ttf::SDL3_ttf
   SDL3_mixer::SDL3_mixer
   glm::glm
-  imgui
   ${VLD_LIBRARIES}
 )
 
