@@ -10,13 +10,9 @@
 #include "ResourceManager.h"
 #include "TextureComponent.h"
 #include "TextComponent.h"
-#include "MultiSpriteComponent.h"
-#include "GridComponent.h"
-#include "StateMachine.h"
 #include "Settings.h"
-#include "Pooka.h"
 #include "Scene.h"
-#include "ComponentList.h"
+#include "MultiSpriteComponent.h"
 
 #include <filesystem>
 #include "InputManager.h"
@@ -61,57 +57,6 @@ static void load()
 	}
 
 	{
-		//grid
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Grid") };
-		gameObject->SetLocalPosition(150.f, 0.f);
-
-		std::unique_ptr<dae::RenderComponentList<dae::TextureComponent>> textureComponentList{
-			std::make_unique<dae::RenderComponentList<dae::TextureComponent>>(gameObject.get())
-		};
-		gameObject->AddComponent<dae::RenderComponentList<dae::TextureComponent>>(std::move(textureComponentList));
-
-		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
-		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
-		scene.Add(std::move(gameObject));
-	}
-
-	{
-		//pooka
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
-		gameObject->SetLocalPosition(100.f, 30.f);
-
-		std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
-			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::walk), {"sprites/pooka_walk.png", dae::Sprite::Type::loop, 0.2f} },
-			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::ghost), {"sprites/pooka_ghost.png", dae::Sprite::Type::loop, 0.2f} },
-			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::flat), {"sprites/pooka_flat.png", dae::Sprite::Type::still} },
-			{ static_cast<dae::sprite_id>(dae::Pooka::Sprites::blow), {"sprites/pooka_blow.png", dae::Sprite::Type::single} },
-		};
-
-		std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
-			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 0)
-		};
-		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
-
-		std::unique_ptr<dae::Pooka::StateData> pookaStateData{
-			std::make_unique<dae::Pooka::StateData>(gameObject.get())
-		};
-		std::vector<std::unique_ptr<dae::Pooka::State>> states{};
-		states.push_back(std::make_unique<dae::Pooka::Idle>(pookaStateData.get()));
-		states.push_back(std::make_unique<dae::Pooka::Ghost>(pookaStateData.get()));
-		states.push_back(std::make_unique<dae::Pooka::Chase>(pookaStateData.get()));
-		states.push_back(std::make_unique<dae::Pooka::Flat>(pookaStateData.get()));
-		states.push_back(std::make_unique<dae::Pooka::Blow>(pookaStateData.get()));
-		states.push_back(std::make_unique<dae::Pooka::Deflate>(pookaStateData.get()));
-
-		std::unique_ptr<dae::Pooka::StateMachine> stateMachine{
-			std::make_unique<dae::Pooka::StateMachine>(gameObject.get(), std::move(states), std::move(pookaStateData), 0)
-		};
-
-		gameObject->AddComponent<dae::Pooka::StateMachine>(std::move(stateMachine));
-		scene.Add(std::move(gameObject));
-	}
-
-	{
 		//sprites
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player1") };
 		gameObject->SetLocalPosition(100.f, 0.f);
@@ -127,13 +72,6 @@ static void load()
 		};
 		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
 		scene.Add(std::move(gameObject));
-	}
-
-	{
-		//sound
-		dae::KeyTrigger keyTriggerGDown{ SDL_SCANCODE_G, dae::KeyState::down };
-		std::unique_ptr<dae::SoundCommand> soundCommand{ std::make_unique<dae::SoundCommand>(0, 1.f) };
-		dae::InputManager::Instance().AddKeyBind(keyTriggerGDown, std::move(soundCommand));
 	}
 }
 

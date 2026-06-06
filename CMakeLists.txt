@@ -57,8 +57,8 @@ add_executable(${TARGET_NAME} #${TARGET_PARAM} #removed target param to open con
   
   
   
-  Project/Game/GridComponent.cpp
-  Project/Game/Pooka.cpp
+  
+  
 )
 
 
