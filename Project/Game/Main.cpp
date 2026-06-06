@@ -27,6 +27,7 @@
 
 #include "TextureComponent.h"
 #include "TextComponent.h"
+#include "GameComponent.h"
 
 static void load()
 {
@@ -49,6 +50,21 @@ static void load()
 		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(gameObject.get(), "no gameplay currently :(", smoothFont) };
 		gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 		scene.Add(std::move(gameObject));
+	}
+
+	{
+		// game manager object
+		std::unique_ptr<dae::GameObject> textObject{ std::make_unique<dae::GameObject>(scene.Root(), "ScoreText") };
+		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(textObject.get(), "SCORE: 0", arcadeFont) };
+
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "GameManager") };
+		std::unique_ptr<dae::GameComponent> gameComponent{ std::make_unique<dae::GameComponent>(gameObject.get(), textComponent.get()) };
+		gameObject->AddComponent<dae::GameComponent>(std::move(gameComponent));
+
+		textObject->AddComponent<dae::GameComponent>(std::move(textComponent));
+		textObject->SetParent(gameObject.get());
+		scene.Add(std::move(gameObject));
+		scene.Add(std::move(textObject));
 	}
 }
 
