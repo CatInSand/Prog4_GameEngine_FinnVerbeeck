@@ -1,6 +1,6 @@
 #include "ColliderComponent.h"
 
-dae::ColliderComponent::ColliderComponent(GameObject* pOwner, const Transform& colliderTransform)
+dae::ColliderComponent::ColliderComponent(GameObject* pOwner, Transform* colliderTransform)
 	: Component(pOwner)
 	, m_Collider{ colliderTransform, pOwner }
 {

@@ -9,7 +9,7 @@ namespace dae
 	class BoxCollider final
 	{
 	public:
-		BoxCollider(const Transform& transform, GameObject* pOwner)
+		BoxCollider(Transform* transform, GameObject* pOwner)
 			: m_Transform{ transform }
 			, m_pOwner{ pOwner }
 		{
@@ -26,10 +26,10 @@ namespace dae
 		*/
 		static bool Collide(const BoxCollider& bc1, const BoxCollider& bc2)
 		{
-			if (bc1.m_Transform.position.x < bc2.m_Transform.position.x + bc2.m_Transform.scale.x
-				&& bc1.m_Transform.position.x + bc1.m_Transform.scale.x > bc2.m_Transform.position.x
-				&& bc1.m_Transform.position.y < bc2.m_Transform.position.y + bc2.m_Transform.scale.y
-				&& bc1.m_Transform.position.y + bc1.m_Transform.scale.y > bc2.m_Transform.position.y)
+			if (bc1.m_Transform->position.x < bc2.m_Transform->position.x + bc2.m_Transform->scale.x
+				&& bc1.m_Transform->position.x + bc1.m_Transform->scale.x > bc2.m_Transform->position.x
+				&& bc1.m_Transform->position.y < bc2.m_Transform->position.y + bc2.m_Transform->scale.y
+				&& bc1.m_Transform->position.y + bc1.m_Transform->scale.y > bc2.m_Transform->position.y)
 			{
 				return true;
 			}
@@ -42,7 +42,7 @@ namespace dae
 		}
 
 	private:
-		Transform m_Transform;
+		Transform* m_Transform;
 		GameObject* m_pOwner;
 	};
 }

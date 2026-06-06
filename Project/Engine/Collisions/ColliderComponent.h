@@ -10,7 +10,7 @@ namespace dae
 	class ColliderComponent : public Observer, public Component
 	{
 	public:
-		ColliderComponent(GameObject* pOwner, const Transform& colliderTransform);
+		ColliderComponent(GameObject* pOwner, Transform* colliderTransform);
 		virtual ~ColliderComponent();
 		ColliderComponent(const ColliderComponent& other) = delete;
 		ColliderComponent(ColliderComponent&& other) = delete;
