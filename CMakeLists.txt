@@ -53,10 +53,10 @@ add_library(engine STATIC
 
 add_executable(${TARGET_NAME} #${TARGET_PARAM} #removed target param to open console window
   Project/Game/Main.cpp
-  Project/Game/HealthComponent.cpp
-  Project/Game/RotatorComponent.cpp
-  Project/Game/DamageCommand.cpp
-  Project/Game/DeathObserver.cpp
+  
+  
+  
+  
   Project/Game/GridComponent.cpp
   Project/Game/Pooka.cpp
 )

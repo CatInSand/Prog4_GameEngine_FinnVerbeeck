@@ -5,7 +5,7 @@
 
 namespace dae
 {
-	class EventPlayerDied final : public Event
+	/*class EventPlayerDied final : public Event
 	{
 	public:
 		EventPlayerDied(GameObject* pTarget)
@@ -13,7 +13,7 @@ namespace dae
 			, m_pTarget{ pTarget }
 		{}
 		GameObject* m_pTarget;
-	};
+	};*/
 }
 
 #endif
