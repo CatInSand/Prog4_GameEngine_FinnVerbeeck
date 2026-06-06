@@ -58,7 +58,7 @@ namespace dae
 		}
 
 		int m_LiveCount{ 6 };
-		float m_MoveSpeed{ 1.f };
+		float m_MoveSpeed{ 100.f };
 
 	private:
 		Direction m_Direction{ Direction::forward };
