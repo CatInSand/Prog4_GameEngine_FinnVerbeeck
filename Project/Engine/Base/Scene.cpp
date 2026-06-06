@@ -17,7 +17,7 @@ void dae::Scene::RemoveAll()
 	m_Objects.clear();
 }
 
-dae::GameObject* dae::Scene::GetObjectWithName(const std::string& name)
+dae::GameObject* dae::Scene::GetObjectWithName(const cat::hash_t& name)
 {
 	for (std::unique_ptr<GameObject>& pObject : m_Objects)
 	{
@@ -28,7 +28,7 @@ dae::GameObject* dae::Scene::GetObjectWithName(const std::string& name)
 	}
 	return nullptr;
 }
-dae::GameObject* dae::Scene::GetObjectWithTag(const std::string& tag)
+dae::GameObject* dae::Scene::GetObjectWithTag(const cat::hash_t& tag)
 {
 	for (std::unique_ptr<GameObject>& pObject : m_Objects)
 	{
@@ -39,7 +39,7 @@ dae::GameObject* dae::Scene::GetObjectWithTag(const std::string& tag)
 	}
 	return nullptr;
 }
-std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithName(const std::string& name)
+std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithName(const cat::hash_t& name)
 {
 	std::vector<dae::GameObject*> result{};
 	for (std::unique_ptr<GameObject>& pObject : m_Objects)
@@ -51,7 +51,7 @@ std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithName(const std::strin
 	}
 	return result;
 }
-std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithTag(const std::string& tag)
+std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithTag(const cat::hash_t& tag)
 {
 	std::vector<dae::GameObject*> result{};
 	for (std::unique_ptr<GameObject>& pObject : m_Objects)

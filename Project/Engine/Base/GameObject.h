@@ -1,11 +1,17 @@
-#pragma once
+#ifndef GAME_OBJECT_H
+#define GAME_OBJECT_H
+
 #include <string>
 #include <memory>
-#include "Transform.h"
-
-#include "Component.h"
 #include <vector>
 #include <stdexcept>
+
+#include <cat/hash.h>
+using namespace cat::hash_literals; //add literal overload _h
+
+#include "Transform.h"
+#include "Component.h"
+
 
 namespace dae
 {
@@ -20,12 +26,12 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 		
 		//Name & tags
-		std::string Name() const;
-		void Rename(const std::string& name);
-		bool HasTag(const std::string& tag) const;
-		void AddTag(const std::string& tag);
-		void RemoveTag(const std::string& tag);
-		std::vector<std::string> Tags() const;
+		cat::hash_t Name() const;
+		void Rename(const cat::hash_t& name);
+		bool HasTag(const cat::hash_t& tag) const;
+		void AddTag(const cat::hash_t& tag);
+		void RemoveTag(const cat::hash_t& tag);
+		std::vector<cat::hash_t> Tags() const;
 
 		//Components
 		template<typename T>
@@ -103,8 +109,8 @@ namespace dae
 
 	private:
 		//Name & tags
-		std::string m_Name;
-		std::vector<std::string> m_Tags{};
+		cat::hash_t m_Name;
+		std::vector<cat::hash_t> m_Tags{};
 
 		//Components
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
@@ -129,3 +135,5 @@ namespace dae
 		bool m_TransformRequiresUpdate{ false };
 	};
 }
+
+#endif

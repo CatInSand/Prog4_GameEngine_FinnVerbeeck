@@ -5,7 +5,7 @@
 
 dae::Pooka::StateData::StateData(GameObject* pPookaObject)
 	: pPooka{ pPookaObject }
-	, pPlayer{ SceneManager::Instance().CurrentScene()->GetObjectWithName("Player") }
+	, pPlayer{ SceneManager::Instance().CurrentScene()->GetObjectWithName("Player"_h) }
 {
 }
 

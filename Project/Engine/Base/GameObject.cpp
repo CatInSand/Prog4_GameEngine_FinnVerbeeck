@@ -8,7 +8,7 @@
 #include "RenderComponent.h"
 
 dae::GameObject::GameObject(dae::GameObject* pParent, const std::string& name)
-	: m_Name{ name }
+	: m_Name{ cat::make_hash(name) }
 	, m_pParent{ pParent }
 {
 	if (m_pParent != nullptr)
@@ -31,15 +31,15 @@ dae::GameObject::~GameObject()
 	//	Either way, children will also get deleted
 }
 
-std::string dae::GameObject::Name() const
+cat::hash_t dae::GameObject::Name() const
 {
 	return m_Name;
 }
-void dae::GameObject::Rename(const std::string& name)
+void dae::GameObject::Rename(const cat::hash_t& name)
 {
 	m_Name = name;
 }
-bool dae::GameObject::HasTag(const std::string& tag) const
+bool dae::GameObject::HasTag(const cat::hash_t& tag) const
 {
 	const auto it{ std::find(m_Tags.cbegin(), m_Tags.cend(), tag) };
 	if (it != m_Tags.cend())
@@ -48,15 +48,15 @@ bool dae::GameObject::HasTag(const std::string& tag) const
 	}
 	return false;
 }
-void dae::GameObject::AddTag(const std::string& tag)
+void dae::GameObject::AddTag(const cat::hash_t& tag)
 {
 	m_Tags.push_back(tag);
 }
-void dae::GameObject::RemoveTag(const std::string& tag)
+void dae::GameObject::RemoveTag(const cat::hash_t& tag)
 {
 	m_Tags.erase(std::remove(m_Tags.begin(), m_Tags.end(), tag), m_Tags.end());
 }
-std::vector<std::string> dae::GameObject::Tags() const
+std::vector<cat::hash_t> dae::GameObject::Tags() const
 {
 	return m_Tags;
 }

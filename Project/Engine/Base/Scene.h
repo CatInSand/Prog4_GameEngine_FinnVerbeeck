@@ -21,10 +21,10 @@ namespace dae
 		void Add(std::unique_ptr<GameObject>&& object);
 		void RemoveAll();
 
-		GameObject* GetObjectWithName(const std::string& name);
-		GameObject* GetObjectWithTag(const std::string& tag);
-		std::vector<GameObject*> GetAllObjectsWithName(const std::string& name);
-		std::vector<GameObject*> GetAllObjectsWithTag(const std::string& tag);
+		GameObject* GetObjectWithName(const cat::hash_t& name);
+		GameObject* GetObjectWithTag(const cat::hash_t& tag);
+		std::vector<GameObject*> GetAllObjectsWithName(const cat::hash_t& name);
+		std::vector<GameObject*> GetAllObjectsWithTag(const cat::hash_t& tag);
 
 		void Update();
 		void Render() const;
