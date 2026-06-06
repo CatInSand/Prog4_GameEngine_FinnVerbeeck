@@ -28,6 +28,7 @@
 #include "TextureComponent.h"
 #include "TextComponent.h"
 #include "GameComponent.h"
+#include "Player.h"
 
 static void load()
 {
@@ -65,6 +66,14 @@ static void load()
 		textObject->SetParent(gameObject.get());
 		scene.Add(std::move(gameObject));
 		scene.Add(std::move(textObject));
+	}
+	
+	{
+		// player object
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
+		std::unique_ptr<dae::PlayerComponent> playerComponent{ std::make_unique<dae::PlayerComponent>(gameObject.get())};
+		gameObject->AddComponent<dae::PlayerComponent>(std::move(playerComponent));
+		scene.Add(std::move(gameObject));
 	}
 }
 

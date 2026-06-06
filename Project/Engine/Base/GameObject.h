@@ -106,6 +106,7 @@ namespace dae
 		void SetLocalPosition(glm::vec2 pos);
 		Transform GetLocalTransform() const;
 		Transform GetWorldTransform();
+		Transform* LocalTransformPtr();
 
 	private:
 		//Name & tags

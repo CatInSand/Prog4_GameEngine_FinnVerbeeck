@@ -191,6 +191,11 @@ dae::Transform dae::GameObject::GetWorldTransform()
 	return m_WorldTransform;
 }
 
+dae::Transform* dae::GameObject::LocalTransformPtr()
+{
+	return &m_LocalTransform;
+}
+
 //private functions
 void dae::GameObject::AddChild(dae::GameObject* pChild)
 {
