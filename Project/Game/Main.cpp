@@ -6,19 +6,15 @@
 #endif
 
 #include "Engine.h"
-#include "SceneManager.h"
-#include "ResourceManager.h"
-#include "TextureComponent.h"
-#include "TextComponent.h"
 #include "Settings.h"
 #include "Scene.h"
-#include "MultiSpriteComponent.h"
+#include "SceneManager.h"
+#include "ResourceManager.h"
 
 #include <filesystem>
+#include <iostream>
 #include "InputManager.h"
 #include "MoveCommand.h"
-
-#include "SoundCommand.h"
 
 #if !__EMSCRIPTEN__
 #include <windows.h>
@@ -27,11 +23,10 @@
 //emscripten includes
 #endif
 
-enum class PlayerSprite : dae::sprite_id {
-	idle,
-	walking,
-	drilling,
-};
+// - - - - - - - - - - - - - - - -
+
+#include "TextureComponent.h"
+#include "TextComponent.h"
 
 static void load()
 {
@@ -53,24 +48,6 @@ static void load()
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Text") };
 		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(gameObject.get(), "no gameplay currently :(", smoothFont) };
 		gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
-		scene.Add(std::move(gameObject));
-	}
-
-	{
-		//sprites
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player1") };
-		gameObject->SetLocalPosition(100.f, 0.f);
-
-		std::unordered_map<dae::sprite_id, dae::Sprite> spriteMap{
-			{ static_cast<dae::sprite_id>(PlayerSprite::idle), {"sprites/idle.png", dae::Sprite::Type::still} },
-			{ static_cast<dae::sprite_id>(PlayerSprite::walking), {"sprites/walk.png", dae::Sprite::Type::loop, 0.2f} },
-			{ static_cast<dae::sprite_id>(PlayerSprite::drilling), {"sprites/swing.png", dae::Sprite::Type::swing, 0.2f} },
-		};
-
-		std::unique_ptr<dae::MultiSpriteComponent> spriteComponent{
-			std::make_unique<dae::MultiSpriteComponent>(gameObject.get(), std::move(spriteMap), 1)
-		};
-		gameObject->AddComponent<dae::MultiSpriteComponent>(std::move(spriteComponent));
 		scene.Add(std::move(gameObject));
 	}
 }
