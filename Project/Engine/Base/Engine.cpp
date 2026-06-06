@@ -91,6 +91,8 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 	EventQueue::Instance().AddObserver(&ServiceLocator::GetSoundSystem());
 }
 
+#include "CollisionQueue.h"
+
 dae::Engine::~Engine()
 {
 	Renderer::Instance().Destroy();
@@ -99,6 +101,8 @@ dae::Engine::~Engine()
 
 	ServiceLocator::RegisterSoundSystem(nullptr);
 	SDL_Quit();
+
+	SceneManager::Instance().Destroy();
 }
 
 void dae::Engine::Run(const std::function<void()>& load)
