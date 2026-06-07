@@ -42,21 +42,24 @@ namespace dae
 	class BlockComponent final : public TextureComponent
 	{
 	public:
-		BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness);
+		BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness, bool solid = false);
 		virtual ~BlockComponent() = default;
 
 		glm::vec2 Size() const;
 		bool Full() const;
 		bool Empty() const;
+		bool IsSolid() const;
 
 		bool Dig(float amount, Direction direction);
 
 		static constexpr float FULL{ 16.f };
 		static constexpr float EMPTY{ 0.f };
+		static constexpr float EPSILON{ 1.f };
 
 	private:
 		float m_Fullness;
 		Direction m_Direction{ Direction::none };
+		bool m_Solid;
 	};
 
 	GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
@@ -79,15 +82,16 @@ namespace dae
 		virtual void Update() override;
 
 		glm::vec2 BlockSize() const;
+		glm::vec2 PlayerSpawn() const;
 
 		GameObject* CurrentBlock(const glm::vec2& position);
 		GameObject* NextBlock(const glm::vec2& position, Direction direction);
 		glm::vec2 SnapToGrid(const glm::vec2& position);
 		glm::vec2 SnapToGridLine(const glm::vec2& position, Direction direction);
-		bool CanDigInDir(const glm::vec2& position, Direction direction);
+		bool CanDigInDir(const glm::vec2& position, Direction direction, Direction previousDirection);
 		bool CanMoveInDir(const glm::vec2& position, Direction direction);
 		glm::vec2 MoveInDir(const glm::vec2& position, Direction direction, float amount);
-		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, float amount);
+		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, Direction previousDirection, float amount);
 
 	private:
 		static GridData<GRID_WIDTH, GRID_HEIGHT> LoadGridFromFile(const std::string& filePath);

@@ -14,6 +14,12 @@ dae::TextureComponent::TextureComponent(dae::GameObject* owner, const std::strin
 {
 }
 
+void dae::TextureComponent::SetTexture(const std::string& filename)
+{
+	auto newpTexture{ ResourceManager::Instance().LoadTexture(filename) };
+	m_pTexture.swap(newpTexture);
+}
+
 void dae::TextureComponent::Render()
 {
 	if (m_pTexture != nullptr)

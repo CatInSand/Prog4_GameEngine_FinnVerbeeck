@@ -17,6 +17,8 @@ namespace dae
 		TextureComponent& operator=(const TextureComponent& other) = delete;
 		TextureComponent& operator=(TextureComponent&& other) = delete;
 
+		void SetTexture(const std::string& filename);
+
 		virtual void Update() override
 		{
 		}

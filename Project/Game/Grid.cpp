@@ -1,12 +1,14 @@
 #include "Grid.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "ResourceManager.h"
 
-dae::BlockComponent::BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness)
+dae::BlockComponent::BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness, bool solid)
 	: TextureComponent(pOwner, texturePath)
 	, m_Fullness{ fullness }
+	, m_Solid{ solid }
 {
 }
 
@@ -16,17 +18,21 @@ glm::vec2 dae::BlockComponent::Size() const
 }
 bool dae::BlockComponent::Full() const
 {
-	if (m_Fullness == FULL)
+	if (m_Fullness >= FULL - EPSILON)
 		return true;
 
 	return false;
 }
 bool dae::BlockComponent::Empty() const
 {
-	if (m_Fullness <= EMPTY)
+	if (m_Fullness <= EMPTY + EPSILON)
 		return true;
 
 	return false;
+}
+bool dae::BlockComponent::IsSolid() const
+{
+	return m_Solid;
 }
 
 bool dae::BlockComponent::Dig(float amount, Direction direction)
@@ -36,13 +42,12 @@ bool dae::BlockComponent::Dig(float amount, Direction direction)
 
 	if (m_Direction == Direction::none)
 		m_Direction = direction;
-	else if (m_Direction != direction)
-		return false;
 
-	m_Fullness = std::min(FULL - amount, m_Fullness);
+	m_Fullness -= amount;
+	std::cout << "Block: " << GetOwner()->GetLocalTransform().position.x << ", " << GetOwner()->GetLocalTransform().position.x << "Fullness: " << m_Fullness << "\n";
 	if (Empty())
 	{
-		m_Fullness = EMPTY;
+		SetTexture("sprites/tile_empty.png");
 		return true;
 	}
 
@@ -52,6 +57,7 @@ bool dae::BlockComponent::Dig(float amount, Direction direction)
 dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData)
 {
 	std::string texturePath{};
+	bool solid{ false };
 	switch (blockData.cellStartingData)
 	{
 	case dae::Cell::rock:
@@ -65,10 +71,14 @@ dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, Blo
 		break;
 	case dae::Cell::solid:
 		texturePath = "sprites/tile_empty.png";
+		solid = true;
 		break;
 	case dae::Cell::ground:
+		texturePath = "sprites/tile_sky.png";
+		break;
 	case dae::Cell::sky:
 		texturePath = "sprites/tile_sky.png";
+		solid = true;
 		break;
 	default:
 		break;
@@ -76,7 +86,7 @@ dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, Blo
 
 	auto gameObject{ std::make_unique<dae::GameObject>(pOwner, "GridBlock") };
 
-	auto blockComponent{ std::make_unique<dae::BlockComponent>(gameObject.get(), texturePath, blockData.fullness)};
+	auto blockComponent{ std::make_unique<dae::BlockComponent>(gameObject.get(), texturePath, blockData.fullness, solid)};
 	gameObject->SetLocalPosition(columnRow.x * blockComponent->Size().x, columnRow.y * blockComponent->Size().y);
 	gameObject->AddComponent<dae::BlockComponent>(std::move(blockComponent));
 
@@ -115,6 +125,12 @@ glm::vec2 dae::GridComponent::BlockSize() const
 {
 	return m_BlockSize;
 }
+glm::vec2 dae::GridComponent::PlayerSpawn() const
+{
+	constexpr uint8_t column{ 7 };
+	constexpr uint8_t row{ 9 };
+	return { m_BlockSize.x * column, m_BlockSize.y * row };
+}
 
 dae::GameObject* dae::GridComponent::CurrentBlock(const glm::vec2& position)
 {
@@ -124,8 +140,8 @@ dae::GameObject* dae::GridComponent::CurrentBlock(const glm::vec2& position)
 }
 dae::GameObject* dae::GridComponent::NextBlock(const glm::vec2& position, Direction direction)
 {
-	size_t row{ static_cast<size_t>(position.x / BlockSize().y) };
-	size_t column{ static_cast<size_t>(position.y / BlockSize().x) };
+	size_t row{ static_cast<size_t>(position.y / BlockSize().y) };
+	size_t column{ static_cast<size_t>(position.x / BlockSize().x) };
 
 	switch (direction)
 	{
@@ -143,7 +159,7 @@ dae::GameObject* dae::GridComponent::NextBlock(const glm::vec2& position, Direct
 }
 glm::vec2 dae::GridComponent::SnapToGrid(const glm::vec2& position)
 {
-	return { std::fmodf(position.x, BlockSize().x),  std::fmodf(position.y, BlockSize().y) };
+	return { static_cast<int>(position.x / BlockSize().x) * BlockSize().x,  static_cast<int>(position.y / BlockSize().y) * BlockSize().y };
 }
 glm::vec2 dae::GridComponent::SnapToGridLine(const glm::vec2& position, Direction direction)
 {
@@ -151,11 +167,11 @@ glm::vec2 dae::GridComponent::SnapToGridLine(const glm::vec2& position, Directio
 	{
 	case dae::Direction::up:
 	case dae::Direction::down:
-		return { std::fmodf(position.x, BlockSize().x), position.y };
+		return { static_cast<int>(position.x / BlockSize().x) * BlockSize().x, position.y };
 		break;
 	case dae::Direction::left:
 	case dae::Direction::right:
-		return { position.x, std::fmodf(position.y, BlockSize().y) };
+		return { position.x, static_cast<int>(position.y / BlockSize().y) * BlockSize().y };
 		break;
 	default:
 		assert(false && "invalid direction");
@@ -163,13 +179,23 @@ glm::vec2 dae::GridComponent::SnapToGridLine(const glm::vec2& position, Directio
 		break;
 	}
 }
-bool dae::GridComponent::CanDigInDir(const glm::vec2& position, Direction direction)
+bool dae::GridComponent::CanDigInDir(const glm::vec2& position, Direction direction, Direction previousDirection)
 {
-	return position == SnapToGridLine(position, direction);
+	bool canDig{};
+
+	canDig = abs(glm::distance(position, SnapToGridLine(position, direction))) < 2.f
+		&& !NextBlock(position, direction)->GetComponent<BlockComponent>()->IsSolid()
+		&& (NextBlock(position, previousDirection)->GetComponent<BlockComponent>()->Empty()
+		|| NextBlock(position, previousDirection)->GetComponent<BlockComponent>()->Full()
+		|| direction == previousDirection);
+
+	return canDig;
 }
 bool dae::GridComponent::CanMoveInDir(const glm::vec2& position, Direction direction)
 {
-	return CanDigInDir(position, direction) && NextBlock(position, direction)->GetComponent<BlockComponent>()->Empty();
+	return abs(glm::distance(position, SnapToGridLine(position, direction))) < 2.f
+		&& !NextBlock(position, direction)->GetComponent<BlockComponent>()->IsSolid()
+		&& NextBlock(position, direction)->GetComponent<BlockComponent>()->Empty();
 }
 glm::vec2 dae::GridComponent::MoveInDir(const glm::vec2& position, Direction direction, float amount)
 {
@@ -201,31 +227,38 @@ glm::vec2 dae::GridComponent::MoveInDir(const glm::vec2& position, Direction dir
 		return position;
 	}
 }
-glm::vec2 dae::GridComponent::DigInDir(const glm::vec2& position, Direction direction, float amount)
+glm::vec2 dae::GridComponent::DigInDir(const glm::vec2& position, Direction direction, Direction previousDirection, float amount)
 {
-	if (CanDigInDir(position, direction))
+	if (CanDigInDir(position, direction, previousDirection))
 	{
 		GameObject* pBlock{ NextBlock(position, direction) };
 
-		if (pBlock->GetComponent<BlockComponent>()->Dig(amount, direction))
+		glm::vec2 newPos{ SnapToGridLine(position, direction) };
+
+		switch (direction)
 		{
-			switch (direction)
-			{
-			case dae::Direction::up:
-				return SnapToGrid({ position.x, position.y - amount });
-			case dae::Direction::down:
-				return SnapToGrid({ position.x, position.y + amount });
-			case dae::Direction::left:
-				return SnapToGrid({ position.x - amount, position.y });
-			case dae::Direction::right:
-				return SnapToGrid({ position.x + amount, position.y });
-				break;
-			default:
-				break;
-			}
+		case dae::Direction::up:
+			newPos = { newPos.x, newPos.y - amount };
+			break;
+		case dae::Direction::down:
+			newPos = { position.x, position.y + amount };
+			break;
+		case dae::Direction::left:
+			newPos = { newPos.x - amount, newPos.y };
+			break;
+		case dae::Direction::right:
+			newPos = { newPos.x + amount, newPos.y };
+			break;
+		default:
+			break;
 		}
 
-		return position;
+		if (pBlock->GetComponent<BlockComponent>()->Dig(amount, direction))
+		{
+			newPos = SnapToGrid(pBlock->GetLocalTransform().position);
+		}
+
+		return newPos;
 	}
 	else
 	{

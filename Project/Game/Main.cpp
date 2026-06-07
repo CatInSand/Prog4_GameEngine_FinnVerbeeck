@@ -62,35 +62,6 @@ static void load()
 		scene.Add(std::move(gameObject));
 		scene.Add(std::move(textObject));
 	}
-	
-	{
-		// player object
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
-
-		std::unique_ptr<dae::PlayerComponent> playerComponent{ std::make_unique<dae::PlayerComponent>(gameObject.get())};
-		dae::InputManager::Instance().AddKeyBind(
-			dae::KeyTrigger{ SDL_SCANCODE_D, dae::KeyState::pressed },
-			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), glm::vec2{ 1.f, 0.f })
-		); //right
-		dae::InputManager::Instance().AddKeyBind(
-			dae::KeyTrigger{ SDL_SCANCODE_A, dae::KeyState::pressed },
-			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), glm::vec2{ -1.f, 0.f })
-		); //left
-		dae::InputManager::Instance().AddKeyBind(
-			dae::KeyTrigger{ SDL_SCANCODE_W, dae::KeyState::pressed },
-			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), glm::vec2{ 0.f, -1.f })
-		); //up
-		dae::InputManager::Instance().AddKeyBind(
-			dae::KeyTrigger{ SDL_SCANCODE_S, dae::KeyState::pressed },
-			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), glm::vec2{ 0.f, 1.f })
-		); //down
-		gameObject->AddComponent<dae::PlayerComponent>(std::move(playerComponent));
-
-		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/idle.png") };
-		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
-
-		scene.Add(std::move(gameObject));
-	}
 
 	{
 		// grid object
@@ -101,18 +72,48 @@ static void load()
 	}
 
 	{
-		// pooka object
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
-		gameObject->SetLocalPosition(100.f, 100.f);
+		// player object
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
+		gameObject->SetLocalPosition(scene.GetObjectWithName("Grid"_h)->GetComponent<dae::GridComponent>()->PlayerSpawn());
 
-		std::unique_ptr<dae::PookaComponent> pookaComponent{ std::make_unique<dae::PookaComponent>(gameObject.get()) };
-		gameObject->AddComponent<dae::PookaComponent>(std::move(pookaComponent));
+		std::unique_ptr<dae::PlayerComponent> playerComponent{ std::make_unique<dae::PlayerComponent>(gameObject.get()) };
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_D, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::right)
+		); //right
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_A, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::left)
+		); //left
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_W, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::up)
+		); //up
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_S, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::down)
+		); //down
+		gameObject->AddComponent<dae::PlayerComponent>(std::move(playerComponent));
 
-		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/pooka_walk.png") };
+		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/idle.png") };
 		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
 
 		scene.Add(std::move(gameObject));
 	}
+
+	//{
+	//	// pooka object
+	//	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
+	//	gameObject->SetLocalPosition(100.f, 100.f);
+
+	//	std::unique_ptr<dae::PookaComponent> pookaComponent{ std::make_unique<dae::PookaComponent>(gameObject.get()) };
+	//	gameObject->AddComponent<dae::PookaComponent>(std::move(pookaComponent));
+
+	//	std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/pooka_walk.png") };
+	//	gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
+
+	//	scene.Add(std::move(gameObject));
+	//}
 }
 
 int main(int, char*[])

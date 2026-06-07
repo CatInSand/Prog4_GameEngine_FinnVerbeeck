@@ -2,75 +2,34 @@
 #define PLAYER_H
 
 #include "ColliderComponent.h"
-#include "Component.h"
 #include "StateMachine.h"
-#include "EventQueue.h"
-#include "DeltaTime.h"
 #include "BaseCommand.h"
-#include "Event.h"
-#include "Tags.h"
+#include "Grid.h"
 
 namespace dae
 {
+	class GridComponent;
 	class PlayerComponent final : public ColliderComponent
 	{
-		enum class Direction {
-			none = -1,
-			up,
-			forward,
-			down,
-		};
-
 	public:
-		PlayerComponent(GameObject* pOwner)
-			: ColliderComponent(pOwner, pOwner->LocalTransformPtr())
-			, m_pIdleState{ std::make_unique<IdleState>(this) }
-			, m_pCurrentState{ m_pIdleState.get() }
-		{
-		}
+		PlayerComponent(GameObject* pOwner);
 
-		virtual void Update() override
-		{
-			m_pCurrentState = m_pCurrentState->Update();
-		}
-
-		void Move(const glm::vec2& direction)
-		{
-			GetOwner()->SetLocalPosition(GetOwner()->GetLocalTransform().position + direction * m_MoveSpeed * time::gDeltaTime);
-
-			if (direction.x != 0)
-				m_Direction = Direction::forward;
-			else if (direction.y > 0)
-				m_Direction = Direction::up;
-			else if (direction.y < 0)
-				m_Direction = Direction::down;
-
-			if (direction.x > 0)
-				m_Right = true;
-			else if (direction.x < 0)
-				m_Right = false;
-		}
+		virtual void Update() override;
+		void Move(Direction direction);
 
 		int m_LiveCount{ 6 };
-		float m_MoveSpeed{ 100.f };
+		float m_MoveSpeed{ 25.f };
+
+		GridComponent* m_pGridComponent{ nullptr };
 
 	private:
-		Direction m_Direction{ Direction::forward };
+		Direction m_Direction{ Direction::right };
+		Direction m_PreviousDirection{ Direction::right };
 		bool m_Right{ true };
 
-		virtual void OnCollisionEnter(GameObject* pObject)
-		{
-			if (pObject->HasTag(TAG_DANGEROUS_TO_PLAYER))
-			{
-				--m_LiveCount;
-				if (m_LiveCount == 0)
-				{
-					EventQueue::Instance().Enqueue(std::make_unique<EventPlayerDied>());
-				}
-			}
-		};
-		virtual void OnCollisionStay(GameObject*) {};
-		virtual void OnCollisionExit(GameObject*) {};
+		virtual void OnCollisionEnter(GameObject* pObject) override;
+		virtual void OnCollisionStay(GameObject*) override {};
+		virtual void OnCollisionExit(GameObject*) override {};
 
 		class State {
 		public:
@@ -96,11 +55,9 @@ namespace dae
 
 			virtual void Enter()
 			{
-
 			}
 			virtual void Exit()
 			{
-
 			}
 		};
 
@@ -111,7 +68,7 @@ namespace dae
 	class PlayerMoveCommand final : public BaseCommand
 	{
 	public:
-		PlayerMoveCommand(PlayerComponent* pPlayer, const glm::vec2& direction)
+		PlayerMoveCommand(PlayerComponent* pPlayer, Direction direction)
 			: m_Direction{ direction }
 			, m_pPlayer{ pPlayer }
 		{}
@@ -122,7 +79,7 @@ namespace dae
 		}
 
 	private:
-		glm::vec2 m_Direction;
+		Direction m_Direction;
 		PlayerComponent* m_pPlayer;
 	};
 }
