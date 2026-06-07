@@ -16,19 +16,13 @@
 #include "InputManager.h"
 #include "MoveCommand.h"
 
-#if !__EMSCRIPTEN__
-#include <windows.h>
-#include <Xinput.h>
-#else
-//emscripten includes
-#endif
-
 // - - - - - - - - - - - - - - - -
 
 #include "TextureComponent.h"
 #include "TextComponent.h"
 #include "GameComponent.h"
 #include "Player.h"
+#include "Grid.h"
 
 static void load()
 {
@@ -96,17 +90,20 @@ static void load()
 
 		scene.Add(std::move(gameObject));
 	}
+
+	{
+		// grid object
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
+		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
+		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
+	}
 }
 
 int main(int, char*[])
 {
-#if __EMSCRIPTEN__
-	std::filesystem::path data_location{ "" };
-#else
 	std::filesystem::path data_location{ "./Data/" };
 	if(!std::filesystem::exists(data_location))
 		data_location = "../Data/";
-#endif
 
 	try
 	{
