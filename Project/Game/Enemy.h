@@ -27,6 +27,7 @@ namespace dae
 
 	protected:
 		static constexpr float SPEED{ 10.f };
+
 		class EnemyState
 		{
 		public:

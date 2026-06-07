@@ -8,6 +8,7 @@
 #include "DeltaTime.h"
 #include "BaseCommand.h"
 #include "Event.h"
+#include "Tags.h"
 
 namespace dae
 {
@@ -57,8 +58,9 @@ namespace dae
 		Direction m_Direction{ Direction::forward };
 		bool m_Right{ true };
 
-		virtual void OnCollisionEnter(GameObject* pObject) {
-			if (pObject->HasTag("Enemy"_h))
+		virtual void OnCollisionEnter(GameObject* pObject)
+		{
+			if (pObject->HasTag(TAG_DANGEROUS_TO_PLAYER))
 			{
 				--m_LiveCount;
 				if (m_LiveCount == 0)

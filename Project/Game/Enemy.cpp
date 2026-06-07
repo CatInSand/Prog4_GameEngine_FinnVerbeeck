@@ -8,6 +8,7 @@ dae::EnemyComponent::EnemyComponent(GameObject* pOwner, bool isPooka, EnemyState
 	, m_pCurrentState{ pStartingState }
 	, m_IsPooka{ isPooka }
 {
+	pOwner->AddTag(TAG_DANGEROUS_TO_PLAYER);
 	m_pPlayer = SceneManager::Instance().CurrentScene()->GetObjectWithName("Player"_h);
 	m_pGridComponent = SceneManager::Instance().CurrentScene()->GetObjectWithName("Grid"_h)->GetComponent<GridComponent>();
 	if (m_pCurrentState != nullptr)
