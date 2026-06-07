@@ -14,9 +14,10 @@ namespace dae
 		SDL_Renderer* m_renderer{};
 		SDL_Window* m_window{};
 		SDL_Color m_clearColor{};
+		float m_Scale{ 1.f };
 
 	public:
-		void Init(SDL_Window* window);
+		void Init(SDL_Window* window, float scale);
 		void Render();
 		void Destroy();
 

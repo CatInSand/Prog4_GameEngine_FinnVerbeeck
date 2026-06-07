@@ -79,7 +79,11 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
-	Renderer::Instance().Init(g_Window);
+	float scale{ std::min(
+		static_cast<float>(m_Settings.screenWidth) / m_Settings.gameWidth,
+		static_cast<float>(m_Settings.screenHeight) / m_Settings.gameHeight)
+	};
+	Renderer::Instance().Init(g_Window, scale);
 	ResourceManager::Instance().Init(dataPath);
 
 #ifndef NDEBUG

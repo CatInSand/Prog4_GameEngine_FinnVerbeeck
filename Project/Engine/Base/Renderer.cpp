@@ -7,8 +7,10 @@
 
 #include <algorithm>
 
-void dae::Renderer::Init(SDL_Window* window)
+void dae::Renderer::Init(SDL_Window* window, float scale)
 {
+	m_Scale = scale;
+
 	m_window = window;
 	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 	m_renderer = SDL_CreateRenderer(window, nullptr);
@@ -48,29 +50,31 @@ void dae::Renderer::Destroy()
 void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
 {
 	SDL_FRect dst{};
-	dst.x = x;
-	dst.y = y;
+	dst.x = x * m_Scale;
+	dst.y = y * m_Scale;
 	SDL_GetTextureSize(texture.GetSDLTexture(), &dst.w, &dst.h);
+	dst.w *= m_Scale;
+	dst.h *= m_Scale;
 	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
 void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height) const
 {
 	SDL_FRect dst{};
-	dst.x = x;
-	dst.y = y;
-	dst.w = width;
-	dst.h = height;
+	dst.x = x * m_Scale;
+	dst.y = y * m_Scale;
+	dst.w = width * m_Scale;
+	dst.h = height * m_Scale;
 	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
 void dae::Renderer::RenderTextureCut(const Texture2D& texture, const float x, const float y, const float srcX, const float srcY, const float srcWidth, const float srcHeight) const
 {
 	SDL_FRect dst{};
-	dst.x = x;
-	dst.y = y;
-	dst.w = srcWidth;
-	dst.h = srcHeight;
+	dst.x = x * m_Scale;
+	dst.y = y * m_Scale;
+	dst.w = srcWidth * m_Scale;
+	dst.h = srcHeight * m_Scale;
 	SDL_FRect src{};
 	src.x = srcX;
 	src.y = srcY;

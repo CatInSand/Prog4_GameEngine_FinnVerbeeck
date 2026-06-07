@@ -126,8 +126,8 @@ int main(int, char*[])
 		dae::Settings settings{
 			.screenWidth = 1080,
 			.screenHeight = 720,
-			.gameWidth = 224,
-			.gameHeight = 288,
+			.gameWidth = 16*16,
+			.gameHeight = 18*16,
 			.masterVolume = 0.2f,
 		};
 
