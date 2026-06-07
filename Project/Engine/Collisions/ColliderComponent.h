@@ -7,7 +7,7 @@
 
 namespace dae
 {
-	class ColliderComponent : public Observer, public Component
+	class ColliderComponent : public Component, public Observer
 	{
 	public:
 		ColliderComponent(GameObject* pOwner, Transform* colliderTransform);

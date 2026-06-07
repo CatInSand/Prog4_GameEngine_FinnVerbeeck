@@ -22,7 +22,8 @@
 #include "TextComponent.h"
 #include "GameComponent.h"
 #include "Player.h"
-#include "Grid.h"
+#include "Enemy.h"
+//#include "Grid.h"
 
 static void load()
 {
@@ -93,9 +94,24 @@ static void load()
 
 	{
 		// grid object
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Grid") };
 		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
 		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
+		scene.Add(std::move(gameObject));
+	}
+
+	{
+		// pooka object
+		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Pooka") };
+		gameObject->SetLocalPosition(100.f, 100.f);
+
+		std::unique_ptr<dae::PookaComponent> pookaComponent{ std::make_unique<dae::PookaComponent>(gameObject.get()) };
+		gameObject->AddComponent<dae::PookaComponent>(std::move(pookaComponent));
+
+		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/pooka_walk.png") };
+		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
+
+		scene.Add(std::move(gameObject));
 	}
 }
 

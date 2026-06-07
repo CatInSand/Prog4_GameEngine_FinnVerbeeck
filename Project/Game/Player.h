@@ -7,17 +7,10 @@
 #include "EventQueue.h"
 #include "DeltaTime.h"
 #include "BaseCommand.h"
+#include "Event.h"
 
 namespace dae
 {
-	class EventPlayerDied final : public Event
-	{
-	public:
-		EventPlayerDied()
-			: Event("EventPlayerDied"_h)
-		{}
-	};
-
 	class PlayerComponent final : public ColliderComponent
 	{
 		enum class Direction {

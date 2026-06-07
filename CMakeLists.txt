@@ -59,7 +59,7 @@ add_executable(${TARGET_NAME} #${TARGET_PARAM} #removed target param to open con
   
   
   
-)
+ "Project/Game/Enemy.cpp" "Project/Game/Grid.cpp")
 
 
 
