@@ -1,10 +1,82 @@
 #include "Grid.h"
 
-dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, const std::string& fileName)
-{
-	std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(pOwner, "GridBlock") };
+#include <fstream>
 
-	std::unique_ptr<dae::BlockComponent> blockComponent{ std::make_unique<dae::BlockComponent>(gameObject.get(), fileName) };
+#include "ResourceManager.h"
+
+dae::BlockComponent::BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness)
+	: TextureComponent(pOwner, texturePath)
+	, m_Fullness{ fullness }
+{
+}
+
+glm::vec2 dae::BlockComponent::Size() const
+{
+	return m_pTexture->GetSize();
+}
+bool dae::BlockComponent::Full() const
+{
+	if (m_Fullness == FULL)
+		return true;
+
+	return false;
+}
+bool dae::BlockComponent::Empty() const
+{
+	if (m_Fullness <= EMPTY)
+		return true;
+
+	return false;
+}
+
+bool dae::BlockComponent::Dig(float amount, Direction direction)
+{
+	if (Empty())
+		return false;
+
+	if (m_Direction == Direction::none)
+		m_Direction = direction;
+	else if (m_Direction != direction)
+		return false;
+
+	m_Fullness = std::min(FULL - amount, m_Fullness);
+	if (Empty())
+	{
+		m_Fullness = EMPTY;
+		return true;
+	}
+
+	return false;
+}
+
+dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData)
+{
+	std::string texturePath{};
+	switch (blockData.cellStartingData)
+	{
+	case dae::Cell::rock:
+	case dae::Cell::full:
+		texturePath = std::format("sprites/tile_layer{}.png", static_cast<int>(blockData.layer));
+		break;
+	case dae::Cell::pooka:
+	case dae::Cell::fygar:
+	case dae::Cell::empty:
+		texturePath = "sprites/tile_empty.png";
+		break;
+	case dae::Cell::solid:
+		texturePath = "sprites/tile_empty.png";
+		break;
+	case dae::Cell::ground:
+	case dae::Cell::sky:
+		texturePath = "sprites/tile_sky.png";
+		break;
+	default:
+		break;
+	}
+
+	auto gameObject{ std::make_unique<dae::GameObject>(pOwner, "GridBlock") };
+
+	auto blockComponent{ std::make_unique<dae::BlockComponent>(gameObject.get(), texturePath, blockData.fullness)};
 	gameObject->SetLocalPosition(columnRow.x * blockComponent->Size().x, columnRow.y * blockComponent->Size().y);
 	gameObject->AddComponent<dae::BlockComponent>(std::move(blockComponent));
 
@@ -17,6 +89,8 @@ dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, con
 dae::GridComponent::GridComponent(GameObject* pOwner)
 	: Component(pOwner)
 {
+	auto grid{ LoadGridFromFile("levels/level1.txt") };
+
 	int row{ 0 };
 	int column{ 0 };
 	for (std::array<GameObject*, GRID_WIDTH>& arr : m_Grid)
@@ -24,22 +98,7 @@ dae::GridComponent::GridComponent(GameObject* pOwner)
 		column = 0;
 		for (GameObject*& element : arr)
 		{
-			std::string fileName{ [=]()
-				{
-					if (row < 4)
-						return "sprites/pooka_walk.png";
-					else if (row < 8)
-						return "sprites/pooka_walk.png";
-					else if (row < 12)
-						return "sprites/pooka_walk.png";
-					else if (row < 16)
-						return "sprites/pooka_walk.png";
-
-					return "";
-				}()
-			};
-
-			element = MakeGridBlock(pOwner, { column , row }, fileName);
+			element = MakeGridBlock(pOwner, { column , row }, grid.grid[row][column]);
 			++column;
 		}
 		++row;
@@ -172,4 +231,70 @@ glm::vec2 dae::GridComponent::DigInDir(const glm::vec2& position, Direction dire
 	{
 		return position;
 	}
+}
+
+dae::GridData<dae::GridComponent::GRID_WIDTH, dae::GridComponent::GRID_HEIGHT> dae::GridComponent::LoadGridFromFile(const std::string& filePath)
+{
+	GridData<GRID_WIDTH, GRID_HEIGHT> result{};
+
+	if (std::ifstream fileStream{ ResourceManager::Instance().DataPath() / filePath }; fileStream.good())
+	{
+		char nextChar{};
+		BlockData blockData{};
+
+		for (int row{}; row < GRID_HEIGHT; ++row)
+		{
+			for (int column{}; column < GRID_WIDTH; ++column)
+			{
+				fileStream.get(nextChar);
+
+				switch (nextChar)
+				{
+				case 'R': //rock
+					blockData.cellStartingData = Cell::rock;
+					blockData.fullness = BlockComponent::FULL;
+					break;
+				case '#': //filled tile
+					blockData.cellStartingData = Cell::full;
+					blockData.fullness = BlockComponent::FULL;
+					break;
+				case '.': //empty tile
+					blockData.cellStartingData = Cell::empty;
+					blockData.fullness = BlockComponent::EMPTY;
+					break;
+				case '0': //surface
+					blockData.cellStartingData = Cell::ground;
+					blockData.fullness = BlockComponent::EMPTY;
+					break;
+				case 'P': //pooka
+					blockData.cellStartingData = Cell::pooka;
+					blockData.fullness = BlockComponent::EMPTY;
+					break;
+				case 'F': //fygar
+					blockData.cellStartingData = Cell::fygar;
+					blockData.fullness = BlockComponent::EMPTY;
+					break;
+				case 'S': //sky
+					blockData.cellStartingData = Cell::sky;
+					blockData.fullness = BlockComponent::FULL;
+					break;
+				case 'B': //bottom
+					blockData.cellStartingData = Cell::solid;
+					blockData.fullness = BlockComponent::FULL;
+					break;
+				default:
+					assert(false && "error loading file, couldn't match data with tile");
+					blockData.cellStartingData = Cell::none;
+					break;
+				}
+
+				blockData.layer = static_cast<uint8_t>((row - 1) / 4);
+
+				result.grid[row][column] = blockData;
+			}
+			fileStream.ignore(INT_MAX, '\n');
+		}
+	}
+
+	return result;
 }

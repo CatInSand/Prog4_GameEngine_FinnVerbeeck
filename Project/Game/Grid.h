@@ -20,62 +20,58 @@ namespace dae
 		count,
 	};
 
+	enum class Cell : uint8_t {
+		none,
+		full,
+		empty,
+		ground,
+		pooka,
+		fygar,
+		rock,
+		solid,
+		sky,
+	};
+
+	struct BlockData
+	{
+		float fullness;
+		uint8_t layer;
+		Cell cellStartingData;
+	};
+
 	class BlockComponent final : public TextureComponent
 	{
 	public:
-		BlockComponent(GameObject* pOwner, const std::string& fileName)
-			: TextureComponent(pOwner, fileName)
-		{
-			m_Enabled = false;
-		}
+		BlockComponent(GameObject* pOwner, const std::string& texturePath, float fullness);
 		virtual ~BlockComponent() = default;
 
-		glm::vec2 Size() const
-		{
-			return m_pTexture->GetSize();
-		}
-		bool Empty()
-		{
-			if (m_Fullness <= EMPTY)
-				return true;
+		glm::vec2 Size() const;
+		bool Full() const;
+		bool Empty() const;
 
-			return false;
-		}
+		bool Dig(float amount, Direction direction);
 
-		bool Dig(float amount, Direction direction)
-		{
-			if (Empty())
-				return false;
-
-			if (m_Direction == Direction::none)
-				m_Direction = direction;
-			else if (m_Direction != direction)
-				return false;
-			
-			m_Fullness = std::min(FULL - amount, m_Fullness);
-			if (Empty())
-			{
-				m_Fullness = EMPTY;
-				return true;
-			}
-
-			return false;
-		}
-
-	private:
 		static constexpr float FULL{ 16.f };
 		static constexpr float EMPTY{ 0.f };
-		float m_Fullness{ FULL };
+
+	private:
+		float m_Fullness;
 		Direction m_Direction{ Direction::none };
 	};
 
-	GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, const std::string& fileName);
+	GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
+
+	template<size_t Width, size_t Height>
+	struct GridData
+	{
+		std::array<std::array<BlockData, Width>, Height> grid;
+	};
 
 	class GridComponent final : public Component
 	{
 	public:
-		static constexpr int GRID_WIDTH{ 10 };
-		static constexpr int GRID_HEIGHT{ 16 };
+		static constexpr int GRID_WIDTH{ 16 };
+		static constexpr int GRID_HEIGHT{ 18 };
 
 		GridComponent(GameObject* pOwner);
 		virtual ~GridComponent() = default;
@@ -94,6 +90,8 @@ namespace dae
 		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, float amount);
 
 	private:
+		static GridData<GRID_WIDTH, GRID_HEIGHT> LoadGridFromFile(const std::string& filePath);
+
 		std::array<std::array<GameObject*, GRID_WIDTH>, GRID_HEIGHT> m_Grid{};
 		glm::vec2 m_BlockSize{};
 	};
