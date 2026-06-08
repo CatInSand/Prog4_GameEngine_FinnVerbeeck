@@ -93,6 +93,7 @@ namespace dae
 		const GameObject* GetChildAtIndex(unsigned int index) const;
 
 		//Gameloop
+		void Start();
 		void Update();
 		void Render();
 

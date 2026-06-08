@@ -125,6 +125,16 @@ const dae::GameObject* dae::GameObject::GetChildAtIndex(unsigned int index) cons
 	return m_pChildren[index];
 }
 
+void dae::GameObject::Start()
+{
+	for (std::unique_ptr<dae::Component>& pComponent : m_pComponents)
+	{
+		if (pComponent->m_Enabled)
+		{
+			pComponent->Start();
+		}
+	}
+}
 void dae::GameObject::Update()
 {
 	for (std::unique_ptr<dae::Component>& pComponent : m_pComponents)

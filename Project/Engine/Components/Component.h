@@ -16,6 +16,7 @@ namespace dae
 		Component& operator=(const Component& other) = delete;
 		Component& operator=(Component&& other) = delete;
 
+		virtual void Start() {}
 		virtual void Update() = 0;
 
 		void Delete();

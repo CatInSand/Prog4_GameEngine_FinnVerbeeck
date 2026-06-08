@@ -9,6 +9,8 @@
 #include "SceneManager.h"
 #include "Texture2D.h"
 
+#include "EnemySpawner.h"
+
 namespace dae
 {
 	enum class Direction {
@@ -61,9 +63,6 @@ namespace dae
 		Direction m_Direction{ Direction::none };
 		bool m_Solid;
 	};
-
-	GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
-
 	template<size_t Width, size_t Height>
 	struct GridData
 	{
@@ -94,10 +93,12 @@ namespace dae
 		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, Direction previousDirection, float amount);
 
 	private:
+		GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
 		static GridData<GRID_WIDTH, GRID_HEIGHT> LoadGridFromFile(const std::string& filePath);
 
 		std::array<std::array<GameObject*, GRID_WIDTH>, GRID_HEIGHT> m_Grid{};
 		glm::vec2 m_BlockSize{};
+		EnemySpawner* m_pEnemySpawner{ nullptr };
 	};
 }
 

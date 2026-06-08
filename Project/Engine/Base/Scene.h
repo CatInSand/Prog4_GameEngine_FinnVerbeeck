@@ -26,6 +26,7 @@ namespace dae
 		std::vector<GameObject*> GetAllObjectsWithName(const cat::hash_t& name);
 		std::vector<GameObject*> GetAllObjectsWithTag(const cat::hash_t& tag);
 
+		void Start();
 		void Update();
 		void Render() const;
 
@@ -38,6 +39,7 @@ namespace dae
 		std::string m_Name;
 		std::unique_ptr<GameObject> m_RootObject{ std::make_unique<GameObject>(nullptr, "Root") };
 		std::vector<std::unique_ptr<GameObject>> m_Objects{};
+		size_t m_NewObjectIndex{ 0 };
 	};
 }
 

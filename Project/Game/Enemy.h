@@ -14,6 +14,7 @@ namespace dae
 	public:
 		virtual ~EnemyComponent() = default;
 
+		virtual void Start() override;
 		virtual void Update() override;
 		void Move(const glm::vec2 movement);
 		GameObject* Owner();
@@ -22,8 +23,8 @@ namespace dae
 
 		float m_PlayerDetectionRadius{ 50.f };
 
-		GridComponent* m_pGridComponent;
-		GameObject* m_pPlayer;
+		GridComponent* m_pGridComponent{ nullptr };
+		GameObject* m_pPlayer{ nullptr };
 
 	protected:
 		static constexpr float SPEED{ 10.f };
@@ -47,7 +48,7 @@ namespace dae
 
 		explicit EnemyComponent(GameObject* pOwner, bool isPooka, EnemyState* pStartingState);
 
-		EnemyState* m_pCurrentState;
+		EnemyState* m_pCurrentState{ nullptr };
 
 	private:
 		bool m_IsPooka;
@@ -62,6 +63,8 @@ namespace dae
 	public:
 		PookaComponent(GameObject* pOwner);
 		virtual ~PookaComponent() = default;
+
+		virtual void Start() override;
 
 	private:
 		class IdleState final : public EnemyState

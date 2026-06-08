@@ -64,6 +64,22 @@ std::vector<dae::GameObject*> dae::Scene::GetAllObjectsWithTag(const cat::hash_t
 	return result;
 }
 
+void dae::Scene::Start()
+{
+	if (m_NewObjectIndex == m_Objects.size())
+		return;
+	else if (m_NewObjectIndex > m_Objects.size())
+		throw std::runtime_error("NewObjectIndex became invalid");
+	else
+	{
+		while (m_NewObjectIndex < m_Objects.size())
+		{
+			m_Objects[m_NewObjectIndex]->Start();
+			++m_NewObjectIndex;
+		}
+	}
+}
+
 void dae::Scene::Update()
 {
 	for(auto& object : m_Objects)
@@ -85,6 +101,11 @@ void dae::Scene::Render() const
 void dae::Scene::DeleteQueue()
 {
 	//delete objects
+	size_t deletedCount{ static_cast<size_t>(std::count_if(m_Objects.begin(), m_Objects.end(),
+			[](std::unique_ptr<dae::GameObject>& object) { return object->IsMarkedForDeletion(); }))
+	};
+	m_NewObjectIndex -= deletedCount;
+
 	m_Objects.erase(std::remove_if(m_Objects.begin(), m_Objects.end(),
 		[](std::unique_ptr<dae::GameObject>& object) { return object->IsMarkedForDeletion(); }),
 		m_Objects.end());

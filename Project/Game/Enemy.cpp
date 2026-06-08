@@ -9,6 +9,10 @@ dae::EnemyComponent::EnemyComponent(GameObject* pOwner, bool isPooka, EnemyState
 	, m_IsPooka{ isPooka }
 {
 	pOwner->AddTag(TAG_DANGEROUS_TO_PLAYER);
+}
+
+void dae::EnemyComponent::Start()
+{
 	m_pPlayer = SceneManager::Instance().CurrentScene()->GetObjectWithName("Player"_h);
 	m_pGridComponent = SceneManager::Instance().CurrentScene()->GetObjectWithName("Grid"_h)->GetComponent<GridComponent>();
 	if (m_pCurrentState != nullptr)
@@ -52,6 +56,11 @@ dae::PookaComponent::PookaComponent(GameObject* pOwner)
 	, m_pIdleState{ std::make_unique<IdleState>(this) }
 	, m_pChaseState{ std::make_unique<ChaseState>(this) }
 {
+}
+
+void dae::PookaComponent::Start()
+{
+	EnemyComponent::Start();
 	m_pCurrentState = m_pIdleState.get();
 	m_pCurrentState->Enter();
 }

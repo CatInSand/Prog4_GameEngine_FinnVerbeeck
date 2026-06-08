@@ -44,7 +44,6 @@ bool dae::BlockComponent::Dig(float amount, Direction direction)
 		m_Direction = direction;
 
 	m_Fullness -= amount;
-	std::cout << "Block: " << GetOwner()->GetLocalTransform().position.x << ", " << GetOwner()->GetLocalTransform().position.x << "Fullness: " << m_Fullness << "\n";
 	if (Empty())
 	{
 		SetTexture("sprites/tile_empty.png");
@@ -54,7 +53,7 @@ bool dae::BlockComponent::Dig(float amount, Direction direction)
 	return false;
 }
 
-dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData)
+dae::GameObject* dae::GridComponent::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData)
 {
 	std::string texturePath{};
 	bool solid{ false };
@@ -65,6 +64,9 @@ dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, Blo
 		texturePath = std::format("sprites/tile_layer{}.png", static_cast<int>(blockData.layer));
 		break;
 	case dae::Cell::pooka:
+		m_pEnemySpawner->SpawnEnemy(EnemyType::pooka, columnRow * BlockSize().x, GetOwner());
+		texturePath = "sprites/tile_empty.png";
+		break;
 	case dae::Cell::fygar:
 	case dae::Cell::empty:
 		texturePath = "sprites/tile_empty.png";
@@ -99,6 +101,8 @@ dae::GameObject* dae::MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, Blo
 dae::GridComponent::GridComponent(GameObject* pOwner)
 	: Component(pOwner)
 {
+	m_pEnemySpawner = GetOwner()->GetComponent<EnemySpawner>();
+
 	auto grid{ LoadGridFromFile("levels/level1.txt") };
 
 	int row{ 0 };

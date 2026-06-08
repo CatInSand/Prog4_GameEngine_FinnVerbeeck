@@ -45,6 +45,7 @@ void dae::SceneManager::SetScene(size_t index)
 void dae::SceneManager::Update()
 {
 	EventQueue::Instance().SendAll();
+	m_CurrentScene->Start();
 	m_CurrentScene->Update();
 	CollisionQueue::Instance().CheckAndSend();
 }
