@@ -25,6 +25,7 @@
 #include "EnemySpawner.h"
 #include "Grid.h"
 #include "Commands.h"
+#include "GameSounds.h"
 
 static void load()
 {
@@ -33,15 +34,7 @@ static void load()
 	std::shared_ptr<dae::Font> smoothFont{ dae::ResourceManager::Instance().LoadFont("Lingua.otf", 36) };
 	std::shared_ptr<dae::Font> arcadeFont{ dae::ResourceManager::Instance().LoadFont("Arcade.TTF", 36) };
 
-	std::unordered_map<dae::sound_id, std::string> idPathMap{
-		{ 0, "audio/spring.wav" },
-	};
-	dae::ServiceLocator::GetSoundSystem().LoadSoundMap(idPathMap);
-
-	dae::InputManager::Instance().AddKeyBind(
-		dae::KeyTrigger{ SDL_SCANCODE_G, dae::KeyState::down },
-		std::make_unique<dae::SoundCommand>(0, 1.f)
-	); // play sound
+	dae::ServiceLocator::GetSoundSystem().LoadSoundMap(dae::gIdPathMap);
 
 	{
 		//background

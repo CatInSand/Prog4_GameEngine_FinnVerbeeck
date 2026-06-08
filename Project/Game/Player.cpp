@@ -3,6 +3,7 @@
 #include "DeltaTime.h"
 #include "Events.h"
 #include "Tags.h"
+#include "GameSounds.h"
 
 
 dae::PlayerComponent::PlayerComponent(GameObject* pOwner)
@@ -43,6 +44,8 @@ void dae::PlayerComponent::OnCollisionEnter(GameObject* pObject)
 		--m_LiveCount;
 		if (m_LiveCount == 0)
 		{
+			ServiceLocator::GetSoundSystem().StopAll();
+			ServiceLocator::GetSoundSystem().Play(static_cast<sound_id>(Sounds::game_over), 1.f);
 			EventQueue::Instance().Enqueue(std::make_unique<EventPlayerDied>());
 		}
 	}

@@ -6,6 +6,7 @@
 #include "EventQueue.h"
 #include "TextComponent.h"
 #include "Events.h"
+#include "GameSounds.h"
 
 namespace dae
 {
@@ -17,6 +18,7 @@ namespace dae
 			, m_pScoreText{ pScoreText }
 		{
 			EventQueue::Instance().AddObserver(this);
+			ServiceLocator::GetSoundSystem().Play(static_cast<sound_id>(Sounds::game_music), 1.f);
 		}
 		virtual ~GameComponent()
 		{

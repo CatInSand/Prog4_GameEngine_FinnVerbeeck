@@ -70,6 +70,15 @@ namespace dae
 			m_SoundQueue.emplace(id, OptionalMute(volume));
 			m_ConditionVariable.notify_all();
 		}
+		void Stop(const sound_id id)
+		{
+
+		}
+		void StopAll()
+		{
+			std::unique_lock<std::mutex> lock{ m_Mutex };
+			m_SoundQueue.push({ 0, -1.f });
+		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
 		{
 			if (pEvent->m_ID == "SoundRequested"_h)
@@ -109,19 +118,29 @@ namespace dae
 					m_SoundQueue.pop();
 					lock.unlock();
 
-					MIX_Track* pTrack{ GetFreeTrack() };
-
-					volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
-					MIX_SetTrackGain(pTrack, volume);
-
-					if (!m_IDAudioMap.contains(id))
+					if (volume >= 0.f)
 					{
-						std::filesystem::path path{ ResourceManager::Instance().DataPath() / m_IDPathMap.at(id) };
-						m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, path.string().c_str(), false);
-					}
-					MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
+						MIX_Track* pTrack{ GetFreeTrack() };
 
-					MIX_PlayTrack(pTrack, 0);
+						volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
+						MIX_SetTrackGain(pTrack, volume);
+
+						if (!m_IDAudioMap.contains(id))
+						{
+							std::filesystem::path path{ ResourceManager::Instance().DataPath() / m_IDPathMap.at(id) };
+							m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, path.string().c_str(), false);
+						}
+						MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
+
+						MIX_PlayTrack(pTrack, 0);
+					}
+					else
+					{
+						for (MIX_Track* pTrack : m_Tracks)
+						{
+							MIX_StopTrack(pTrack, 0);
+						}
+					}
 
 					lock.lock();
 				}
@@ -173,6 +192,14 @@ void dae::SoundSystem::Play(const sound_id id , const float volume)
 {
 	m_pImpl->Play(id, volume);
 }
+void dae::SoundSystem::Stop(const sound_id id)
+{
+	m_pImpl->Stop(id)
+}
+void dae::SoundSystem::StopAll()
+{
+	m_pImpl->StopAll();
+}
 void dae::SoundSystem::Notify(std::unique_ptr<dae::Event>& pEvent)
 {
 	m_pImpl->Notify(pEvent);
@@ -194,6 +221,16 @@ void dae::LoggingSoundSystem::Play(sound_id id, float volume)
 {
 	std::cout << "Playing sound with id " << id << " at volume " << volume << "\n";
 	m_pSoundSystem->Play(id, volume);
+}
+void dae::LoggingSoundSystem::Stop(const sound_id id)
+{
+	std::cout << "Stopping sound with id " << id << "\n";
+	m_pSoundSystem->Stop(id);
+}
+void dae::LoggingSoundSystem::StopAll()
+{
+	std::cout << "Stopping all sounds\n";
+	m_pSoundSystem->StopAll();
 }
 void dae::LoggingSoundSystem::Notify(std::unique_ptr<Event>& pEvent)
 {

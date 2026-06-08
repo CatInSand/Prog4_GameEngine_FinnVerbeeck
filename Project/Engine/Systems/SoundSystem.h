@@ -17,6 +17,8 @@ namespace dae
 	public:
 		virtual ~BaseSoundSystem() = default;
 		virtual void Play(const sound_id id, float volume) = 0;
+		virtual void Stop(const sound_id id) = 0;
+		virtual void StopAll() = 0;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) = 0;
 		virtual void ToggleMute() = 0;
 		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) = 0;
@@ -27,6 +29,8 @@ namespace dae
 	public:
 		virtual ~NullSoundSystem() = default;
 		virtual void Play(const sound_id, float) override {}
+		virtual void Stop(const sound_id id) override {}
+		virtual void StopAll() override {}
 		virtual void Notify(std::unique_ptr<Event>&) override {}
 		virtual void ToggleMute() override {}
 		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>&) override {};
@@ -38,6 +42,8 @@ namespace dae
 		SoundSystem(float masterVolume);
 		virtual ~SoundSystem();
 		virtual void Play(sound_id id, float volume = 1.f) override;
+		virtual void Stop(const sound_id id) override;
+		virtual void StopAll() override;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
 		virtual void ToggleMute() override;
 		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) override;
@@ -53,6 +59,8 @@ namespace dae
 		LoggingSoundSystem(std::unique_ptr<BaseSoundSystem>&& pSoundSystem);
 		virtual ~LoggingSoundSystem() = default;
 		virtual void Play(sound_id id, float volume = 1.f) override;
+		virtual void Stop(const sound_id id) override;
+		virtual void StopAll() override;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
 		virtual void ToggleMute() override;
 		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) override;
