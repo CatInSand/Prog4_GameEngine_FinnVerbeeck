@@ -16,7 +16,8 @@ namespace dae
 
 		virtual void Start() override;
 		virtual void Update() override;
-		void Move(const glm::vec2 movement);
+		void Move(Direction direction);
+		void MovePhase(const glm::vec2 direction);
 		GameObject* Owner();
 
 		Direction m_Direction{ Direction::none };
@@ -39,9 +40,9 @@ namespace dae
 			virtual void Exit() = 0;
 
 		protected:
-			explicit EnemyState(EnemyComponent* pData)
-				: m_pEnemyComponent{ pData }
-			{}
+			explicit EnemyState(EnemyComponent* pData);
+
+			Direction GetNewDirection(Direction currentDir);
 
 			EnemyComponent* m_pEnemyComponent;
 		};
