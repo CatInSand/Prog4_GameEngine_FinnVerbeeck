@@ -1,11 +1,12 @@
 #ifndef  SOUND_SYSTEM_H
 #define  SOUND_SYSTEM_H
 
-#include <iostream>
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 
 #include "Observer.h"
+#include "BaseCommand.h"
 
 namespace dae
 {
@@ -15,16 +16,20 @@ namespace dae
 	{
 	public:
 		virtual ~BaseSoundSystem() = default;
-		virtual void Play(const sound_id id, const float volume) = 0;
+		virtual void Play(const sound_id id, float volume) = 0;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) = 0;
+		virtual void ToggleMute() = 0;
+		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) = 0;
 	};
 
 	class NullSoundSystem final : public BaseSoundSystem
 	{
 	public:
 		virtual ~NullSoundSystem() = default;
-		virtual void Play(const sound_id, const float) override {}
+		virtual void Play(const sound_id, float) override {}
 		virtual void Notify(std::unique_ptr<Event>&) override {}
+		virtual void ToggleMute() override {}
+		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>&) override {};
 	};
 
 	class SoundSystem : public BaseSoundSystem
@@ -34,6 +39,8 @@ namespace dae
 		virtual ~SoundSystem();
 		virtual void Play(sound_id id, float volume = 1.f) override;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
+		virtual void ToggleMute() override;
+		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) override;
 
 	protected:
 		class SoundSystemImpl;
@@ -47,9 +54,23 @@ namespace dae
 		virtual ~LoggingSoundSystem() = default;
 		virtual void Play(sound_id id, float volume = 1.f) override;
 		virtual void Notify(std::unique_ptr<Event>& pEvent) override;
+		virtual void ToggleMute() override;
+		virtual void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map) override;
 
 	private:
 		std::unique_ptr<BaseSoundSystem> m_pSoundSystem;
+	};
+
+	class SoundCommand final : public BaseCommand
+	{
+	public:
+		SoundCommand(sound_id id, float volume);
+		virtual ~SoundCommand() = default;
+		virtual void Execute() override;
+
+	private:
+		sound_id m_ID;
+		float m_Volume;
 	};
 
 	//sound events

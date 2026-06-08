@@ -8,8 +8,12 @@
 #include <queue>
 #include <stop_token>
 #include <thread>
+#include <iostream>
 
 #include "SDL3_mixer/SDL_mixer.h"
+
+#include "ResourceManager.h"
+#include "ServiceLocator.h"
 
 //https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer
 
@@ -63,7 +67,7 @@ namespace dae
 			assert(m_IDPathMap.contains(id));
 
 			std::unique_lock<std::mutex> lock{ m_Mutex };
-			m_SoundQueue.emplace(id, volume);
+			m_SoundQueue.emplace(id, OptionalMute(volume));
 			m_ConditionVariable.notify_all();
 		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
@@ -74,8 +78,20 @@ namespace dae
 				Play(currentEvent->m_ID, currentEvent->m_Volume);
 			}
 		}
+		void ToggleMute()
+		{
+			m_Muted = !m_Muted;
+		}
+		void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map)
+		{
+			m_IDPathMap = map;
+		}
 
 	private:
+		float OptionalMute(float volume)
+		{
+			return m_Muted ? 0.f : volume;
+		}
 		void AudioMain(std::stop_token stopToken)
 		{
 			while (!stopToken.stop_requested())
@@ -100,7 +116,8 @@ namespace dae
 
 					if (!m_IDAudioMap.contains(id))
 					{
-						m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, m_IDPathMap.at(id).c_str(), false);
+						std::filesystem::path path{ ResourceManager::Instance().DataPath() / m_IDPathMap.at(id) };
+						m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, path.string().c_str(), false);
 					}
 					MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
 
@@ -133,6 +150,7 @@ namespace dae
 		std::jthread m_Thread{};
 		std::mutex m_Mutex{};
 
+		bool m_Muted{ false };
 		float m_MasterVolume;
 		MIX_Mixer* m_pMixer{ nullptr };
 		static const uint8_t TRACK_COUNT{ 16 };
@@ -141,11 +159,7 @@ namespace dae
 		std::queue<std::pair<sound_id, float>> m_SoundQueue{};
 
 		std::unordered_map<sound_id, MIX_Audio*> m_IDAudioMap{};
-		static const std::unordered_map<sound_id, std::string> m_IDPathMap;
-	};
-
-	const std::unordered_map<sound_id, std::string> SoundSystem::SoundSystemImpl::m_IDPathMap{
-		{0, "./Data/spring.wav"}
+		std::unordered_map<sound_id, std::string> m_IDPathMap{};
 	};
 }
 
@@ -162,6 +176,14 @@ void dae::SoundSystem::Play(const sound_id id , const float volume)
 void dae::SoundSystem::Notify(std::unique_ptr<dae::Event>& pEvent)
 {
 	m_pImpl->Notify(pEvent);
+}
+void dae::SoundSystem::ToggleMute()
+{
+	m_pImpl->ToggleMute();
+}
+void dae::SoundSystem::LoadSoundMap(const std::unordered_map<sound_id, std::string>& map)
+{
+	m_pImpl->LoadSoundMap(map);
 }
 
 dae::LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<BaseSoundSystem>&& pSoundSystem)
@@ -181,4 +203,24 @@ void dae::LoggingSoundSystem::Notify(std::unique_ptr<Event>& pEvent)
 		std::cout << "Playing sound with id " << currentEvent->m_ID << " at volume " << currentEvent->m_Volume << "\n";
 	}
 	m_pSoundSystem->Notify(pEvent);
+}
+void dae::LoggingSoundSystem::ToggleMute()
+{
+	std::cout << "Toggling mute\n";
+	m_pSoundSystem->ToggleMute();
+}
+void dae::LoggingSoundSystem::LoadSoundMap(const std::unordered_map<sound_id, std::string>& map)
+{
+	std::cout << "Loading sounds\n";
+	m_pSoundSystem->LoadSoundMap(map);
+}
+
+dae::SoundCommand::SoundCommand(sound_id id, float volume)
+	: m_ID{ id }
+	, m_Volume{ volume }
+{
+}
+void dae::SoundCommand::Execute()
+{
+	ServiceLocator::GetSoundSystem().Play(m_ID, m_Volume);
 }
