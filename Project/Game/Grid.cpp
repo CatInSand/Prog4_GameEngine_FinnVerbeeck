@@ -112,7 +112,28 @@ dae::GridComponent::GridComponent(GameObject* pOwner)
 {
 	m_pEnemySpawner = GetOwner()->GetComponent<EnemySpawner>();
 
-	auto grid{ LoadGridFromFile("levels/level1.txt") };
+	LoadLevel(1);
+}
+
+void dae::GridComponent::LoadNextLevel()
+{
+	LoadLevel(m_CurrentLevel + 1);
+}
+
+void dae::GridComponent::LoadLevel(int level)
+{
+	if (level > 3)
+		return;
+
+	m_CurrentLevel = level;
+
+	size_t childCount{ GetOwner()->GetChildCount() };
+	for (size_t childIndex{}; childIndex < childCount; ++childIndex)
+	{
+		GetOwner()->GetChildAtIndex(0)->Delete();
+	}
+
+	auto grid{ LoadGridFromFile(std::format("levels/level{}.txt", level))};
 
 	int row{ 0 };
 	int column{ 0 };
@@ -121,7 +142,7 @@ dae::GridComponent::GridComponent(GameObject* pOwner)
 		column = 0;
 		for (GameObject*& element : arr)
 		{
-			element = MakeGridBlock(pOwner, { column , row }, grid.grid[row][column]);
+			element = MakeGridBlock(GetOwner(), {column , row}, grid.grid[row][column]);
 			++column;
 		}
 		++row;
@@ -137,7 +158,7 @@ dae::GridComponent::GridComponent(GameObject* pOwner)
 		for (GameObject*& element : arr)
 		{
 			(void)element; // can't just remove it :(
-			SpawnObjects(pOwner, { column , row }, grid.grid[row][column]);
+			SpawnObjects(GetOwner(), { column , row }, grid.grid[row][column]);
 			++column;
 		}
 		++row;
@@ -159,25 +180,58 @@ glm::vec2 dae::GridComponent::PlayerSpawn() const
 	return { m_BlockSize.x * column, m_BlockSize.y * row };
 }
 
-dae::GameObject* dae::GridComponent::CurrentBlock(const glm::vec2& position)
+dae::GameObject* dae::GridComponent::CurrentBlock(const glm::vec2& position, Direction direction)
 {
-	size_t row{ static_cast<size_t>(position.x / BlockSize().y) };
-	size_t column{ static_cast<size_t>(position.y / BlockSize().x) };
+	size_t row{ static_cast<size_t>(SnapToGrid(position).y / BlockSize().y) };
+	size_t column{ static_cast<size_t>(SnapToGrid(position).x / BlockSize().x) };
+
+	if (position != SnapToGrid(position))
+	{
+		switch (direction)
+		{
+		case dae::Direction::up:
+			++row;
+			break;
+		case dae::Direction::left:
+			++column;
+			break;
+		default:
+			break;
+		}
+	}
+
 	return m_Grid[row][column];
 }
 dae::GameObject* dae::GridComponent::NextBlock(const glm::vec2& position, Direction direction)
 {
-	size_t row{ static_cast<size_t>(position.y / BlockSize().y) };
-	size_t column{ static_cast<size_t>(position.x / BlockSize().x) };
+	size_t row{ static_cast<size_t>(SnapToGrid(position).y / BlockSize().y) };
+	size_t column{ static_cast<size_t>(SnapToGrid(position).x / BlockSize().x) };
+
+	if (position != SnapToGrid(position))
+	{
+		switch (direction)
+		{
+		case dae::Direction::up:
+			++row;
+			break;
+		case dae::Direction::left:
+			++column;
+			break;
+		default:
+			break;
+		}
+	}
 
 	switch (direction)
 	{
-	case dae::Direction::down:
-		++row;
-		break;
-	case dae::Direction::right:
-		++column;
-		break;
+	case Direction::up:
+		return m_Grid[row - 1][column];
+	case Direction::down:
+		return m_Grid[row + 1][column];
+	case Direction::left:
+		return m_Grid[row][column - 1];
+	case Direction::right:
+		return m_Grid[row][column + 1];
 	default:
 		break;
 	}
@@ -186,7 +240,7 @@ dae::GameObject* dae::GridComponent::NextBlock(const glm::vec2& position, Direct
 }
 glm::vec2 dae::GridComponent::SnapToGrid(const glm::vec2& position)
 {
-	return { static_cast<int>(position.x / BlockSize().x) * BlockSize().x,  static_cast<int>(position.y / BlockSize().y) * BlockSize().y };
+	return { floorf(position.x / BlockSize().x) * BlockSize().x,  floorf(position.y / BlockSize().y) * BlockSize().y };
 }
 glm::vec2 dae::GridComponent::SnapToGridLine(const glm::vec2& position, Direction direction)
 {
@@ -194,11 +248,11 @@ glm::vec2 dae::GridComponent::SnapToGridLine(const glm::vec2& position, Directio
 	{
 	case dae::Direction::up:
 	case dae::Direction::down:
-		return { static_cast<int>(position.x / BlockSize().x) * BlockSize().x, position.y };
+		return { floorf(position.x / BlockSize().x) * BlockSize().x, position.y };
 		break;
 	case dae::Direction::left:
 	case dae::Direction::right:
-		return { position.x, static_cast<int>(position.y / BlockSize().y) * BlockSize().y };
+		return { position.x,  floorf(position.y / BlockSize().y) * BlockSize().y };
 		break;
 	default:
 		assert(false && "invalid direction");
@@ -245,6 +299,23 @@ glm::vec2 dae::GridComponent::MoveInDir(const glm::vec2& position, Direction dir
 			break;
 		default:
 			break;
+		}
+
+		if (NextBlock(position, direction) == CurrentBlock(newPos, direction))
+		{
+			switch (direction)
+			{
+			case dae::Direction::up:
+			case dae::Direction::left:
+				SnapToGrid(position);
+				break;
+			case dae::Direction::down:
+			case dae::Direction::right:
+				SnapToGrid(newPos);
+				break;
+			default:
+				break;
+			}
 		}
 
 		return newPos;

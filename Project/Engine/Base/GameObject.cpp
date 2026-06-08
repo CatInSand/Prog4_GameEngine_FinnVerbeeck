@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "DeltaTime.h"
 #include "RenderComponent.h"
+#include "SceneManager.h"
 
 dae::GameObject::GameObject(dae::GameObject* pParent, const std::string& name)
 	: m_Name{ cat::make_hash(name) }
@@ -120,7 +121,7 @@ size_t dae::GameObject::GetChildCount() const
 {
 	return m_pChildren.size();
 }
-const dae::GameObject* dae::GameObject::GetChildAtIndex(unsigned int index) const
+dae::GameObject* dae::GameObject::GetChildAtIndex(size_t index)
 {
 	return m_pChildren[index];
 }
@@ -167,6 +168,7 @@ void dae::GameObject::Delete()
 	{
 		pChild->Delete();
 	}
+	SetParent(SceneManager::Instance().CurrentScene()->Root());
 }
 bool dae::GameObject::IsMarkedForDeletion() const
 {
@@ -214,8 +216,7 @@ void dae::GameObject::AddChild(dae::GameObject* pChild)
 void dae::GameObject::RemoveChild(dae::GameObject* pChild)
 {
 	m_pChildren.erase(std::find_if(m_pChildren.begin(), m_pChildren.end(),
-		[pChild](dae::GameObject* pCurrentChild) { return pCurrentChild == pChild; }),
-		m_pChildren.end());
+		[pChild](dae::GameObject* pCurrentChild) { return pCurrentChild == pChild; }));
 }
 bool dae::GameObject::IsChild(dae::GameObject* pChild)
 {

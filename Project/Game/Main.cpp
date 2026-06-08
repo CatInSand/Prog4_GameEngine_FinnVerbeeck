@@ -74,6 +74,12 @@ static void load()
 		gameObject->AddComponent<dae::EnemySpawner>(std::move(spawnerComponent));
 
 		std::unique_ptr<dae::GridComponent> gridComponent{ std::make_unique<dae::GridComponent>(gameObject.get()) };
+
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_F1, dae::KeyState::down },
+			std::make_unique<dae::NextLevelCommand>(gridComponent.get())
+		); //Skip level
+
 		gameObject->AddComponent<dae::GridComponent>(std::move(gridComponent));
 
 		scene.Add(std::move(gameObject));

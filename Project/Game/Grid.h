@@ -83,7 +83,7 @@ namespace dae
 		glm::vec2 BlockSize() const;
 		glm::vec2 PlayerSpawn() const;
 
-		GameObject* CurrentBlock(const glm::vec2& position);
+		GameObject* CurrentBlock(const glm::vec2& position, Direction direction);
 		GameObject* NextBlock(const glm::vec2& position, Direction direction);
 		glm::vec2 SnapToGrid(const glm::vec2& position);
 		glm::vec2 SnapToGridLine(const glm::vec2& position, Direction direction);
@@ -92,7 +92,10 @@ namespace dae
 		glm::vec2 MoveInDir(const glm::vec2& position, Direction direction, float amount);
 		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, Direction previousDirection, float amount);
 
+		void LoadNextLevel();
+
 	private:
+		void LoadLevel(int level);
 		GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
 		GameObject* SpawnObjects(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
 		static GridData<GRID_WIDTH, GRID_HEIGHT> LoadGridFromFile(const std::string& filePath);
@@ -100,6 +103,7 @@ namespace dae
 		std::array<std::array<GameObject*, GRID_WIDTH>, GRID_HEIGHT> m_Grid{};
 		glm::vec2 m_BlockSize{};
 		EnemySpawner* m_pEnemySpawner{ nullptr };
+		int m_CurrentLevel{};
 	};
 }
 

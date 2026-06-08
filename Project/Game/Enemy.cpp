@@ -35,9 +35,27 @@ dae::GameObject* dae::EnemyComponent::Owner()
 {
 	return GetOwner();
 }
-void dae::EnemyComponent::Move(const glm::vec2 movement)
+void dae::EnemyComponent::Move(Direction direction)
 {
-	GetOwner()->SetLocalPosition(GetOwner()->GetLocalTransform().position + movement * SPEED * time::gDeltaTime);
+	m_Direction = direction;
+
+	if (m_pGridComponent->CanMoveInDir(GetOwner()->GetLocalTransform().position, direction))
+	{
+		GetOwner()->SetLocalPosition(
+			m_pGridComponent->MoveInDir(
+				GetOwner()->GetLocalTransform().position,
+				direction,
+				SPEED * time::gDeltaTime
+			)
+		);
+	}
+}
+void dae::EnemyComponent::MovePhase(const glm::vec2 direction)
+{
+	GetOwner()->SetLocalPosition(
+		GetOwner()->GetLocalTransform().position
+		+ glm::normalize(direction) * SPEED * time::gDeltaTime
+	);
 }
 
 void dae::EnemyComponent::OnCollisionEnter(GameObject* pObject)
@@ -65,30 +83,37 @@ void dae::PookaComponent::Start()
 	m_pCurrentState->Enter();
 }
 
+dae::EnemyComponent::EnemyState::EnemyState(EnemyComponent* pData)
+	: m_pEnemyComponent{ pData }
+{
+}
+
+dae::Direction dae::EnemyComponent::EnemyState::GetNewDirection(Direction currentDir)
+{
+	for (Direction direction{}; direction < Direction::count; direction = static_cast<Direction>(static_cast<int>(direction) + 1))
+	{
+		if (m_pEnemyComponent->m_pGridComponent->CanMoveInDir(
+				m_pEnemyComponent->Owner()->GetLocalTransform().position, direction))
+		{
+			return direction;
+		}
+	}
+
+	// return static_cast<Direction>((static_cast<int>(currentDir) + 1) % static_cast<int>(Direction::count));
+	return currentDir;
+}
+
 dae::PookaComponent::IdleState::IdleState(EnemyComponent* pData)
 	: EnemyState(pData)
 {
 }
 dae::PookaComponent::EnemyState* dae::PookaComponent::IdleState::Update()
 {
-	switch (m_pEnemyComponent->m_Direction)
+	glm::vec2 oldPos{ m_pEnemyComponent->Owner()->GetLocalTransform().position };
+	m_pEnemyComponent->Move(m_pEnemyComponent->m_Direction);
+	if (oldPos == m_pEnemyComponent->Owner()->GetLocalTransform().position)
 	{
-	case Direction::none:
-		break;
-	case Direction::up:
-		m_pEnemyComponent->Move({ 0.f, -1.f });
-		break;
-	case Direction::down:
-		m_pEnemyComponent->Move({ 0.f, 1.f });
-		break;
-	case Direction::left:
-		m_pEnemyComponent->Move({ -1.f, 0.f });
-		break;
-	case Direction::right:
-		m_pEnemyComponent->Move({ 1.f, 0.f });
-		break;
-	default:
-		break;
+		m_pEnemyComponent->m_Direction = GetNewDirection(m_pEnemyComponent->m_Direction);
 	}
 
 	float distance{ glm::distance(m_pEnemyComponent->Owner()->GetLocalTransform().position, m_pEnemyComponent->m_pPlayer->GetLocalTransform().position) };
@@ -102,15 +127,7 @@ dae::PookaComponent::EnemyState* dae::PookaComponent::IdleState::Update()
 }
 void dae::PookaComponent::IdleState::Enter()
 {
-	for (Direction direction{}; direction < Direction::count; direction = static_cast<Direction>(static_cast<int>(direction) + 1))
-	{
-		if (m_pEnemyComponent->m_pGridComponent->CanMoveInDir(m_pEnemyComponent->Owner()->GetLocalTransform().position, Direction::down))
-		{
-			m_pEnemyComponent->m_Direction = direction;
-		}
-	}
-
-	m_pEnemyComponent->m_Direction = Direction::right;
+	m_pEnemyComponent->m_Direction = GetNewDirection(Direction::none);
 }
 void dae::PookaComponent::IdleState::Exit()
 {
@@ -122,7 +139,7 @@ dae::PookaComponent::ChaseState::ChaseState(EnemyComponent* pData)
 }
 dae::PookaComponent::EnemyState* dae::PookaComponent::ChaseState::Update()
 {
-	m_pEnemyComponent->Move(glm::normalize(m_pEnemyComponent->m_pPlayer->GetLocalTransform().position - m_pEnemyComponent->Owner()->GetLocalTransform().position));
+	m_pEnemyComponent->MovePhase(m_pEnemyComponent->m_pPlayer->GetLocalTransform().position - m_pEnemyComponent->Owner()->GetLocalTransform().position);
 	return this;
 }
 void dae::PookaComponent::ChaseState::Enter()

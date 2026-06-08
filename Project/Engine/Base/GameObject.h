@@ -90,7 +90,7 @@ namespace dae
 		GameObject* GetRoot();
 		const GameObject* GetRoot() const;
 		size_t GetChildCount() const;
-		const GameObject* GetChildAtIndex(unsigned int index) const;
+		GameObject* GetChildAtIndex(size_t index);
 
 		//Gameloop
 		void Start();
