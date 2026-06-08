@@ -64,9 +64,6 @@ dae::GameObject* dae::GridComponent::MakeGridBlock(GameObject* pOwner, glm::vec2
 		texturePath = std::format("sprites/tile_layer{}.png", static_cast<int>(blockData.layer));
 		break;
 	case dae::Cell::pooka:
-		m_pEnemySpawner->SpawnEnemy(EnemyType::pooka, columnRow * BlockSize().x, GetOwner());
-		texturePath = "sprites/tile_empty.png";
-		break;
 	case dae::Cell::fygar:
 	case dae::Cell::empty:
 		texturePath = "sprites/tile_empty.png";
@@ -97,6 +94,18 @@ dae::GameObject* dae::GridComponent::MakeGridBlock(GameObject* pOwner, glm::vec2
 
 	return result;
 }
+dae::GameObject* dae::GridComponent::SpawnObjects(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData)
+{
+	switch (blockData.cellStartingData)
+	{
+	case dae::Cell::pooka:
+		return m_pEnemySpawner->SpawnEnemy(EnemyType::pooka, { columnRow.x * BlockSize().x, columnRow.y * BlockSize().y }, pOwner);
+	default:
+		break;
+	}
+
+	return nullptr;
+}
 
 dae::GridComponent::GridComponent(GameObject* pOwner)
 	: Component(pOwner)
@@ -119,6 +128,20 @@ dae::GridComponent::GridComponent(GameObject* pOwner)
 	}
 
 	m_BlockSize = m_Grid[0][0]->GetComponent<BlockComponent>()->Size();
+
+	row = 0;
+	column = 0;
+	for (std::array<GameObject*, GRID_WIDTH>& arr : m_Grid)
+	{
+		column = 0;
+		for (GameObject*& element : arr)
+		{
+			(void)element; // can't just remove it :(
+			SpawnObjects(pOwner, { column , row }, grid.grid[row][column]);
+			++column;
+		}
+		++row;
+	}
 }
 
 void dae::GridComponent::Update()

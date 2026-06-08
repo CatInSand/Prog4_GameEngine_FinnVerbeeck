@@ -94,6 +94,7 @@ namespace dae
 
 	private:
 		GameObject* MakeGridBlock(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
+		GameObject* SpawnObjects(GameObject* pOwner, glm::vec2 columnRow, BlockData blockData);
 		static GridData<GRID_WIDTH, GRID_HEIGHT> LoadGridFromFile(const std::string& filePath);
 
 		std::array<std::array<GameObject*, GRID_WIDTH>, GRID_HEIGHT> m_Grid{};

@@ -41,14 +41,6 @@ static void load()
 	}
 
 	{
-		//text
-		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Text") };
-		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(gameObject.get(), "no gameplay currently :(", smoothFont) };
-		gameObject->AddComponent<dae::TextComponent>(std::move(textComponent));
-		scene.Add(std::move(gameObject));
-	}
-
-	{
 		// game manager object
 		std::unique_ptr<dae::GameObject> textObject{ std::make_unique<dae::GameObject>(scene.Root(), "ScoreText") };
 		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(textObject.get(), "SCORE: 0", arcadeFont) };
