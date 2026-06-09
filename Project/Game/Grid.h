@@ -82,10 +82,11 @@ namespace dae
 
 		glm::vec2 BlockSize() const;
 		glm::vec2 PlayerSpawn() const;
+		int GetLayer(const glm::vec2& position) const;
 
 		GameObject* CurrentBlock(const glm::vec2& position, Direction direction);
 		GameObject* NextBlock(const glm::vec2& position, Direction direction);
-		glm::vec2 SnapToGrid(const glm::vec2& position);
+		glm::vec2 SnapToGrid(const glm::vec2& position) const;
 		glm::vec2 SnapToGridLine(const glm::vec2& position, Direction direction);
 		bool CanDigInDir(const glm::vec2& position, Direction direction, Direction previousDirection);
 		bool CanMoveInDir(const glm::vec2& position, Direction direction);
@@ -93,6 +94,7 @@ namespace dae
 		glm::vec2 DigInDir(const glm::vec2& position, Direction direction, Direction previousDirection, float amount);
 
 		void LoadNextLevel();
+		void RestartLevel();
 
 	private:
 		void LoadLevel(int level);

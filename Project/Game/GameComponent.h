@@ -7,6 +7,7 @@
 #include "TextComponent.h"
 #include "Events.h"
 #include "GameSounds.h"
+#include "Grid.h"
 
 namespace dae
 {
@@ -54,6 +55,11 @@ namespace dae
 					assert(m_Score >= 0);
 					m_ScoreChanged = true;
 				}
+				break;
+			}
+			case "EventPlayerDied"_h:
+			{
+				SceneManager::Instance().CurrentScene()->GetObjectWithName("Grid"_h)->GetComponent<GridComponent>()->RestartLevel();
 				break;
 			}
 			default:

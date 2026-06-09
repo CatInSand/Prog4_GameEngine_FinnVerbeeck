@@ -5,6 +5,7 @@
 #include "StateMachine.h"
 #include "BaseCommand.h"
 #include "Grid.h"
+#include "Shoot.h"
 
 namespace dae
 {
@@ -16,8 +17,9 @@ namespace dae
 
 		virtual void Update() override;
 		void Move(Direction direction);
+		void Shoot(Direction direction);
 
-		int m_LiveCount{ 6 };
+		int m_LiveCount{ 4 };
 		float m_MoveSpeed{ 25.f };
 
 		GridComponent* m_pGridComponent{ nullptr };
@@ -26,6 +28,7 @@ namespace dae
 		Direction m_Direction{ Direction::right };
 		Direction m_PreviousDirection{ Direction::right };
 		bool m_Right{ true };
+		PumpComponent* m_pPumpComponent{ nullptr };
 
 		virtual void OnCollisionEnter(GameObject* pObject) override;
 		virtual void OnCollisionStay(GameObject*) override {};

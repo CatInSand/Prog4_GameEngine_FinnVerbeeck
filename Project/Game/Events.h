@@ -5,17 +5,6 @@
 
 namespace dae
 {
-	class EventEnemyDied final : public Event
-	{
-	public:
-		EventEnemyDied(bool pooka_)
-			: Event("EventEnemyDied"_h)
-			, pooka{ pooka_ }
-		{}
-
-		bool pooka;
-	};
-
 	class EventPlayerDied final : public Event
 	{
 	public:
@@ -24,7 +13,15 @@ namespace dae
 		{}
 	};
 
-	class ScoreEvent final : public Event
+	class EventGameOver final : public Event
+	{
+	public:
+		EventGameOver()
+			: Event("EventGameOver"_h)
+		{}
+	};
+
+	class ScoreEvent : public Event
 	{
 	private:
 		static constexpr int m_RockScores[]{
@@ -58,6 +55,14 @@ namespace dae
 
 		int deltaScore{ 0 };
 		bool reset{ false };
+	};
+
+	class EventEnemyDied final : public ScoreEvent
+	{
+	public:
+		EventEnemyDied(int layer, bool pooka)
+			: ScoreEvent(layer, !pooka)
+		{}
 	};
 }
 

@@ -119,6 +119,10 @@ void dae::GridComponent::LoadNextLevel()
 {
 	LoadLevel(m_CurrentLevel + 1);
 }
+void dae::GridComponent::RestartLevel()
+{
+	LoadLevel(m_CurrentLevel);
+}
 
 void dae::GridComponent::LoadLevel(int level)
 {
@@ -179,6 +183,12 @@ glm::vec2 dae::GridComponent::PlayerSpawn() const
 	constexpr uint8_t row{ 9 };
 	return { m_BlockSize.x * column, m_BlockSize.y * row };
 }
+int dae::GridComponent::GetLayer(const glm::vec2& position) const
+{
+	int row{ static_cast<int>(SnapToGrid(position).y / BlockSize().y) };
+
+	return row / 4;
+}
 
 dae::GameObject* dae::GridComponent::CurrentBlock(const glm::vec2& position, Direction direction)
 {
@@ -238,7 +248,7 @@ dae::GameObject* dae::GridComponent::NextBlock(const glm::vec2& position, Direct
 
 	return m_Grid[row][column];
 }
-glm::vec2 dae::GridComponent::SnapToGrid(const glm::vec2& position)
+glm::vec2 dae::GridComponent::SnapToGrid(const glm::vec2& position) const
 {
 	return { floorf(position.x / BlockSize().x) * BlockSize().x,  floorf(position.y / BlockSize().y) * BlockSize().y };
 }

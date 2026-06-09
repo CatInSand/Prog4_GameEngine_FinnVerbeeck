@@ -62,7 +62,8 @@ void dae::EnemyComponent::OnCollisionEnter(GameObject* pObject)
 {
 	if (pObject->HasTag(TAG_DANGEROUS_TO_ENEMY))
 	{
-		EventQueue::Instance().Enqueue(std::make_unique<EventEnemyDied>(m_IsPooka));
+		int layer{ m_pGridComponent->GetLayer(GetOwner()->GetLocalTransform().position) };
+		EventQueue::Instance().Enqueue(std::make_unique<EventEnemyDied>(layer, m_IsPooka));
 		GetOwner()->Delete();
 	}
 }

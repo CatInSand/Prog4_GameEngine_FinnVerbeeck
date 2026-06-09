@@ -194,7 +194,7 @@ void dae::SoundSystem::Play(const sound_id id , const float volume)
 }
 void dae::SoundSystem::Stop(const sound_id id)
 {
-	m_pImpl->Stop(id)
+	m_pImpl->Stop(id);
 }
 void dae::SoundSystem::StopAll()
 {

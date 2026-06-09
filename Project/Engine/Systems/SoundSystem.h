@@ -29,7 +29,7 @@ namespace dae
 	public:
 		virtual ~NullSoundSystem() = default;
 		virtual void Play(const sound_id, float) override {}
-		virtual void Stop(const sound_id id) override {}
+		virtual void Stop(const sound_id) override {}
 		virtual void StopAll() override {}
 		virtual void Notify(std::unique_ptr<Event>&) override {}
 		virtual void ToggleMute() override {}
