@@ -40,7 +40,8 @@ dae::GameObject* dae::EnemySpawner::SpawnPooka(const glm::vec2& position, GameOb
 	auto pookaComponent{ std::make_unique<PookaComponent>(gameObject.get()) };
 	gameObject->AddComponent<PookaComponent>(std::move(pookaComponent));
 
-	auto renderComponent{ std::make_unique<TextureComponent>(gameObject.get(), "sprites/pooka_walk.png") };
+	auto renderComponent{ std::make_unique<TextureComponent>(gameObject.get(), "sprites/pooka.png") };
+	gameObject->SetLocalScale(renderComponent->GetSize());
 	gameObject->AddComponent<TextureComponent>(std::move(renderComponent));
 
 	GameObject* result{ gameObject.get() };

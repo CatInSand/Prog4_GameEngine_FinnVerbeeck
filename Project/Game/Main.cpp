@@ -98,9 +98,14 @@ static void load()
 			dae::KeyTrigger{ SDL_SCANCODE_S, dae::KeyState::pressed },
 			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::down)
 		); //down
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_SCANCODE_SPACE, dae::KeyState::down },
+			std::make_unique<dae::PlayerShootCommand>(playerComponent.get())
+		); //shoot
 		gameObject->AddComponent<dae::PlayerComponent>(std::move(playerComponent));
 
 		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/idle.png") };
+		gameObject->SetLocalScale(renderComponent->GetSize());
 		gameObject->AddComponent<dae::TextureComponent>(std::move(renderComponent));
 
 		scene.Add(std::move(gameObject));

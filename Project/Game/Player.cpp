@@ -46,9 +46,9 @@ void dae::PlayerComponent::Move(Direction direction)
 		);
 	}
 }
-void dae::PlayerComponent::Shoot(Direction)
+void dae::PlayerComponent::Shoot()
 {
-	
+	m_pPumpComponent->Shoot(m_Direction);
 }
 
 void dae::PlayerComponent::OnCollisionEnter(GameObject* pObject)

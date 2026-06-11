@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"
+#include "Texture2D.h"
 
 dae::TextureComponent::TextureComponent(dae::GameObject* owner)
 	: RenderComponent(owner)
@@ -18,6 +19,10 @@ void dae::TextureComponent::SetTexture(const std::string& filename)
 {
 	auto newpTexture{ ResourceManager::Instance().LoadTexture(filename) };
 	m_pTexture.swap(newpTexture);
+}
+glm::vec2 dae::TextureComponent::GetSize() const
+{
+	return m_pTexture->GetSize();
 }
 
 void dae::TextureComponent::Render()

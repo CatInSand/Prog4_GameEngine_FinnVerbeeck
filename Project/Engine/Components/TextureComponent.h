@@ -2,10 +2,10 @@
 #define TEXTURE_COMPONENT_H
 
 #include "RenderComponent.h"
+#include "Texture2D.h"
 
 namespace dae
 {
-	class Texture2D;
 	class TextureComponent : public RenderComponent
 	{
 	public:
@@ -18,6 +18,7 @@ namespace dae
 		TextureComponent& operator=(TextureComponent&& other) = delete;
 
 		void SetTexture(const std::string& filename);
+		glm::vec2 GetSize() const;
 
 		virtual void Update() override
 		{

@@ -17,7 +17,7 @@ namespace dae
 
 		virtual void Update() override;
 		void Move(Direction direction);
-		void Shoot(Direction direction);
+		void Shoot();
 
 		int m_LiveCount{ 4 };
 		float m_MoveSpeed{ 25.f };
@@ -85,6 +85,22 @@ namespace dae
 
 	private:
 		Direction m_Direction;
+		PlayerComponent* m_pPlayer;
+	};
+
+	class PlayerShootCommand final : public BaseCommand
+	{
+	public:
+		PlayerShootCommand(PlayerComponent* pPlayer)
+			: m_pPlayer{ pPlayer }
+		{}
+		virtual ~PlayerShootCommand() = default;
+		virtual void Execute()
+		{
+			m_pPlayer->Shoot();
+		}
+
+	private:
 		PlayerComponent* m_pPlayer;
 	};
 }
