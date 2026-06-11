@@ -26,10 +26,13 @@ namespace dae
 		*/
 		static bool Collide(const BoxCollider& bc1, const BoxCollider& bc2)
 		{
-			if (bc1.m_Transform->position.x < bc2.m_Transform->position.x + bc2.m_Transform->scale.x
-				&& bc1.m_Transform->position.x + bc1.m_Transform->scale.x > bc2.m_Transform->position.x
-				&& bc1.m_Transform->position.y < bc2.m_Transform->position.y + bc2.m_Transform->scale.y
-				&& bc1.m_Transform->position.y + bc1.m_Transform->scale.y > bc2.m_Transform->position.y)
+			Transform transform1{ bc1.m_pOwner->GetWorldTransform() };
+			Transform transform2{ bc2.m_pOwner->GetWorldTransform() };
+
+			if (transform1.position.x < transform2.position.x + transform2.scale.x
+				&& transform1.position.x + transform1.scale.x > transform2.position.x
+				&& transform1.position.y < transform2.position.y + transform2.scale.y
+				&& transform1.position.y + transform1.scale.y > transform2.position.y)
 			{
 				return true;
 			}
