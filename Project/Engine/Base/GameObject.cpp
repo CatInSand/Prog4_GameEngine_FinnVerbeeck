@@ -190,6 +190,16 @@ void dae::GameObject::SetLocalPosition(glm::vec2 pos)
 	m_LocalTransform.position = pos;
 	SetTransformDirty();
 }
+void dae::GameObject::SetLocalScale(float scale)
+{
+	m_LocalTransform.scale = { scale, scale };
+	SetTransformDirty();
+}
+void dae::GameObject::SetLocalScale(glm::vec2 scale)
+{
+	m_LocalTransform.scale = scale;
+	SetTransformDirty();
+}
 dae::Transform dae::GameObject::GetLocalTransform() const
 {
 	return m_LocalTransform;
