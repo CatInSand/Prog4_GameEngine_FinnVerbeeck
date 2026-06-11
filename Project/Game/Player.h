@@ -34,6 +34,8 @@ namespace dae
 		virtual void OnCollisionStay(GameObject*) override {};
 		virtual void OnCollisionExit(GameObject*) override {};
 
+		void SetStartPosition();
+
 		class State {
 		public:
 			State(PlayerComponent* player)

@@ -76,7 +76,6 @@ static void load()
 	{
 		// player object
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "Player") };
-		gameObject->SetLocalPosition(scene.GetObjectWithName("Grid"_h)->GetComponent<dae::GridComponent>()->PlayerSpawn());
 
 		std::unique_ptr<dae::PlayerComponent> playerComponent{ std::make_unique<dae::PlayerComponent>(gameObject.get()) };
 		dae::InputManager::Instance().AddKeyBind(

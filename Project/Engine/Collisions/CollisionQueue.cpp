@@ -98,7 +98,7 @@ void dae::CollisionQueue::SendAll()
 			collision.type,
 			collision.pCollider1->Owner())
 		};
-		collision.pObserver2->Notify(event1);
+		collision.pObserver2->Notify(event2);
 	}
 
 	m_PreviousCollisions = std::move(m_CurrentCollisions);

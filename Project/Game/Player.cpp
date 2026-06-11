@@ -12,6 +12,7 @@ dae::PlayerComponent::PlayerComponent(GameObject* pOwner)
 	, m_pCurrentState{ m_pIdleState.get() }
 {
 	m_pGridComponent = SceneManager::Instance().CurrentScene()->GetObjectWithName("Grid"_h)->GetComponent<GridComponent>();
+	SetStartPosition();
 
 	//make pump
 	std::unique_ptr<GameObject> gameObject{ std::make_unique<GameObject>(GetOwner(), "Pump") };
@@ -61,7 +62,13 @@ void dae::PlayerComponent::OnCollisionEnter(GameObject* pObject)
 		}
 		else
 		{
+			SetStartPosition();
 			EventQueue::Instance().Enqueue(std::make_unique<EventPlayerDied>());
 		}
 	}
 };
+
+void dae::PlayerComponent::SetStartPosition()
+{
+	GetOwner()->SetLocalPosition(m_pGridComponent->PlayerSpawn());
+}
