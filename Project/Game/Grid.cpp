@@ -10,6 +10,7 @@ dae::BlockComponent::BlockComponent(GameObject* pOwner, const std::string& textu
 	, m_Fullness{ fullness }
 	, m_Solid{ solid }
 {
+	GetOwner()->RenderPrioritize(1);
 }
 
 glm::vec2 dae::BlockComponent::Size() const

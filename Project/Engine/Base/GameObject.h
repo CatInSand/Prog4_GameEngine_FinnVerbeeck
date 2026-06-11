@@ -109,6 +109,10 @@ namespace dae
 		Transform GetWorldTransform();
 		Transform* LocalTransformPtr();
 
+		//Rendering
+		void RenderPrioritize(int priority);
+		int RenderPriority() const;
+
 	private:
 		//Name & tags
 		cat::hash_t m_Name;
@@ -135,6 +139,9 @@ namespace dae
 		Transform m_WorldTransform{};
 		Transform m_LocalTransform{};
 		bool m_TransformRequiresUpdate{ false };
+
+		//Rendering
+		int m_RenderPriority{ 0 };
 	};
 }
 

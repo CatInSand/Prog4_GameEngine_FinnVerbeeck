@@ -208,6 +208,16 @@ dae::Transform* dae::GameObject::LocalTransformPtr()
 	return &m_LocalTransform;
 }
 
+//trivial because of consistent API design
+void dae::GameObject::RenderPrioritize(int priority)
+{
+	m_RenderPriority = priority;
+}
+int dae::GameObject::RenderPriority() const
+{
+	return m_RenderPriority;
+}
+
 //private functions
 void dae::GameObject::AddChild(dae::GameObject* pChild)
 {

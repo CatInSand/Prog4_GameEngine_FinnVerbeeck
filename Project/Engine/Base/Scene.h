@@ -40,6 +40,10 @@ namespace dae
 		std::unique_ptr<GameObject> m_RootObject{ std::make_unique<GameObject>(nullptr, "Root") };
 		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 		size_t m_NewObjectIndex{ 0 };
+
+		void CalculatePriorityList() const;
+		mutable std::vector<std::pair<size_t, int>> m_PriorityIndexList{};
+		mutable bool m_PriorityListDirty{ true };
 	};
 }
 

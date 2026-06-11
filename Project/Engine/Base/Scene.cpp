@@ -10,11 +10,13 @@ void dae::Scene::Add(std::unique_ptr<GameObject>&& object)
 {
 	assert(object != nullptr && "Cannot add a null GameObject to the scene.");
 	m_Objects.emplace_back(std::move(object));
+	m_PriorityListDirty = true;
 }
 
 void dae::Scene::RemoveAll()
 {
 	m_Objects.clear();
+	m_PriorityListDirty = true;
 }
 
 dae::GameObject* dae::Scene::GetObjectWithName(const cat::hash_t& name)
@@ -92,10 +94,17 @@ void dae::Scene::Update()
 
 void dae::Scene::Render() const
 {
-	for (const auto& object : m_Objects)
+	CalculatePriorityList();
+
+	for (const auto& [index, priority] : m_PriorityIndexList)
+	{
+		m_Objects[index]->Render();
+	}
+
+	/*for (const auto& object : m_Objects)
 	{
 		object->Render();
-	}
+	}*/
 }
 
 void dae::Scene::DeleteQueue()
@@ -104,11 +113,15 @@ void dae::Scene::DeleteQueue()
 	size_t deletedCount{ static_cast<size_t>(std::count_if(m_Objects.begin(), m_Objects.end(),
 			[](std::unique_ptr<dae::GameObject>& object) { return object->IsMarkedForDeletion(); }))
 	};
-	m_NewObjectIndex -= deletedCount;
+	if (deletedCount > 0)
+	{
+		m_NewObjectIndex -= deletedCount;
+		m_PriorityListDirty = true;
 
-	m_Objects.erase(std::remove_if(m_Objects.begin(), m_Objects.end(),
-		[](std::unique_ptr<dae::GameObject>& object) { return object->IsMarkedForDeletion(); }),
-		m_Objects.end());
+		m_Objects.erase(std::remove_if(m_Objects.begin(), m_Objects.end(),
+			[](std::unique_ptr<dae::GameObject>& object) { return object->IsMarkedForDeletion(); }),
+			m_Objects.end());
+	}
 
 	//delete components from remaining objects
 	for (std::unique_ptr<dae::GameObject>& object : m_Objects)
@@ -124,4 +137,29 @@ dae::GameObject* dae::Scene::Root() const
 std::string dae::Scene::Name() const
 {
 	return m_Name;
+}
+
+void dae::Scene::CalculatePriorityList() const
+{
+	if (m_PriorityListDirty)
+	{
+		m_PriorityIndexList.clear();
+		m_PriorityIndexList.reserve(m_Objects.size());
+
+		size_t index{ 0 };
+		for (const auto& object : m_Objects)
+		{
+			m_PriorityIndexList.push_back({ index, object->RenderPriority() });
+			++index;
+		}
+
+		std::sort(m_PriorityIndexList.begin(), m_PriorityIndexList.end(),
+			[](const std::pair<size_t, int>& val1, const std::pair<size_t, int>& val2)
+			{
+				return val1.second > val2.second;
+			}
+		);
+
+		m_PriorityListDirty = false;
+	}
 }
