@@ -43,7 +43,7 @@ namespace dae
 		~SoundSystemImpl()
 		{
 			//stop thread
-			std::unique_lock<std::mutex> lock{ m_Mutex };
+			std::unique_lock<std::mutex> lock{ m_QueueMutex };
 			m_StopSource.request_stop();
 			m_ConditionVariable.notify_all();
 			lock.unlock();
@@ -66,7 +66,7 @@ namespace dae
 		{
 			assert(m_IDPathMap.contains(id));
 
-			std::unique_lock<std::mutex> lock{ m_Mutex };
+			std::unique_lock<std::mutex> lock{ m_QueueMutex };
 			m_SoundQueue.emplace(id, OptionalMute(volume));
 			m_ConditionVariable.notify_all();
 		}
@@ -76,7 +76,7 @@ namespace dae
 		}
 		void StopAll()
 		{
-			std::unique_lock<std::mutex> lock{ m_Mutex };
+			std::unique_lock<std::mutex> lock{ m_QueueMutex };
 			m_SoundQueue.push({ 0, -1.f });
 		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
@@ -89,7 +89,17 @@ namespace dae
 		}
 		void ToggleMute()
 		{
+			std::unique_lock<std::mutex> lock{ m_QueueMutex };
 			m_Muted = !m_Muted;
+			if (m_Muted)
+			{
+				m_SoundQueue.emplace(0, -FLT_MAX);
+			}
+			else
+			{
+				m_SoundQueue.emplace(1, -FLT_MAX);
+			}
+			m_ConditionVariable.notify_all();
 		}
 		void LoadSoundMap(const std::unordered_map<sound_id, std::string>& map)
 		{
@@ -105,7 +115,7 @@ namespace dae
 		{
 			while (!stopToken.stop_requested())
 			{
-				std::unique_lock<std::mutex> lock{ m_Mutex };
+				std::unique_lock<std::mutex> lock{ m_QueueMutex };
 
 				while (!stopToken.stop_requested() && m_SoundQueue.empty())
 				{
@@ -122,7 +132,7 @@ namespace dae
 					{
 						MIX_Track* pTrack{ GetFreeTrack() };
 
-						volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
+						volume = std::clamp(volume * m_MasterVolume, MIN_VOLUME, MAX_VOLUME);
 						MIX_SetTrackGain(pTrack, volume);
 
 						if (!m_IDAudioMap.contains(id))
@@ -133,6 +143,23 @@ namespace dae
 						MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
 
 						MIX_PlayTrack(pTrack, 0);
+					}
+					else if (volume == -FLT_MAX)
+					{
+						if (id == 0)
+						{
+							for (MIX_Track* pTrack : m_Tracks)
+							{
+								MIX_SetTrackGain(pTrack, 0.f);
+							}
+						}
+						else
+						{
+							for (MIX_Track* pTrack : m_Tracks)
+							{
+								MIX_SetTrackGain(pTrack, m_MasterVolume);
+							}
+						}
 					}
 					else
 					{
@@ -167,7 +194,7 @@ namespace dae
 		std::stop_token m_StopToken{ m_StopSource.get_token() };
 		std::condition_variable m_ConditionVariable{};
 		std::jthread m_Thread{};
-		std::mutex m_Mutex{};
+		std::mutex m_QueueMutex{};
 
 		bool m_Muted{ false };
 		float m_MasterVolume;
