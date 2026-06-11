@@ -11,6 +11,7 @@ namespace dae
 		EventPlayerDied()
 			: Event("EventPlayerDied"_h)
 		{}
+		virtual ~EventPlayerDied() = default;
 	};
 
 	class EventGameOver final : public Event
@@ -19,50 +20,21 @@ namespace dae
 		EventGameOver()
 			: Event("EventGameOver"_h)
 		{}
+		virtual ~EventGameOver() = default;
 	};
 
-	class ScoreEvent : public Event
-	{
-	private:
-		static constexpr int m_RockScores[]{
-			INT_MIN,
-			1000,
-			2500,
-			4000,
-			6000,
-			8000,
-			12000,
-			15000
-		};
-
-	public:
-		ScoreEvent(int layer, bool fygar)
-			: Event("ScoreEvent"_h)
-			, deltaScore{ fygar ? (100 * (1 + layer)) : (200 * (1 + layer)) }
-		{
-			assert(0 < layer && layer < 5);
-		}
-		ScoreEvent(int numberKilledByRock)
-			: Event("ScoreEvent"_h)
-			, deltaScore{ m_RockScores[numberKilledByRock] }
-		{
-			assert(0 < numberKilledByRock && numberKilledByRock < 9);
-		}
-		ScoreEvent(bool reset_)
-			: Event("ScoreEvent"_h)
-			, reset{ reset_ }
-		{}
-
-		int deltaScore{ 0 };
-		bool reset{ false };
-	};
-
-	class EventEnemyDied final : public ScoreEvent
+	class EventEnemyDied final : public Event
 	{
 	public:
 		EventEnemyDied(int layer, bool pooka)
-			: ScoreEvent(layer, !pooka)
+			: Event("EventEnemyDied"_h)
+			, m_Layer{ layer }
+			, m_Pooka{ pooka }
 		{}
+		virtual ~EventEnemyDied() = default;
+
+		int m_Layer;
+		bool m_Pooka;
 	};
 }
 

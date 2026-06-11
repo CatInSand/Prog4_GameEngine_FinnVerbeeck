@@ -15,12 +15,14 @@
 #include <iostream>
 #include "InputManager.h"
 #include "MoveCommand.h"
+#include "OmniCommand.h"
 
 // - - - - - - - - - - - - - - - -
 
 #include "TextureComponent.h"
 #include "TextComponent.h"
 #include "GameComponent.h"
+#include "ScoreComponent.h"
 #include "Player.h"
 #include "EnemySpawner.h"
 #include "Grid.h"
@@ -43,10 +45,12 @@ static void load()
 		std::unique_ptr<dae::TextComponent> textComponent{ std::make_unique<dae::TextComponent>(textObject.get(), "SCORE: 0", arcadeFont) };
 
 		std::unique_ptr<dae::GameObject> gameObject{ std::make_unique<dae::GameObject>(scene.Root(), "GameManager") };
-		std::unique_ptr<dae::GameComponent> gameComponent{ std::make_unique<dae::GameComponent>(gameObject.get(), textComponent.get()) };
+		std::unique_ptr<dae::GameComponent> gameComponent{ std::make_unique<dae::GameComponent>(gameObject.get()) };
 		gameObject->AddComponent<dae::GameComponent>(std::move(gameComponent));
 		std::unique_ptr<dae::SoundComponent> soundComponent{ std::make_unique<dae::SoundComponent>(gameObject.get()) };
 		gameObject->AddComponent<dae::SoundComponent>(std::move(soundComponent));
+		std::unique_ptr<dae::ScoreComponent> scoreComponent{ std::make_unique<dae::ScoreComponent>(gameObject.get(), textComponent.get()) };
+		gameObject->AddComponent<dae::ScoreComponent>(std::move(scoreComponent));
 
 		textObject->AddComponent<dae::TextComponent>(std::move(textComponent));
 		textObject->SetParent(gameObject.get());
