@@ -20,8 +20,96 @@
 constexpr float MIN_VOLUME{ 0.f };
 constexpr float MAX_VOLUME{ 1.f };
 
+constexpr float STOP_TRACK{ -1.f };
+constexpr float MUTE_TRACK{ -2.f };
+constexpr float UNMUTE_TRACK{ -3.f };
+constexpr dae::sound_id ALL_TRACKS{ UINT16_MAX };
+
 namespace dae
 {
+	class Track final
+	{
+	public:
+		Track(MIX_Mixer* pMixer)
+			: m_Track{ MIX_CreateTrack(pMixer) }
+		{
+		}
+		~Track()
+		{
+			if (m_Track != nullptr)
+			{
+				MIX_DestroyTrack(m_Track);
+			}
+		}
+		Track(const Track&) = delete;
+		Track& operator=(const Track&) = delete;
+		Track(Track&& other)
+			: m_Track{ std::move(other.m_Track) }
+			, m_ID{ std::move(other.m_ID) }
+			, m_Volume{ std::move(other.m_Volume) }
+			, m_Muted{ std::move(other.m_Muted) }
+		{
+			other.m_Track = nullptr;
+		}
+		Track& operator=(Track&& other)
+		{
+			m_Track = std::move(other.m_Track);
+			m_ID = std::move(other.m_ID);
+			m_Volume = std::move(other.m_Volume);
+			m_Muted = std::move(other.m_Muted);
+			return *this;
+		}
+
+		void SetAudio(MIX_Audio* pAudio, sound_id id, float volume = 1.f)
+		{
+			m_ID = id;
+			m_Volume = volume;
+			MIX_SetTrackAudio(m_Track, pAudio);
+			if (!m_Muted)
+			{
+				MIX_SetTrackGain(m_Track, m_Volume);
+			}
+		}
+		void Play()
+		{
+			MIX_PlayTrack(m_Track, 0);
+		}
+		void Stop()
+		{
+			MIX_StopTrack(m_Track, 0);
+		}
+		void Mute(bool mute)
+		{
+			if (m_Muted != mute)
+			{
+				m_Muted = !m_Muted;
+				if (m_Muted)
+				{
+					MIX_SetTrackGain(m_Track, 0.f);
+				}
+				else
+				{
+					MIX_SetTrackGain(m_Track, m_Volume);
+				}
+			}
+		}
+
+		bool Playing() const
+		{
+			return MIX_TrackPlaying(m_Track);
+		}
+		sound_id ID() const
+		{
+			return m_ID;
+		}
+
+	private:
+		MIX_Track* m_Track;
+		sound_id m_ID{};
+		float m_Volume{ 0.f };
+		bool m_Muted{ false };
+	};
+
 	class SoundSystem::SoundSystemImpl final
 	{
 	public:
@@ -35,7 +123,7 @@ namespace dae
 			m_Tracks.reserve(TRACK_COUNT);
 			for (int index{ 0 }; index < TRACK_COUNT; ++index)
 			{
-				m_Tracks.push_back(MIX_CreateTrack(m_pMixer));
+				m_Tracks.push_back(Track{ m_pMixer });
 			}
 
 			m_Thread = std::jthread{ &dae::SoundSystem::SoundSystemImpl::AudioMain, this, m_StopToken };
@@ -53,31 +141,33 @@ namespace dae
 			{
 				MIX_DestroyAudio(pAudio);
 			}
-			for (MIX_Track* pTrack : m_Tracks)
-			{
-				MIX_DestroyTrack(pTrack);
-			}
 
 			MIX_DestroyMixer(m_pMixer);
 			MIX_Quit();
 		}
 
-		void Play(const sound_id id, float volume)
+		void Play(sound_id id, float volume)
+		{
+			assert(m_IDPathMap.contains(id));
+			assert(volume >= 0.f);
+
+			std::unique_lock<std::mutex> lock{ m_QueueMutex };
+			m_SoundQueue.emplace(id, volume);
+			m_ConditionVariable.notify_all();
+		}
+		void Stop(sound_id id)
 		{
 			assert(m_IDPathMap.contains(id));
 
 			std::unique_lock<std::mutex> lock{ m_QueueMutex };
-			m_SoundQueue.emplace(id, OptionalMute(volume));
+			m_SoundQueue.emplace(id, STOP_TRACK);
 			m_ConditionVariable.notify_all();
-		}
-		void Stop(const sound_id id)
-		{
-
 		}
 		void StopAll()
 		{
 			std::unique_lock<std::mutex> lock{ m_QueueMutex };
-			m_SoundQueue.push({ 0, -1.f });
+			m_SoundQueue.emplace(ALL_TRACKS, STOP_TRACK);
+			m_ConditionVariable.notify_all();
 		}
 		void Notify(std::unique_ptr<dae::Event>& pEvent)
 		{
@@ -93,11 +183,11 @@ namespace dae
 			m_Muted = !m_Muted;
 			if (m_Muted)
 			{
-				m_SoundQueue.emplace(0, -FLT_MAX);
+				m_SoundQueue.emplace(ALL_TRACKS, MUTE_TRACK);
 			}
 			else
 			{
-				m_SoundQueue.emplace(1, -FLT_MAX);
+				m_SoundQueue.emplace(ALL_TRACKS, UNMUTE_TRACK);
 			}
 			m_ConditionVariable.notify_all();
 		}
@@ -107,10 +197,6 @@ namespace dae
 		}
 
 	private:
-		float OptionalMute(float volume)
-		{
-			return m_Muted ? 0.f : volume;
-		}
 		void AudioMain(std::stop_token stopToken)
 		{
 			while (!stopToken.stop_requested())
@@ -130,42 +216,31 @@ namespace dae
 
 					if (volume >= 0.f)
 					{
-						MIX_Track* pTrack{ GetFreeTrack() };
+						Track* pTrack{ GetFreeTrack() };
 
-						volume = std::clamp(volume * m_MasterVolume, MIN_VOLUME, MAX_VOLUME);
-						MIX_SetTrackGain(pTrack, volume);
-
+						volume = std::clamp(volume, MIN_VOLUME, MAX_VOLUME);
 						if (!m_IDAudioMap.contains(id))
 						{
 							std::filesystem::path path{ ResourceManager::Instance().DataPath() / m_IDPathMap.at(id) };
 							m_IDAudioMap[id] = MIX_LoadAudio(m_pMixer, path.string().c_str(), false);
 						}
-						MIX_SetTrackAudio(pTrack, m_IDAudioMap.at(id));
 
-						MIX_PlayTrack(pTrack, 0);
-					}
-					else if (volume == -FLT_MAX)
-					{
-						if (id == 0)
-						{
-							for (MIX_Track* pTrack : m_Tracks)
-							{
-								MIX_SetTrackGain(pTrack, 0.f);
-							}
-						}
-						else
-						{
-							for (MIX_Track* pTrack : m_Tracks)
-							{
-								MIX_SetTrackGain(pTrack, m_MasterVolume);
-							}
-						}
+						pTrack->SetAudio(m_IDAudioMap.at(id), id, volume);
+						pTrack->Play();
 					}
 					else
 					{
-						for (MIX_Track* pTrack : m_Tracks)
+						for (Track& track : m_Tracks)
 						{
-							MIX_StopTrack(pTrack, 0);
+							if (id == ALL_TRACKS || id == track.ID())
+							{
+								if (volume == STOP_TRACK)
+									track.Stop();
+								else if (volume == MUTE_TRACK)
+									track.Mute(true);
+								else if (volume == UNMUTE_TRACK)
+									track.Mute(false);
+							}
 						}
 					}
 
@@ -173,21 +248,21 @@ namespace dae
 				}
 			}
 		}
-		MIX_Track* GetFreeTrack()
+		Track* GetFreeTrack()
 		{
-			for (MIX_Track* pTrack : m_Tracks)
+			for (Track& track : m_Tracks)
 			{
-				if (!MIX_TrackPlaying(pTrack))
+				if (!track.Playing())
 				{
-					return pTrack;
+					return &track;
 				}
 			}
 
 			//no free tracks
 			static int16_t currentStoppedTrack{ -1 };
 			currentStoppedTrack = (currentStoppedTrack + 1) % TRACK_COUNT;
-			MIX_StopTrack(m_Tracks[currentStoppedTrack], 0);
-			return m_Tracks[currentStoppedTrack];
+			m_Tracks[currentStoppedTrack].Stop();
+			return &m_Tracks[currentStoppedTrack];
 		}
 
 		std::stop_source m_StopSource;
@@ -200,7 +275,7 @@ namespace dae
 		float m_MasterVolume;
 		MIX_Mixer* m_pMixer{ nullptr };
 		static const uint8_t TRACK_COUNT{ 16 };
-		std::vector<MIX_Track*> m_Tracks{};
+		std::vector<Track> m_Tracks{};
 
 		std::queue<std::pair<sound_id, float>> m_SoundQueue{};
 
