@@ -16,13 +16,13 @@ namespace dae
 		bool UpdateStates();
 
 		KeyState GetKeyState(SDL_Scancode scancode);
-		KeyState GetButtonState(SDL_GamepadButton button) const;
+		KeyState GetButtonState(SDL_GamepadButton button);
 
 	private:
 		std::unordered_map<SDL_Scancode, KeyState> m_KeyBoardState{};
+		std::unordered_map<SDL_GamepadButton, KeyState> m_GamepadState{};
 
-		class GamepadImplementation;
-		std::unique_ptr<GamepadImplementation> m_pImpl;
+		SDL_Gamepad* m_pGamepad{};
 	};
 }
 

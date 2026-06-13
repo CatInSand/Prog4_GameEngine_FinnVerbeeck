@@ -4,42 +4,21 @@
 #include <SDL3/SDL_gamepad.h>
 #include <iostream>
 
-class dae::InputState::GamepadImplementation final
-{
-public:
-	GamepadImplementation()
-	{
-		SDL_Init(SDL_INIT_GAMEPAD);
-		if (!SDL_HasGamepad())
-		{
-			std::cout << "No gamepad detected\n";
-		}
-		int gamepadCount{};
-		SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
-		m_pGamepad = SDL_OpenGamepad(gamepads[0]);
-	}
-	~GamepadImplementation()
-	{
-		SDL_CloseGamepad(m_pGamepad);
-	}
-	dae::KeyState GetButtonState(SDL_GamepadButton button) const
-	{
-		if (SDL_GetGamepadButton(m_pGamepad, button))
-			return dae::KeyState::pressed;
-		else
-			return dae::KeyState::none;
-	}
-
-private:
-	SDL_Gamepad* m_pGamepad{};
-};
-
 dae::InputState::InputState()
-	: m_pImpl{ std::make_unique<GamepadImplementation>() }
 {
-
+	SDL_Init(SDL_INIT_GAMEPAD);
+	if (!SDL_HasGamepad())
+	{
+		std::cout << "No gamepad detected\n";
+	}
+	int gamepadCount{};
+	SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
+	m_pGamepad = SDL_OpenGamepad(gamepads[0]);
 }
-dae::InputState::~InputState() = default;
+dae::InputState::~InputState()
+{
+	SDL_CloseGamepad(m_pGamepad);
+}
 
 bool dae::InputState::UpdateStates()
 {
@@ -59,9 +38,24 @@ bool dae::InputState::UpdateStates()
 		}
 	}
 
+	for (auto& [button, keyState] : m_GamepadState)
+	{
+		switch (keyState)
+		{
+		case dae::KeyState::down:
+			keyState = dae::KeyState::pressed;
+			break;
+		case dae::KeyState::up:
+			keyState = dae::KeyState::none;
+			break;
+		default:
+			break;
+		}
+	}
+
 	//keyboard input
 	SDL_Event e;
-	while (SDL_PollEvent(&e))
+	while (SDL_PollEvent(&e))	
 	{
 		switch (e.type)
 		{
@@ -72,6 +66,12 @@ bool dae::InputState::UpdateStates()
 			break;
 		case SDL_EVENT_KEY_DOWN:
 			m_KeyBoardState[e.key.scancode] = dae::KeyState::down;
+			break;
+		case SDL_EVENT_GAMEPAD_BUTTON_UP:
+			m_GamepadState[static_cast<SDL_GamepadButton>(e.gbutton.button)] = dae::KeyState::up;
+			break;
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+			m_GamepadState[static_cast<SDL_GamepadButton>(e.gbutton.button)] = dae::KeyState::down;
 			break;
 		default:
 			break;
@@ -86,7 +86,7 @@ dae::KeyState dae::InputState::GetKeyState(SDL_Scancode scancode)
 	return m_KeyBoardState[scancode];
 }
 
-dae::KeyState dae::InputState::GetButtonState(SDL_GamepadButton button) const
+dae::KeyState dae::InputState::GetButtonState(SDL_GamepadButton button)
 {
-	return m_pImpl->GetButtonState(button);
+	return m_GamepadState[button];
 }

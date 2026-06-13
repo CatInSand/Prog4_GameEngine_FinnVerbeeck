@@ -102,6 +102,27 @@ static void load()
 			dae::KeyTrigger{ SDL_SCANCODE_SPACE, dae::KeyState::down },
 			std::make_unique<dae::PlayerShootCommand>(playerComponent.get())
 		); //shoot
+
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_GAMEPAD_BUTTON_DPAD_RIGHT, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::right)
+		); //gamepad right
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_GAMEPAD_BUTTON_DPAD_LEFT, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::left)
+		); //gamepad left
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_GAMEPAD_BUTTON_DPAD_UP, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::up)
+		); //gamepad up
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_GAMEPAD_BUTTON_DPAD_DOWN, dae::KeyState::pressed },
+			std::make_unique<dae::PlayerMoveCommand>(playerComponent.get(), dae::Direction::down)
+		); //gamepad down
+		dae::InputManager::Instance().AddKeyBind(
+			dae::KeyTrigger{ SDL_GAMEPAD_BUTTON_SOUTH, dae::KeyState::down },
+			std::make_unique<dae::PlayerShootCommand>(playerComponent.get())
+		); //gamepad shoot
 		gameObject->AddComponent<dae::PlayerComponent>(std::move(playerComponent));
 
 		std::unique_ptr<dae::TextureComponent> renderComponent{ std::make_unique<dae::TextureComponent>(gameObject.get(), "sprites/idle.png") };
