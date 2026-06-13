@@ -144,6 +144,16 @@ int main(int, char*[])
 	if(!std::filesystem::exists(data_location))
 		data_location = "../Data/";
 
+	//controls
+	std::cout << "- - - - CONTROLS - - - -\n";
+	std::cout << "Skip level: F1\n";
+	std::cout << "Mute: F2\n";
+	std::cout << "\n";
+	std::cout << "- - - - GAMEPLAY - - - -\n";
+	std::cout << "Movement: WASD or controller DPAD\n";
+	std::cout << "Pump: Space or controller south button (A)\n";
+	std::cout << "\n";
+
 	try
 	{
 		dae::Settings settings{
