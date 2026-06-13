@@ -89,7 +89,7 @@ dae::Engine::Engine(const std::filesystem::path& dataPath, Settings&& settings)
 #ifndef NDEBUG
 	ServiceLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystem>(m_Settings.masterVolume)));
 #else
-	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(masterVolume));
+	ServiceLocator::RegisterSoundSystem(std::make_unique<SoundSystem>(m_Settings.masterVolume));
 #endif
 
 	EventQueue::Instance().AddObserver(&ServiceLocator::GetSoundSystem());
